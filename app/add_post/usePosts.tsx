@@ -6,6 +6,9 @@ function usePosts() {
   const db = getFirestore(app);
   const [posts, setPosts] = useState<{ account: string, context: string, datetime: Date, tag: string, title: string }[]>([]);
 
+  const [updated, setUpdated] = useState(0);
+
+
   async function fetchData() {
     let data: { account: string, context: string, datetime: Date, tag: string, title: string }[] = [];
     const querySnapshot = await getDocs(collection(db, "post"));
@@ -41,13 +44,15 @@ function usePosts() {
       setPosts(() => [...data]);
     }
     fetchData();
-  }, [db]);
+  }, [db, updated]);
 
   async function addPost(post: {account: string, context: string, datetime: Date, tag: string, title: string}) {
     const db = getFirestore(app);
     const docRef = await addDoc(collection(db, "post"),
       { account: post.account, context: post.context, datetime: new Date(), tag: post.tag, title: post.title});
     console.log("Document written with ID: ", docRef.id);
+
+    setUpdated((currentValue) => currentValue + 1)
   }
   return [posts, setPosts, addPost] as const;
 
