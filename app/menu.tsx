@@ -60,19 +60,16 @@ export default function Menu() {
   const pathname = usePathname()
 
   return (
-    // <AppBar position="static">
-    //   <Toolbar>
-    //     <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
-    //     <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
-    //   </Toolbar>
-    // </AppBar>
 
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
           <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
-          <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章</Button>
+          <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章總攬</Button>
+          <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
+          <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
+          <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
           <Typography
             variant="h6"
             noWrap

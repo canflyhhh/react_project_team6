@@ -1,5 +1,5 @@
 'use client';
-import styles from './page.module.css'
+import styles from '../page.module.css'
 import Sort from '../sort/sort'
 
 export default function Home() {

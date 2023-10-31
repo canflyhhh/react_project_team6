@@ -1,7 +1,7 @@
 
 import { collection, getDocs, getFirestore, query, orderBy, limit, Timestamp, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import app from "@/app/_firebase/config"
+import app from "@/app/_firebase/Config"
 
 export default function useProducts() {
   const db = getFirestore(app);

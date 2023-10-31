@@ -40,14 +40,23 @@ const columns: GridColDef[] = [
   },
 ];
 
+interface PostData {
+  id: string;
+  account: string;
+  title: string;
+  tag: string;
+  context: string;
+  datetime: Date;
+}
+
 export default function Sort() {
   const db = getFirestore(app);
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<PostData[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       const querySnapshot = await getDocs(collection(db, "post"));
-      const postData = [];
+      const postData: PostData[] = [];
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
