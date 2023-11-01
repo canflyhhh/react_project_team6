@@ -78,7 +78,7 @@ function usePosts() {
     try {
       const db = getFirestore(app);
       await updateDoc(doc(db, "post", post.id),
-        { id: post.id, context: post.context });
+        { id: post.id, context: post.context, title: post.title, tag: post.tag });
       setUpdated((currentValue) => currentValue + 1)
     }
     catch (error) {
@@ -87,15 +87,22 @@ function usePosts() {
 
   }
 
+  function setUpdatePosts(post: Post) {
+    setNewPost({ ...post, visible: true })
+  }
 
 
 
 
 
-  return [posts, setPosts, addPost, deletePost, updatePost] as const;
+  return [posts, setPosts, addPost, deletePost, updatePost, setUpdatePosts] as const;
 
 
   // return [posts, setPosts] as const;
 }
 
 export default usePosts;
+function setNewPost(arg0: { visible: boolean; id: string; account: string; context: string; datetime: Date; tag: string; title: string; }) {
+  throw new Error("Function not implemented.");
+}
+
