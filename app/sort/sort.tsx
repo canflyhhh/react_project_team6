@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { collection, getDocs, getFirestore, addDoc } from "firebase/firestore";
-import app from "@/app/_firebase/config"
+import app from "@/app/_firebase/Config"
 // import Table from 'react-bootstrap/Table';
 
 import Box from '@mui/material/Box';

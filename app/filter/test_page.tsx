@@ -21,7 +21,6 @@ export default function useProducts() {
         console.log(`${doc.id} => ${doc.data()}`);
       });
       setProducts(() => [...data]);
-      console.log(data);
     }
     fetchData();
   }, [db]);
