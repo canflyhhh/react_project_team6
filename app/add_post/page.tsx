@@ -184,7 +184,7 @@ import usePosts from "./usePosts"; // Import the custom hook for posts
 export default function PostList() {
 
   // const [posts, setPosts] = usePosts(); // Use the custom hook to fetch posts
-  const [posts, setPosts, addPost] = usePosts();
+  const [posts, setPosts, addPost, deletePost] = usePosts();
 
   function add() {
     addPost?.(newPost);
@@ -217,7 +217,7 @@ export default function PostList() {
   };
 
   const update = () => {
-    setPosts([...posts, newPost]);
+    // setPosts([...posts, newPost]);
     setNewPost({ visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
     console.log(posts);
   };
@@ -294,11 +294,11 @@ export default function PostList() {
       <Dialog open={editDialogOpen} onClose={closeEditDialog} aria-labelledby="修改帖子">
         <DialogTitle>修改帖子</DialogTitle>
         <DialogContent>
-          <TextField label="帳號" variant="outlined" name="account" value={editedPost.account} onChange={(e) => setEditedPost({ ...editedPost, account: e.target.value })} /><br />
+          {/* <TextField label="帳號" variant="outlined" name="account" value={editedPost.account} onChange={(e) => setEditedPost({ ...editedPost, account: e.target.value })} /><br />
           <TextField label="內容" variant="outlined" name="context" value={editedPost.context} onChange={(e) => setEditedPost({ ...editedPost, context: e.target.value })} /><br />
-          {/* <TextField label="日期時間" variant="outlined" name="datetime" value={editedPost.datetime} onChange={(e) => setEditedPost({ ...editedPost, datetime: new Date(e.target.value) })} /><br /> */}
+          <TextField label="日期時間" variant="outlined" name="datetime" value={editedPost.datetime} onChange={(e) => setEditedPost({ ...editedPost, datetime: new Date(e.target.value) })} /><br /> 
           <TextField label="標籤" variant="outlined" name="tag" value={editedPost.tag} onChange={(e) => setEditedPost({ ...editedPost, tag: e.target.value })} /><br />
-          <TextField label="標題" variant="outlined" name="title" value={editedPost.title} onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })} /><br />
+          <TextField label="標題" variant="outlined" name="title" value={editedPost.title} onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })} /><br /> */}
         </DialogContent>
         <DialogActions>
           <IconButton
@@ -327,7 +327,7 @@ export default function PostList() {
               <IconButton edge="end" aria-label="edit" >
                 <EditIcon />
               </IconButton>
-              <IconButton edge="end" aria-label="delete">
+              <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
                 <DeleteIcon />
               </IconButton>
             </ListItem>
