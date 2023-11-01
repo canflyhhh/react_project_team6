@@ -60,13 +60,14 @@ export default function Sort() {
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
+        const datetime = data.datetime ? data.datetime.toDate() : null;
         postData.push({
           id: doc.id,
           account: data.account,
           title: data.title,
           tag: data.tag,
           context: data.context,
-          datetime: data.datetime.toDate(), 
+          datetime: datetime, 
         });
       });
 
