@@ -1,5 +1,5 @@
 import { addDoc, collection, getDocs, getFirestore, deleteDoc, doc, updateDoc } from "firebase/firestore";
-import app from "@/app/_firebase/config";
+import app from "@/app/_firebase/Config";
 import { useEffect, useState } from "react";
 import { Post } from "../_settings/interfaces";
 

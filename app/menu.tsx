@@ -1,7 +1,9 @@
 'use client';
 import { AppBar, Button, Toolbar } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
-
+import { useState, useEffect } from 'react';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import app from "@/app/_firebase/Config"
 
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
@@ -54,22 +56,41 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const auth = getAuth(app);
 
 export default function Menu() {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState<User | null>();
+
+  useEffect(() => {
+    console.log("weeeee");
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      console.log('user', user);
+    });
+    return () => unsubscribe(); 
+  }, []);
 
   return (
-
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
-          <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
-          <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章總攬</Button>
-          <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
-          <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
-          <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
+        {user?user.email:""}
+          <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面 </Button>
+          <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>mail註冊/登入</Button>
+          <Button color="inherit" variant={pathname === "/google_login" ? "outlined" : "text"} onClick={() => router.push("/google_login")}>google註冊/登入</Button>
+          
+          {user && (
+            <>
+              <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
+              <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章總攬</Button>
+              <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
+              <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
+              <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
+            </>
+          )}
+
           <Typography
             variant="h6"
             noWrap
@@ -88,6 +109,7 @@ export default function Menu() {
           </Search>
         </Toolbar>
       </AppBar>
+      
     </Box>
   );
 }
