@@ -2,11 +2,30 @@
 import * as React from 'react';
 import usePosts from './post/usePosts';
 import { useEffect } from 'react';
-import { Grid, Card, CardContent, Typography, CardActions, Button } from "@mui/material";
+import { Grid, Card, CardContent, Typography, CardActions, Button, Slide, 
+    TransitionProps, Dialog, DialogTitle, DialogActions, DialogContentText, DialogContent
+    , useMediaQuery } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
+
+
+// post view - slide in
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+      children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+  ) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+  
+
 
 export default function Home() {
   // Destructure posts and setPosts from the usePosts hook
   const [posts, setPosts] = usePosts();
+  const router = useRouter();
+
   return (
     <Grid container spacing={2}  sx={{ padding: 4 }}>
         {posts.map((post) => (
@@ -20,11 +39,15 @@ export default function Home() {
                             {post.account}
                         </Typography>
                         <Typography variant="body2">
-                            {post.context}
+                            {post.context.length > 50
+                            ? `${post.context.substring(0, 50)}……`
+                            : post.context}
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button size="small">Learn More</Button>
+                        <Button variant="outlined" onClick={() => router.push("/post_context")}>
+                            查看內容
+                        </Button>
                     </CardActions>
                 </Card>
             </Grid>
