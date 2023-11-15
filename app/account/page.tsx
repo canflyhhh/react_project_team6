@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import styles from '../page.module.css'
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import app from "@/app/_firebase/Config"
+import app from "@/app/_firebase/config"
 import { FirebaseError } from 'firebase/app';
 
 export default function Account() {
