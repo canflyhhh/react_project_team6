@@ -3,7 +3,7 @@ import { AppBar, Button, Toolbar } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import app from "@/app/_firebase/Config"
+import app from "@/app/_firebase/config"
 
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
@@ -84,7 +84,7 @@ export default function Menu() {
           {user && (
             <>
               <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
-              <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章總攬</Button>
+              <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章總覽</Button>
               <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
               <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
               <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
