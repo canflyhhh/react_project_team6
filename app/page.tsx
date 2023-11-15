@@ -35,9 +35,18 @@ export default function Home() {
                         <Typography variant="h5" component="div">
                             {post.title}
                         </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            {post.account}
-                        </Typography>
+                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                            <Grid item xs={6}>
+                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                    {post.account}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                    {/* {post.datetime} */}
+                                </Typography>
+                            </Grid>
+                        </Grid>
                         <Typography variant="body2">
                             {post.context.length > 50
                             ? `${post.context.substring(0, 50)}……`
