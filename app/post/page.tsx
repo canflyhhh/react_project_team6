@@ -238,9 +238,19 @@ export default function PostList() {
                                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
                                     {post.account}
                                 </Typography>
-                                <Typography variant="body2">
-                                    {`"${post.context}"`}
-                                </Typography>
+                                {post.context.length > 50
+                                    ? (
+                                        <Typography variant="body2">
+                                            {`${post.context.substring(0, 50)}……`}
+                                        </Typography>
+                                    )
+                                    : (
+                                        <Typography variant="body2">
+                                            {`${post.context}`}
+                                        </Typography>
+                                    )
+                                }
+
                             </CardContent>
                             <CardActions style={{ position: 'relative', bottom: 0, right: 0 }}>
                                 <Button size="small">Learn More</Button>
@@ -278,9 +288,9 @@ export default function PostList() {
                 <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
                 <DialogContent>
                     <TextField label="帳號" variant="outlined" name="account" value={newPost.account} onChange={handleClick} fullWidth /><br />
-                    <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
-                    <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br />
                     <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} fullWidth /><br />
+                    <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br />
+                    <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
                 </DialogContent>
                 <DialogActions>
                     <IconButton
