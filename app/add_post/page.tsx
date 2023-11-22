@@ -18,23 +18,36 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import usePosts from "./usePosts"; // Import the custom hook for posts
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Post } from "../_settings/interfaces";
 
 
 
 export default function PostList() {
 
-  // const [posts, setPosts] = usePosts(); // Use the custom hook to fetch posts
-  const [posts, setPosts, addPost] = usePosts();
+  const [posts, setPosts, addPost, deletePost, updatePost] = usePosts();
 
-  function add() {
-    addPost?.(newPost);
-    setNewPost({ ...newPost, visible: false })
-    console.log(posts);
+  function addOrUpdate() {
+    if (newPost.id === "") {
+      console.log("全新體驗");
+      addPost(newPost);
+    }
+    else {
+      console.log("更新啦");
+      updatePost(newPost)
+    }
+    setStatus({ ...status, visible: false })
+    resetPost();
   }
 
 
-  const [newPost, setNewPost] = useState({ visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
+  const [newPost, setNewPost] = useState<Post>({ id: "", account: "", context: "", datetime: new Date(), tag: "", title: "" });
+
+
+
+  const [status, setStatus] = useState({ visible: false });
+
+
+
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editedPost, setEditedPost] = useState({ account: "", context: "", datetime: new Date(), tag: "", title: "" });
   const [editPostIndex, setEditPostIndex] = useState(-1);
@@ -54,30 +67,29 @@ export default function PostList() {
   };
 
   const show = () => {
-    setNewPost({ ...newPost, visible: true });
-  };
+    setStatus({ ...status, visible: true })
+  }
 
   const update = () => {
-    setPosts([...posts, newPost]);
-    setNewPost({ visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
+    // setPosts([...posts, newPost]);
+    setNewPost({ ...newPost, visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
     console.log(posts);
   };
 
+
   const hide = () => {
-    setNewPost({ visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
-  };
+    setStatus({ ...status, visible: false })
+  }
 
-  // const deletePost = (post_index) => {
-  //   const updatedPosts = [...posts];
-  //   updatedPosts.splice(post_index, 1);
-  //   setPosts(updatedPosts);
-  // };
+  function setUpdatePost(post: Post) {
+    setNewPost({ ...post })
+    setStatus({ visible: true })
+  }
 
-  // const openEditDialog = (post_index) => {
-  //   setEditDialogOpen(true);
-  //   setEditPostIndex(post_index);
-  //   setEditedPost(posts[post_index]);
-  // };
+  const resetPost = () => {
+    setNewPost({ id: newPost.id, account: "", context: "", datetime: new Date(), tag: "", title: "" });
+  }
+
 
   const closeEditDialog = () => {
     setEditDialogOpen(false);
@@ -85,14 +97,6 @@ export default function PostList() {
     setEditedPost({ account: "", context: "", datetime: new Date(), tag: "", title: "" });
   };
 
-  // const saveEditedPost = () => {
-  //   if (editPostIndex !== -1) {
-  //     const updatedPosts = [...posts];
-  //     updatedPosts[editPostIndex] = editedPost;
-  //     setPosts(updatedPosts);
-  //     closeEditDialog();
-  //   }
-  // };
 
   return (
     <Box
@@ -104,13 +108,12 @@ export default function PostList() {
         textAlign: "left",
       }}
     >
-      <Dialog open={newPost.visible} onClose={hide} aria-labelledby="新增帖子">
-        <DialogTitle>新增帖子</DialogTitle>
+
+      <Dialog open={status.visible} onClose={hide} aria-labelledby={newPost.id === "" ? "新增文章" : "更新文章"}>
+        <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
         <DialogContent>
           <TextField label="帳號" variant="outlined" name="account" value={newPost.account} onChange={handleClick} /><br />
           <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} /><br />
-          {/* <DatePicker label="日期時間" variant="outlined" name="datetime" value={newPost.datetime} onChange={handleClick}></DatePicker> */}
-          {/* <TextField label="日期時間" variant="outlined" name="datetime" value={newPost.datetime} onChange={handleClick} /><br /> */}
           <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} /><br />
           <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} /><br />
         </DialogContent>
@@ -119,43 +122,14 @@ export default function PostList() {
             aria-label="close"
             onClick={hide}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               right: 8,
               top: 8,
             }}
           >
             <CloseIcon />
           </IconButton>
-          <Button variant="contained" color="primary" onClick={add}>
-            新增
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={editDialogOpen} onClose={closeEditDialog} aria-labelledby="修改帖子">
-        <DialogTitle>修改帖子</DialogTitle>
-        <DialogContent>
-          <TextField label="帳號" variant="outlined" name="account" value={editedPost.account} onChange={(e) => setEditedPost({ ...editedPost, account: e.target.value })} /><br />
-          <TextField label="內容" variant="outlined" name="context" value={editedPost.context} onChange={(e) => setEditedPost({ ...editedPost, context: e.target.value })} /><br />
-          {/* <TextField label="日期時間" variant="outlined" name="datetime" value={editedPost.datetime} onChange={(e) => setEditedPost({ ...editedPost, datetime: new Date(e.target.value) })} /><br /> */}
-          <TextField label="標籤" variant="outlined" name="tag" value={editedPost.tag} onChange={(e) => setEditedPost({ ...editedPost, tag: e.target.value })} /><br />
-          <TextField label="標題" variant="outlined" name="title" value={editedPost.title} onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })} /><br />
-        </DialogContent>
-        <DialogActions>
-          <IconButton
-            aria-label="close"
-            onClick={closeEditDialog}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Button variant="contained" color="primary" >
-            儲存
-          </Button>
+          <Button variant="contained" color="primary" onClick={addOrUpdate}>{newPost.id === "" ? "新增文章" : "更新文章"}</Button>
         </DialogActions>
       </Dialog>
 
@@ -165,10 +139,10 @@ export default function PostList() {
           {posts.map((post, index) => (
             <ListItem divider key={post.title}>
               <ListItemText primary={post.title} secondary={`Account: ${post.account}, Tag: ${post.tag}, Datetime: ${post.datetime}`} />
-              <IconButton edge="end" aria-label="edit" >
+              <IconButton edge="end" aria-label="edit" onClick={() => setUpdatePost(post)}>
                 <EditIcon />
               </IconButton>
-              <IconButton edge="end" aria-label="delete">
+              <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
                 <DeleteIcon />
               </IconButton>
             </ListItem>

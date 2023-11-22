@@ -8,27 +8,7 @@ import { Post } from "../_settings/interfaces";
 function usePosts() {
   const db = getFirestore(app);
   const [posts, setPosts] = useState<Post[]>([]);
-
   const [updated, setUpdated] = useState(0);
-
-
-  // async function fetchData() {
-  //   let data: Post[] = [];
-  //   const querySnapshot = await getDocs(collection(db, "post"));
-  //   querySnapshot.forEach((doc: { data: () => any; id: any; }) => {
-  //     const post = doc.data();
-  //     data.push({
-  //       id: post.id,
-  //       account: post.account,
-  //       context: post.context,
-  //       datetime: new Date(post.datetime), // Assuming datetime is stored as a valid date string
-  //       tag: post.tag,
-  //       title: post.title,
-  //     });
-  //     console.log(`${doc.id} => ${doc.data()}`);
-  //   });
-  //   setPosts(() => [...data]);
-  // }
 
   useEffect(() => {
     async function fetchData() {
@@ -90,10 +70,6 @@ function usePosts() {
   function setUpdatePosts(post: Post) {
     setNewPost({ ...post, visible: true })
   }
-
-
-
-
 
   return [posts, setPosts, addPost, deletePost, updatePost, setUpdatePosts] as const;
 

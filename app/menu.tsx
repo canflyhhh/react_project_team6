@@ -1,7 +1,9 @@
 'use client';
 import { AppBar, Button, Toolbar } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
-
+import { useState, useEffect } from 'react';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import app from "@/app/_firebase/config"
 
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
@@ -54,13 +56,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const auth = getAuth(app);
 
 export default function Menu() {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState<User | null>();
+
+  useEffect(() => {
+    console.log("weeeee");
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      console.log('user', user);
+    });
+    return () => unsubscribe(); 
+  }, []);
 
   return (
-
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
@@ -88,6 +100,7 @@ export default function Menu() {
           </Search>
         </Toolbar>
       </AppBar>
+      
     </Box>
   );
 }
