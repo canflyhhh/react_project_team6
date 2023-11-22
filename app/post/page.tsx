@@ -106,7 +106,7 @@
 
 
 'use client'
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     Box,
     Input,
@@ -133,11 +133,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import usePosts from "./usePosts"; // Import the custom hook for posts
 import { Post } from "../_settings/interfaces";
 import AddIcon from '@mui/icons-material/Add';
+import { AuthContext } from '../account/authContext';
 
 
 
 
 export default function PostList() {
+    const authContext = useContext(AuthContext);
 
     const [posts, setPosts, addPost, deletePost, updatePost] = usePosts();
 
@@ -153,7 +155,7 @@ export default function PostList() {
     }
 
 
-    const [newPost, setNewPost] = useState<Post>({ id: "", account: "", context: "", datetime: new Date(), tag: "", title: "" });
+    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: "", title: "" });
 
 
 
@@ -203,7 +205,7 @@ export default function PostList() {
     }
 
     const resetPost = () => {
-        setNewPost({ id: "", account: "", context: "", datetime: new Date(), tag: "", title: "" });
+        setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: "", title: "" });
         console.log("success reset")
     }
 
@@ -218,48 +220,50 @@ export default function PostList() {
     return (
         <div>
             <Grid container spacing={2}>
+
                 {posts.map((post, index) => (
-                    <Grid item xs={4} key={post.id}>
-                        <Card variant="outlined" style={{ position: 'relative' }}>
-                            <CardContent>
-                                <Box display="flex" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="h5" component="div">
-                                        {post.title}
-                                    </Typography>
-                                    <Box display="flex" alignItems="center">
-                                        <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
-                                            <EditIcon />
-                                        </IconButton>
-                                        <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
+                    post.account === authContext && (
+                        <Grid item xs={4} key={post.id}>
+                            <Card variant="outlined" style={{ position: 'relative' }}>
+                                <CardContent>
+                                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                                        <Typography variant="h5" component="div">
+                                            {post.title}
+                                        </Typography>
+                                        <Box display="flex" alignItems="center">
+                                            <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
+                                                <EditIcon />
+                                            </IconButton>
+                                            <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Box>
                                     </Box>
-                                </Box>
-                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                    {post.account}
-                                </Typography>
-                                {post.context.length > 50
-                                    ? (
-                                        <Typography variant="body2">
-                                            {`${post.context.substring(0, 50)}……`}
-                                        </Typography>
-                                    )
-                                    : (
-                                        <Typography variant="body2">
-                                            {`${post.context}`}
-                                        </Typography>
-                                    )
-                                }
+                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                        {post.account}
+                                    </Typography>
+                                    {post.context.length > 50
+                                        ? (
+                                            <Typography variant="body2">
+                                                {`${post.context.substring(0, 50)}……`}
+                                            </Typography>
+                                        )
+                                        : (
+                                            <Typography variant="body2">
+                                                {`${post.context}`}
+                                            </Typography>
+                                        )
+                                    }
 
-                            </CardContent>
-                            <CardActions style={{ position: 'relative', bottom: 0, right: 0 }}>
-                                <Button size="small">Learn More</Button>
+                                </CardContent>
+                                <CardActions style={{ position: 'relative', bottom: 0, right: 0 }}>
+                                    <Button size="small">Learn More</Button>
 
-                                <Typography>{post.datetime.toLocaleString()}</Typography>
-                            </CardActions>
-                        </Card>
-                    </Grid>
-
+                                    <Typography>{post.datetime.toLocaleString()}</Typography>
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    )
                 ))}
 
             </Grid>
@@ -287,7 +291,10 @@ export default function PostList() {
             >
                 <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
                 <DialogContent>
-                    <TextField label="帳號" variant="outlined" name="account" value={newPost.account} onChange={handleClick} fullWidth /><br />
+                    <TextField label="帳號" variant="outlined" name="account" value={newPost.account} onChange={handleClick} fullWidth InputProps={{
+                        readOnly: true,
+                        style: { backgroundColor: '#f2f2f2' },
+                    }} /><br />
                     <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} fullWidth /><br />
                     <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br />
                     <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
