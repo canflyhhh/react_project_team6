@@ -8,7 +8,7 @@ import { FirebaseError } from 'firebase/app';
 
 export default function Account() {
     const auth = getAuth(app);
-    const [account, setAccount] = useState({ email: "", password: "", name: "" });
+    const [account, setAccount] = useState({ email: "",password: "", name: "" });
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState("註冊");
     const handleChange = function (e: React.ChangeEvent<HTMLInputElement>) {
@@ -28,6 +28,7 @@ export default function Account() {
         auth.signOut();
         setMessage("登出成功");
     }
+
   
     const handleSubmit = async function (e: React.MouseEvent<HTMLElement>) {
         try {
