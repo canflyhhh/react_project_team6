@@ -143,12 +143,10 @@ export default function PostList() {
 
     function addOrUpdate() {
         if (newPost.id === "") {
-            console.log("全新新增體驗");
             addPost(newPost);
         }
         else {
-            console.log("更新文章啦");
-            updatePost(newPost)
+            updatePost(newPost);
         }
         setStatus({ ...status, visible: false })
         resetPost();
@@ -168,6 +166,7 @@ export default function PostList() {
     const [editPostIndex, setEditPostIndex] = useState(-1);
 
     const handleClick = function (e: { target: { name: any; value: any; }; }) {
+        console.log("handle click")
         if (e.target.name === 'datetime') {
             setNewPost({
                 ...newPost,
@@ -181,9 +180,7 @@ export default function PostList() {
         }
     };
 
-    const show = () => {
-        setStatus({ ...status, visible: true })
-    }
+
 
     const update = () => {
         // setPosts([...posts, newPost]);
@@ -194,6 +191,10 @@ export default function PostList() {
 
     const hide = () => {
         setStatus({ ...status, visible: false })
+        resetPost()
+    }
+    const show = () => {
+        setStatus({ ...status, visible: true })
     }
 
     function setUpdatePost(post: Post) {
@@ -202,7 +203,8 @@ export default function PostList() {
     }
 
     const resetPost = () => {
-        setNewPost({ id: newPost.id, account: "", context: "", datetime: new Date(), tag: "", title: "" });
+        setNewPost({ id: "", account: "", context: "", datetime: new Date(), tag: "", title: "" });
+        console.log("success reset")
     }
 
 
