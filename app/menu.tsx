@@ -14,6 +14,10 @@ import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 
+
+import { useContext } from 'react';
+import { AuthContext } from './account/authContext';
+
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -62,26 +66,45 @@ export default function Menu() {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>();
+  const authContext = useContext(AuthContext);
 
-  useEffect(() => {
-    console.log("weeeee");
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      console.log('user', user);
-    });
-    return () => unsubscribe(); 
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     setUser(user);
+  //     console.log('user', user);
+  //   });
+  //   return () => unsubscribe(); 
+  // }, []);
+
+  const [email, setEmail] = useState('');  
+  const unsub = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setEmail(user.email ? user.email : "");
+    }
+    else {
+      setEmail("");
+    }
+
+    //console.log(user);
+    return () => {
+      unsub();
+    }
+  }
+  );
+  useEffect(unsub, [unsub]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-        {user?user.email:""}
+        {authContext}
+        {/* {user?user.email:""} */}
+        {authContext? authContext:""}
           <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面 </Button>
           <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>mail註冊/登入</Button>
           <Button color="inherit" variant={pathname === "/google_login" ? "outlined" : "text"} onClick={() => router.push("/google_login")}>google註冊/登入</Button>
           
-          {user && (
+          {authContext && (
             <>
               <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
               <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>文章總覽</Button>

@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Menu from './menu'
 import ThemeRegistry from './_theme/ThemeRegistry'
+import { AuthContextProvider } from './account/authContext';
+import { useContext } from 'react';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,10 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <h1>進階web程式設計</h1>
         <ThemeRegistry>
-          <Menu />
-          {children}
+          <AuthContextProvider>
+            <Menu />
+            {children}
+          </AuthContextProvider>
         </ThemeRegistry>
       </body>
     </html>
