@@ -1,112 +1,5 @@
-// // 'use client'
-// // import * as React from 'react';
-// // import Box from '@mui/material/Box';
-// // import Card from '@mui/material/Card';
-// // import CardActions from '@mui/material/CardActions';
-// // import CardContent from '@mui/material/CardContent';
-// // import Button from '@mui/material/Button';
-// // import Typography from '@mui/material/Typography';
-// // import { styled } from '@mui/material/styles';
-// // import Paper from '@mui/material/Paper';
-// // import Grid from '@mui/material/Grid';
-
-
-// export default function BasicCard() {
-//     return (
-//         <Grid container spacing={2}>
-//             <Grid item xs={4}>
-//                 <Card variant="outlined">
-//                     <CardContent>
-//                         <Typography variant="h5" component="div">
-//                             Hello
-//                         </Typography>
-//                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-//                             abc@gmail.com
-//                         </Typography>
-//                         <Typography variant="body2">
-//                             well meaning and kindly.
-//                             <br />
-//                             {'"a benevolent smile"'}
-//                         </Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                         <Button size="small">Learn More</Button>
-//                     </CardActions>
-//                 </Card>
-//             </Grid>
-//             <Grid item xs={4}>
-//                 <Card variant="outlined">
-//                     <CardContent>
-//                         <Typography variant="h5" component="div">
-//                             你好
-//                         </Typography>
-//                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-//                             adjective
-//                         </Typography>
-//                         <Typography variant="body2">
-//                             well meaning and kindly.
-//                             <br />
-//                             {'"a benevolent smile"'}
-//                         </Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                         <Button size="small">Learn More</Button>
-//                     </CardActions>
-//                 </Card>
-//             </Grid>
-//             <Grid item xs={4}>
-//                 <Card variant="outlined">
-//                     <CardContent>
-//                         <Typography variant="h5" component="div">
-//                             Welcome
-//                         </Typography>
-//                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-//                             adjective
-//                         </Typography>
-//                         <Typography variant="body2">
-//                             well meaning and kindly.
-//                             <br />
-//                             {'"a benevolent smile"'}
-//                         </Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                         <Button size="small">Learn More</Button>
-//                     </CardActions>
-//                 </Card>
-//             </Grid>
-//             <Grid item xs={4}>
-//                 <Card variant="outlined">
-//                     <CardContent>
-//                         <Typography variant="h5" component="div">
-//                             asdd
-//                         </Typography>
-//                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-//                             adjective
-//                         </Typography>
-//                         <Typography variant="body2">
-//                             well meaning and kindly.
-//                             <br />
-//                             {'"a benevolent smile"'}
-//                         </Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                         <Button size="small">Learn More</Button>
-//                     </CardActions>
-//                 </Card>
-//             </Grid>
-//         </Grid>
-
-
-//     );
-// }
-
-
-
-
-
-
 'use client'
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Box,
     Input,
@@ -138,6 +31,116 @@ import { AuthContext } from '../account/authContext';
 
 
 
+interface TagInputProps {
+    onRemove: (index: number) => void;
+    onUpdate?: (updatedTags: string[]) => void;
+    initialTags?: string[]; // New prop for initial tags
+}
+
+const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) => {
+    const [tags, setTags] = useState<string[]>(initialTags || []);
+    const [currentTag, setCurrentTag] = useState<string>('');
+
+    useEffect(() => {
+        setTags(initialTags || []);
+    }, [initialTags]);
+
+    const handleAddTag = () => {
+        if (currentTag.trim() !== '') {
+            const updatedTags = [...tags, currentTag.trim()];
+            setTags(updatedTags);
+            setCurrentTag('');
+    
+            // Pass the updated tags to the callback
+            if (onUpdate) {
+                onUpdate(updatedTags);
+            }
+        }
+    };
+    
+
+    const handleRemoveTag = (index: number) => {
+        const updatedTags = [...tags];
+        updatedTags.splice(index, 1);
+        setTags(updatedTags);
+        onRemove(index);
+        if (onUpdate) {
+            onUpdate(updatedTags);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevents the default behavior of the Enter key (form submission)
+            handleAddTag();
+        }
+    };
+
+    const handleAddTagButtonClick = () => {
+        handleAddTag();
+    };
+
+    return (
+        <div>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {tags.map((tag, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            margin: '4px',
+                            border: '1px solid #ccc',
+                            borderRadius: '5px',
+                            padding: '4px',
+                        }}
+                    >
+                        <div>{tag}</div>
+                        <IconButton onClick={() => handleRemoveTag(index)}>
+                            <CloseIcon />
+                        </IconButton>
+                    </div>
+                ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <TextField
+                    label="新增標籤"
+                    variant="outlined"
+                    name="tag"  // Add this line to set the name attribute
+                    value={currentTag}
+                    onChange={(e) => setCurrentTag(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                />
+
+                <IconButton onClick={handleAddTagButtonClick}>
+                    <AddIcon />
+                </IconButton>
+            </div>
+        </div>
+    );
+};
+
+const App = () => {
+    const handleTagRemove = (index: number) => {
+        console.log(`Removing tag at index ${index}`);
+        // Add your custom logic for tag removal here
+    };
+
+    return (
+        <div>
+            <h1>Tag Input Example</h1>
+            <TagInput onRemove={handleTagRemove} />
+        </div>
+    );
+};
+
+
+
+
+
+
+
+
 export default function PostList() {
     const authContext = useContext(AuthContext);
 
@@ -155,7 +158,7 @@ export default function PostList() {
     }
 
 
-    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: "", title: "" });
+    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
 
 
 
@@ -164,7 +167,7 @@ export default function PostList() {
 
 
     const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [editedPost, setEditedPost] = useState({ account: "", context: "", datetime: new Date(), tag: "", title: "" });
+    const [editedPost, setEditedPost] = useState({ account: "", context: "", datetime: new Date(), tag: [], title: "" });
     const [editPostIndex, setEditPostIndex] = useState(-1);
 
     const handleClick = function (e: { target: { name: any; value: any; }; }) {
@@ -184,11 +187,11 @@ export default function PostList() {
 
 
 
-    const update = () => {
-        // setPosts([...posts, newPost]);
-        setNewPost({ ...newPost, visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
-        console.log(posts);
-    };
+    // const update = () => {
+    //     // setPosts([...posts, newPost]);
+    //     setNewPost({ ...newPost, visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
+    //     console.log(posts);
+    // };
 
 
     const hide = () => {
@@ -205,7 +208,7 @@ export default function PostList() {
     }
 
     const resetPost = () => {
-        setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: "", title: "" });
+        setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
         console.log("success reset")
     }
 
@@ -213,7 +216,7 @@ export default function PostList() {
     const closeEditDialog = () => {
         setEditDialogOpen(false);
         setEditPostIndex(-1);
-        setEditedPost({ account: "", context: "", datetime: new Date(), tag: "", title: "" });
+        setEditedPost({ account: "", context: "", datetime: new Date(), tag: [], title: "" });
     };
 
 
@@ -292,12 +295,19 @@ export default function PostList() {
             >
                 <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
                 <DialogContent>
-                    <TextField label="帳號" variant="outlined" name="account" value={newPost.account} onChange={handleClick} fullWidth InputProps={{
+                    <TextField label="帳號" variant="outlined" name="account" value={authContext} onChange={handleClick} fullWidth InputProps={{
                         readOnly: true,
                         style: { backgroundColor: '#f2f2f2' },
                     }} /><br />
                     <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} fullWidth /><br />
-                    <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br />
+                    {/* <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br /> */}
+                    <TagInput
+                        onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
+                        initialTags={newPost.tag}
+                        onRemove={function (index: number): void { }}
+                    />
+
+
                     <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
                 </DialogContent>
                 <DialogActions>
@@ -319,60 +329,6 @@ export default function PostList() {
             </Dialog>
 
         </div>
-
-
-
-        // <Box
-        //   sx={{
-        //     width: "80vw",
-        //     height: "100vh",
-        //     backgroundColor: "background.paper",
-        //     color: "black",
-        //     textAlign: "left",
-        //   }}
-        // >
-
-        //   <Dialog open={status.visible} onClose={hide} aria-labelledby={newPost.id === "" ? "新增文章" : "更新文章"}>
-        //     <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
-        //     <DialogContent>
-        //       <TextField label="帳號" variant="outlined" name="account" value={newPost.account} onChange={handleClick} /><br />
-        //       <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} /><br />
-        //       <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} /><br />
-        //       <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} /><br />
-        //     </DialogContent>
-        //     <DialogActions>
-        //       <IconButton
-        //         aria-label="close"
-        //         onClick={hide}
-        //         sx={{
-        //           position: 'absolute',
-        //           right: 8,
-        //           top: 8,
-        //         }}
-        //       >
-        //         <CloseIcon />
-        //       </IconButton>
-        //       <Button variant="contained" color="primary" onClick={addOrUpdate}>{newPost.id === "" ? "新增文章" : "更新文章"}</Button>
-        //     </DialogActions>
-        //   </Dialog>
-
-        //   <div>
-        //     <button onClick={show}>新增帖子</button>
-        //     <List subheader="Post list" aria-label="post list">
-        //       {posts.map((post, index) => (
-        //         <ListItem divider key={post.title}>
-        //           <ListItemText primary={post.title} secondary={`Account: ${post.account}, Tag: ${post.tag}, Datetime: ${post.datetime}`} />
-        //           <IconButton edge="end" aria-label="edit" onClick={() => setUpdatePost(post)}>
-        //             <EditIcon />
-        //           </IconButton>
-        //           <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
-        //             <DeleteIcon />
-        //           </IconButton>
-        //         </ListItem>
-        //       ))}
-        //     </List>
-        //   </div>
-        // </Box>
     );
 }
 

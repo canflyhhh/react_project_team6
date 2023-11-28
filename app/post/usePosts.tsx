@@ -32,7 +32,7 @@ function usePosts() {
     fetchData();
   }, [db, updated]);
 
-  async function addPost(post: { account: string, context: string, datetime: Date, tag: string, title: string }) {
+  async function addPost(post: { account: string, context: string, datetime: Date, tag: string[], title: string }) {
     const db = getFirestore(app);
     const docRef = await addDoc(collection(db, "post"),
       { account: post.account, context: post.context, datetime: new Date(), tag: post.tag, title: post.title });
@@ -40,6 +40,15 @@ function usePosts() {
 
     setUpdated((currentValue) => currentValue + 1)
   }
+
+  // async function addPost(post: { account: string, context: string, datetime: Date, tag: string, title: string }) {
+  //   const db = getFirestore(app);
+  //   const docRef = await addDoc(collection(db, "post"),
+  //     { account: post.account, context: post.context, datetime: new Date(), tag: post.tag, title: post.title });
+  //   console.log("Document written with ID: ", docRef.id);
+
+  //   setUpdated((currentValue) => currentValue + 1)
+  // }
 
   async function deletePost(id: string) {
     try {
@@ -54,18 +63,38 @@ function usePosts() {
 
   }
 
+  // async function updatePost(post: Post) {
+  //   try {
+  //     const db = getFirestore(app);
+  //     await updateDoc(doc(db, "post", post.id),
+  //       { id: post.id, context: post.context, title: post.title, tag: post.tag });
+  //     setUpdated((currentValue) => currentValue + 1)
+  //   }
+  //   catch (error) {
+  //     console.error(error);
+  //   }
+
+  // }
+
   async function updatePost(post: Post) {
     try {
       const db = getFirestore(app);
-      await updateDoc(doc(db, "post", post.id),
-        { id: post.id, context: post.context, title: post.title, tag: post.tag });
-      setUpdated((currentValue) => currentValue + 1)
+      const postDocRef = doc(db, "post", post.id);
+  
+      await updateDoc(postDocRef, {
+        id: post.id,
+        context: post.context,
+        title: post.title,
+        tag: post.tag,
+      });
+  
+      console.log(`Post with ID ${post.id} successfully updated.`);
+      setUpdated((currentValue) => currentValue + 1);
+    } catch (error) {
+      console.error("Error updating post:", error);
     }
-    catch (error) {
-      console.error(error);
-    }
-
   }
+  
 
   function setUpdatePosts(post: Post) {
     setNewPost({ ...post, visible: true })
@@ -76,7 +105,7 @@ function usePosts() {
 }
 
 export default usePosts;
-function setNewPost(arg0: { visible: boolean; id: string; account: string; context: string; datetime: Date; tag: string; title: string; }) {
+function setNewPost(arg0: { visible: boolean; id: string; account: string; context: string; datetime: Date; tag: string[]; title: string; }) {
   throw new Error("Function not implemented.");
 }
 
