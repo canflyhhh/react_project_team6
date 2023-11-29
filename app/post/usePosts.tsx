@@ -25,7 +25,6 @@ function usePosts() {
           tag: post.tag,
           title: post.title,
         });
-        console.log(`${doc.id} => ${doc.data()}`);
       });
       setPosts(() => [...data]);
     }
@@ -36,7 +35,6 @@ function usePosts() {
     const db = getFirestore(app);
     const docRef = await addDoc(collection(db, "post"),
       { account: post.account, context: post.context, datetime: new Date(), tag: post.tag, title: post.title });
-    console.log("Document written with ID: ", docRef.id);
 
     setUpdated((currentValue) => currentValue + 1)
   }
@@ -57,7 +55,6 @@ function usePosts() {
       setUpdated((currentValue) => currentValue + 1)
     }
     catch (error) {
-      console.log("id = " + id)
       console.error(error);
     }
 
@@ -88,7 +85,6 @@ function usePosts() {
         tag: post.tag,
       });
   
-      console.log(`Post with ID ${post.id} successfully updated.`);
       setUpdated((currentValue) => currentValue + 1);
     } catch (error) {
       console.error("Error updating post:", error);

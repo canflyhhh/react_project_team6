@@ -122,8 +122,6 @@ const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) 
 
 const App = () => {
     const handleTagRemove = (index: number) => {
-        console.log(`Removing tag at index ${index}`);
-        // Add your custom logic for tag removal here
     };
 
     return (
@@ -171,7 +169,6 @@ export default function PostList() {
     const [editPostIndex, setEditPostIndex] = useState(-1);
 
     const handleClick = function (e: { target: { name: any; value: any; }; }) {
-        console.log("handle click")
         if (e.target.name === 'datetime') {
             setNewPost({
                 ...newPost,
@@ -209,7 +206,6 @@ export default function PostList() {
 
     const resetPost = () => {
         setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
-        console.log("success reset")
     }
 
 
