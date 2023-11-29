@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -50,14 +51,14 @@ const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) 
             const updatedTags = [...tags, currentTag.trim()];
             setTags(updatedTags);
             setCurrentTag('');
-    
+
             // Pass the updated tags to the callback
             if (onUpdate) {
                 onUpdate(updatedTags);
             }
         }
     };
-    
+
 
     const handleRemoveTag = (index: number) => {
         const updatedTags = [...tags];
@@ -157,10 +158,8 @@ export default function PostList() {
 
 
     const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
-
-
-
     const [status, setStatus] = useState({ visible: false });
+    const [file, setFile] = useState();
 
 
 
@@ -181,6 +180,11 @@ export default function PostList() {
             });
         }
     };
+
+    function handleChange(e) {
+        console.log(e.target.files);
+        setFile(URL.createObjectURL(e.target.files[0]));
+    }
 
 
 
@@ -305,6 +309,8 @@ export default function PostList() {
 
 
                     <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
+                    <input type="file" onChange={handleChange} />
+                    <img src={file} alt="" />
                 </DialogContent>
                 <DialogActions>
                     <IconButton
