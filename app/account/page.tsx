@@ -6,11 +6,19 @@ import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } f
 import app from "@/app/_firebase/config"
 import { FirebaseError } from 'firebase/app';
 
+
+import axios from "axios";
+
 export default function Account() {
     const auth = getAuth(app);
     const [account, setAccount] = useState({ email: "",password: "", name: "" });
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState("註冊");
+
+    const [emailMessage, setEmailMessage] = useState({ email: '', subject: 'ReactGOGO帳號註冊成功', html: '恭喜您註冊成功' });
+    const [response, setResponse] = useState('');
+
+
     const handleChange = function (e: React.ChangeEvent<HTMLInputElement>) {
         setAccount({ ...account, [e.target.name]: e.target.value })
     }
@@ -34,6 +42,22 @@ export default function Account() {
         try {
             if (status === "註冊") {
                 const res = await createUserWithEmailAndPassword(auth, account.email, account.password);
+                try {
+                    emailMessage.email = account.email
+                    const response = await axios({
+                      method: 'post',
+                      url: '/email',
+                      data: emailMessage,
+                    });
+                    setResponse(response.data.message);
+                  } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                      setResponse(error.message);
+                    } else {
+                      setResponse("錯誤");
+                    }
+              
+                  }
                 setMessage(`註冊成功，歡迎 ${res.user?.email}`);
             }
             else {

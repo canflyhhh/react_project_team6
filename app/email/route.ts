@@ -21,8 +21,8 @@ export async function POST(request: NextRequest) {
       await transporter.sendMail({
         from: process.env.SMTP_USER || "willieclassroom@gmail.com",
         to: data.email || "willieyu0123@gmail.com",
-        subject: data.subject || "歡迎加入輔大資管大家庭",
-        html: data.html || "<h1>歡迎加入輔大資管大家庭</h1>",
+        subject: data.subject || "帳號註冊成功",
+        html: data.html || "<h1>恭喜您成功註冊ReactGOGO平台</h1>",
       });
       return NextResponse.json({ message: "成功送出信件" }, { status: 200 });
     } else {
