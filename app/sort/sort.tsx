@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { collection, getDocs, getFirestore, addDoc } from "firebase/firestore";
-import app from "@/app/_firebase/Config"
+import app from "@/app/_firebase/config"
 // import Table from 'react-bootstrap/Table';
 
 import Box from '@mui/material/Box';
@@ -54,20 +54,19 @@ export default function Sort() {
   const [rows, setRows] = useState<PostData[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData() {z
       const querySnapshot = await getDocs(collection(db, "post"));
       const postData: PostData[] = [];
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        const datetime = data.datetime ? data.datetime.toDate() : null;
         postData.push({
           id: doc.id,
           account: data.account,
           title: data.title,
           tag: data.tag,
           context: data.context,
-          datetime: datetime, 
+          datetime: data.datetime.toDate(), 
         });
       });
 

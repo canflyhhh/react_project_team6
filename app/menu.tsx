@@ -14,7 +14,6 @@ import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 
-
 import { useContext } from 'react';
 import { AuthContext } from './account/authContext';
 
@@ -67,25 +66,12 @@ export default function Menu() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>();
   const authContext = useContext(AuthContext);
-
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     setUser(user);
-  //     console.log('user', user);
-  //   });
-  //   return () => unsubscribe(); 
-  // }, []);
-
   const [email, setEmail] = useState('');  
-  const unsub = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setEmail(user.email ? user.email : "");
-    }
-    else {
-      setEmail("");
-    }
 
+  const unsub = onAuthStateChanged(auth, (user) => {
+    setUser(user);
     //console.log(user);
+    
     return () => {
       unsub();
     }
@@ -93,26 +79,44 @@ export default function Menu() {
   );
   useEffect(unsub, [unsub]);
 
+
+  // const unsub = onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     setEmail(user.email ? user.email : "");
+  //   }
+  //   else {
+  //     setEmail("");
+  //   }
+
+  //   //console.log(user);
+  //   return () => {
+  //     unsub();
+  //   }
+  // }
+  // );
+  // useEffect(unsub, [unsub]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-        {authContext}
-        {/* {user?user.email:""} */}
-        {authContext? authContext:""}
-          <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面 </Button>
-          <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>mail註冊/登入</Button>
-          <Button color="inherit" variant={pathname === "/google_login" ? "outlined" : "text"} onClick={() => router.push("/google_login")}>google註冊/登入</Button>
+
+          {authContext.email? authContext.email:""}
+
+          <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
+          {authContext.email? <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>登出</Button> 
+               : <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>註冊 / 登入</Button>
+          }
           
-          {authContext && (
+          {authContext.email && (
             <>
-              <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
-              <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>我的文章</Button>
-              <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
-              <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
-              <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
-              <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>
-            </>
+            <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
+            <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>我的文章</Button>
+            <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
+            <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
+            <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
+            <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>
+          </>
           )}
 
           <Typography
