@@ -32,6 +32,7 @@ import { AuthContext } from '../account/authContext';
 
 
 
+
 interface TagInputProps {
     onRemove: (index: number) => void;
     onUpdate?: (updatedTags: string[]) => void;
@@ -157,7 +158,7 @@ export default function PostList() {
     }
 
 
-    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
+    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext.email, context: "", datetime: new Date(), tag: [], title: "" });
     const [status, setStatus] = useState({ visible: false });
     const [file, setFile] = useState();
 
@@ -181,9 +182,9 @@ export default function PostList() {
         }
     };
 
-    function handleChange(e) {
+    function handleChange(e: { target: { files: any; }; }) {
         console.log(e.target.files);
-        setFile(URL.createObjectURL(e.target.files[0]));
+        // setFile(URL.createObjectURL(e.target.files[0]));
     }
 
 
@@ -209,7 +210,7 @@ export default function PostList() {
     }
 
     const resetPost = () => {
-        setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
+        setNewPost({ id: "", account: authContext.email, context: "", datetime: new Date(), tag: [], title: "" });
     }
 
 
@@ -223,11 +224,10 @@ export default function PostList() {
 
     return (
         <div>
-            <Grid container spacing={2}>
-
+            <Grid container spacing={2} sx={{ padding: 4 }}>
                 {posts.map((post, index) => (
-                    post.account === authContext && (
-                        <Grid item xs={4} key={post.id}>
+                    post.account === authContext.email && (
+                        <Grid item xs={4} key={index}>
                             <Card variant="outlined" style={{ position: 'relative' }}>
                                 <CardContent>
                                     <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -268,7 +268,8 @@ export default function PostList() {
                             </Card>
                         </Grid>
                     )
-                ))}
+                )
+                )}
 
             </Grid>
             <Fab
@@ -295,7 +296,7 @@ export default function PostList() {
             >
                 <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
                 <DialogContent>
-                    <TextField label="帳號" variant="outlined" name="account" value={authContext} onChange={handleClick} fullWidth InputProps={{
+                    <TextField label="帳號" variant="outlined" name="account" value={authContext.email} onChange={handleClick} fullWidth InputProps={{
                         readOnly: true,
                         style: { backgroundColor: '#f2f2f2' },
                     }} /><br />
@@ -304,7 +305,7 @@ export default function PostList() {
                     <TagInput
                         onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
                         initialTags={newPost.tag}
-                        onRemove={function (index: number): void { }}
+                        onRemove={function (): void { }}
                     />
 
 

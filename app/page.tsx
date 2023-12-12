@@ -4,7 +4,7 @@ import usePosts from './post/usePosts';
 import { useEffect } from 'react';
 import { 
     Grid, Card, CardContent, Typography, CardActions, Button, Slide, 
-    TransitionProps, Dialog, DialogTitle, DialogActions, DialogContentText, DialogContent , useMediaQuery 
+    Dialog, DialogTitle, DialogActions, DialogContentText, DialogContent , useMediaQuery 
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
@@ -17,8 +17,8 @@ export default function Home() {
 
   return (
     <Grid container spacing={2} sx={{ padding: 4 }}>
-        {posts.map((post) => (
-            <Grid item xs={4}>
+        {posts.map((post, index) => (
+            <Grid item xs={4} key={index}>
                 <Card variant="outlined">
                     <CardContent>
                         <Typography variant="h5" component="div">
