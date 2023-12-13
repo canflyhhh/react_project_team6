@@ -1,7 +1,10 @@
 'use client'
-import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
+import {
+  Grid, Card, CardContent, Typography, CardActions, Button, TextField, Divider, CardMedia, Icon
+} from "@mui/material";
+import EmailIcon from '@mui/icons-material/Email';
 
 export default function TestEmail() {
   const [message, setMessage] = useState({ email: '', subject: '', html: '' });
@@ -35,42 +38,70 @@ export default function TestEmail() {
   }
 
   return (
-    <div style={divStyle}>
-      <h3>有什麼需要協助的嗎? 寄信讓我們知道吧！</h3>
-      <div style={textFieldStyle}>
-        <TextField
-          type="email"
-          name="email"
-          value={message.email}
-          placeholder="請輸入信箱..."
-          onChange={handleChange}
-          autoComplete="email"
+    <Grid container spacing={2} sx={{ padding: 10 }}>
+      <Card variant="outlined" sx={{ margin: '0 auto', width: '60%', padding: 2 }}>
+        <CardMedia
+          component="img"
+          height="250"
+          image="./Mail-cuate.png"
+          alt="send email to us"
         />
-      </div>
-      <div style={textFieldStyle}>
-        <TextField
-          type="text"
-          name="subject"
-          value={message.subject}
-          placeholder="請輸入信件主題..."
-          onChange={handleChange}
-        />
-      </div>
-      <div style={textFieldStyle}>
-        <TextField
-          type="text"
-          name="html"
-          multiline
-          rows={5}
-          value={message.html}
-          placeholder="請輸入信件內容..."
-          onChange={handleChange}
-        />
-      </div>
-      <div>{response}</div>
-      <Button onClick={handleClick}>
-        送出
-      </Button>
-    </div>
-  )
+        <CardContent>
+          <Typography variant="h5" component="div">
+            有什麼需要協助的嗎? 寄信讓我們知道吧！
+          </Typography>
+          <Divider sx={{ marginY: 4 }} ></Divider>
+          <Grid container direction="column" rowSpacing={1}>
+            <Grid item direction="row">
+              <Typography color="text.secondary">
+                信箱：
+              </Typography>
+              <TextField
+                type="email"
+                name="email"
+                placeholder="請輸入信箱..."
+                autoComplete="email"
+                sx={{ width: '100%' }}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid item>
+              <Typography color="text.secondary">
+                主旨：
+              </Typography>
+              <TextField
+                type="text"
+                name="subject"
+                placeholder="請輸入信件主旨..."
+                sx={{ width: '100%' }}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid item>
+              <Typography color="text.secondary">
+                內文：
+              </Typography>
+              <TextField
+                type="text"
+                name="html"
+                multiline
+                rows={5}
+                placeholder="請輸入信件內容..."
+                sx={{ width: '100%' }}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+          </Grid>
+        </CardContent>
+        <CardActions sx={{ justifyContent: 'flex-end' }}>
+          <Button variant="contained" onClick={handleClick}>
+            <EmailIcon sx={{ marginRight:1 }}/>送 出
+          </Button>
+        </CardActions>
+      </Card>
+      </Grid>
+      )
 }

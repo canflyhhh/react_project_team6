@@ -82,7 +82,7 @@ function usePosts() {
         id: post.id,
         context: post.context,
         title: post.title,
-        tag: post.tag,
+        tag: post.tag
       });
   
       setUpdated((currentValue) => currentValue + 1);

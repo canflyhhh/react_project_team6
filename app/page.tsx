@@ -48,7 +48,6 @@ export default function Home() {
                         </Button>
                     </CardActions>
                 </Card>
-                {post.id}
             </Grid>
         ))}
     </Grid>
