@@ -4,9 +4,17 @@ import { useState } from "react";
 import {
   Grid, Card, CardContent, Typography, CardActions, Button, TextField, Divider, CardMedia, Icon
 } from "@mui/material";
-import EmailIcon from '@mui/icons-material/Email';
+import { Email, Send } from '@mui/icons-material';
+import { AuthContext } from '../account/authContext';
+import { useContext } from 'react';
+
+
 
 export default function TestEmail() {
+  // 取得現在的帳號
+  const authContext = useContext(AuthContext);
+
+  // 回傳寄送內容
   const [message, setMessage] = useState({ email: '', subject: '', html: '' });
   const [response, setResponse] = useState('');
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,12 +38,6 @@ export default function TestEmail() {
 
     }
   }
-  const divStyle = {
-    padding: '50px',
-  };
-  const textFieldStyle = {
-    padding: '5px',
-  }
 
   return (
     <Grid container spacing={2} sx={{ padding: 10 }}>
@@ -47,23 +49,24 @@ export default function TestEmail() {
           alt="send email to us"
         />
         <CardContent>
-          <Typography variant="h5" component="div">
-            有什麼需要協助的嗎? 寄信讓我們知道吧！
+          <Typography variant="h5" component="div" sx={{marginY: 4}}>
+            <Email sx={{ marginRight: 1 }} />有什麼需要協助的嗎? 寄信告訴我們吧！
           </Typography>
           <Divider sx={{ marginY: 4 }} ></Divider>
           <Grid container direction="column" rowSpacing={1}>
             <Grid item direction="row">
               <Typography color="text.secondary">
-                信箱：
+                您的信箱：
               </Typography>
               <TextField
                 type="email"
                 name="email"
+                value={authContext.email ? authContext.email : ""}
                 placeholder="請輸入信箱..."
                 autoComplete="email"
                 sx={{ width: '100%' }}
                 onChange={handleChange}
-                required
+                required disabled
               />
             </Grid>
             <Grid item>
@@ -96,12 +99,12 @@ export default function TestEmail() {
             </Grid>
           </Grid>
         </CardContent>
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={handleClick}>
-            <EmailIcon sx={{ marginRight:1 }}/>送 出
+        <CardActions sx={{ justifyContent: 'flex-end'}}>
+          <Button variant="contained" onClick={handleClick}  sx={{ width: '30%' }}>
+            送 出 郵 件
           </Button>
         </CardActions>
       </Card>
-      </Grid>
-      )
+    </Grid>
+  )
 }
