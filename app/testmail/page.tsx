@@ -61,7 +61,7 @@ export default function TestEmail() {
           type="text"
           name="html"
           multiline
-          rows={4}
+          rows={5}
           value={message.html}
           placeholder="請輸入信件內容..."
           onChange={handleChange}
