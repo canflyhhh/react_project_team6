@@ -27,9 +27,17 @@ export default function TestEmail() {
 
     }
   }
+  const divStyle = {
+    padding: '50px',
+  };
+  const textFieldStyle = {
+    padding: '5px',
+  }
+
   return (
-    <div>
-      <div>
+    <div style={divStyle}>
+      <h3>有什麼需要協助的嗎? 寄信讓我們知道吧！</h3>
+      <div style={textFieldStyle}>
         <TextField
           type="email"
           name="email"
@@ -39,7 +47,7 @@ export default function TestEmail() {
           autoComplete="email"
         />
       </div>
-      <div>
+      <div style={textFieldStyle}>
         <TextField
           type="text"
           name="subject"
@@ -48,10 +56,12 @@ export default function TestEmail() {
           onChange={handleChange}
         />
       </div>
-      <div>
+      <div style={textFieldStyle}>
         <TextField
           type="text"
           name="html"
+          multiline
+          rows={4}
           value={message.html}
           placeholder="請輸入信件內容..."
           onChange={handleChange}
