@@ -15,7 +15,7 @@ export default function TestEmail() {
   const authContext = useContext(AuthContext);
 
   // 回傳寄送內容
-  const [message, setMessage] = useState({ email: '', subject: '', html: '' });
+  const [message, setMessage] = useState({senderEmail: authContext.email || '', email: '', subject: '', html: '' });
   const [response, setResponse] = useState('');
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage({ ...message, [e.target.name]: e.target.value });
@@ -60,13 +60,14 @@ export default function TestEmail() {
               </Typography>
               <TextField
                 type="email"
-                name="email"
-                value={authContext.email ? authContext.email : ""}
+                name="senderEmail"
+                value={message.senderEmail} // Use the value from the component's state
                 placeholder="請輸入信箱..."
                 autoComplete="email"
                 sx={{ width: '100%' }}
                 onChange={handleChange}
-                required disabled
+                required
+                disabled
               />
             </Grid>
             <Grid item>

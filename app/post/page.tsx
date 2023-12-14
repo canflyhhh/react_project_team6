@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -28,6 +27,7 @@ import usePosts from "./usePosts"; // Import the custom hook for posts
 import { Post } from "../_settings/interfaces";
 import AddIcon from '@mui/icons-material/Add';
 import { AuthContext } from '../account/authContext';
+
 
 
 
@@ -137,10 +137,6 @@ const App = () => {
 
 
 
-
-
-
-
 export default function PostList() {
     const authContext = useContext(AuthContext);
 
@@ -160,10 +156,7 @@ export default function PostList() {
 
     const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext.email, context: "", datetime: new Date(), tag: [], title: "" });
     const [status, setStatus] = useState({ visible: false });
-    const [file, setFile] = useState();
-
-
-
+    const [file, setFile] = useState<File | null>(null);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editedPost, setEditedPost] = useState({ account: "", context: "", datetime: new Date(), tag: [], title: "" });
     const [editPostIndex, setEditPostIndex] = useState(-1);
@@ -182,10 +175,12 @@ export default function PostList() {
         }
     };
 
-    function handleChange(e: { target: { files: any; }; }) {
-        console.log(e.target.files);
-        // setFile(URL.createObjectURL(e.target.files[0]));
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const selectedFile = e.target.files && e.target.files[0];
+        setFile(selectedFile);
     }
+    
+
 
 
 
@@ -311,7 +306,8 @@ export default function PostList() {
 
                     <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
                     <input type="file" onChange={handleChange} />
-                    <img src={file} alt="" />
+                    {file && <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
+
                 </DialogContent>
                 <DialogActions>
                     <IconButton
