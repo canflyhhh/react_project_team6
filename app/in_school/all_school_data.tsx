@@ -13,14 +13,12 @@ export default function usePosts(tag:string) {
       let data: { time: Timestamp, account: string, context:string, title:string }[] = [];
       const query1 = collection(db, "post");
       const query2 = query(query1, where("tag","array-contains", tag));
-      console.log(tag)
 
       const querySnapshot = await getDocs(query2);
       querySnapshot.forEach((doc) => {
         data.push({ time: doc.data().datetime, account: doc.data().account, context: doc.data().context, title: doc.data().title })
       });
       setPosts(() => [...data]);
-      console.log(data);
     }
     fetchData();
   }, [db, tag]);
