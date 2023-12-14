@@ -116,6 +116,8 @@ export default function Menu() {
             <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
             <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
             <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>
+            <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/in_school")}>校內</Button>
+            <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/out_school")}>校外</Button>
           </>
           )}
 
