@@ -77,6 +77,8 @@ function PostsList() {
             <Pagination
               count={Math.ceil(posts.length / postsPerPage)}
               page={page}
+              variant="outlined"
+              color="primary"
               onChange={handleChangePage}
             />
           </Stack>
