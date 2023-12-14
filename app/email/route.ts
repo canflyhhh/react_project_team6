@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { AuthContext } from "../account/authContext";
 
 export async function POST(request: NextRequest) {
   const smtpOptions = {
@@ -19,7 +20,11 @@ export async function POST(request: NextRequest) {
 
     if (data) {
       await transporter.sendMail({
-        from: process.env.SMTP_USER || "willieclassroom@gmail.com",
+        // from: process.env.SMTP_USER || "willieclassroom@gmail.com",
+        from: {
+          name: data.senderEmail,
+          address: 'sender@mail.com',
+        },
         to: data.email || "willieyu0123@gmail.com",
         subject: data.subject || "帳號註冊成功",
         html: data.html || "<h1>恭喜您成功註冊ReactGOGO平台</h1>",
