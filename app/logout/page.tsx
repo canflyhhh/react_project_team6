@@ -2,15 +2,18 @@
 import React, { useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import app from '@/app/_firebase/config';
+import { useRouter } from 'next/navigation';
 
 const Logout = () => {
   const auth = getAuth(app);
+  const router = useRouter();
 
   useEffect(() => {
     const logout = async () => {
       try {
         await auth.signOut();
-        console.log('Logout successful');
+        alert("登出成功，返回主頁面！");
+        router.push('/');
       } catch (error) {
         if (error instanceof Error) {
           console.error('Logout error:', error.message);
@@ -20,11 +23,11 @@ const Logout = () => {
       }
     };
     logout();
-  }, []); 
+  }, [auth, router]); 
 
   return (
     <div>
-      <p>Logging out...</p>
+      
     </div>
   );
 };
