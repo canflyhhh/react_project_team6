@@ -10,7 +10,7 @@ import 'react-quill/dist/quill.snow.css';
 
 
 
-function PostsList() {
+function InSchool() {
     // 篩選校外  
     const [posts, setPosts] = usePosts("輔大");
 
@@ -37,16 +37,16 @@ function PostsList() {
         setPage(value);
     };
 
+    // 算頁數
+    const indexOfLastPost = page * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
     // 將html多元素轉化為純文字
     const stripHtmlTags = (html: string) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
     };
-
-
-    const indexOfLastPost = page * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
     return (
         <div>
@@ -75,7 +75,8 @@ function PostsList() {
                                         <Typography variant="body2">
                                             {post.context.length > 50
                                                 ? `${stripHtmlTags(post.context).substring(0, 50)}……`
-                                                : stripHtmlTags(post.context)}
+                                                : stripHtmlTags(post.context)
+                                            }
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
@@ -132,5 +133,5 @@ function PostsList() {
     );
 }
 
-export default PostsList;
+export default InSchool;
 
