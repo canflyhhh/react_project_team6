@@ -1,28 +1,30 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Card, CardContent, CardMedia, TextField } from '@mui/material';
 import styles from '../page.module.css';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import app from "@/app/_firebase/config";
 import { FirebaseError } from 'firebase/app';
 import { doc, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { signInWithGooglePopup } from "./admin"; // google login
+import { useRouter } from 'next/navigation';
+import { AuthContext } from './authContext';
 
 import axios from "axios";
 
 export default function Account() {
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
-    const [account, setAccount] = useState({ email: "", password: "", name: "", photo: "next.svg" });
+    const router = useRouter();
+    const authContext = useContext(AuthContext);
+    const [account, setAccount] = useState({ email: "", password: "", name: ""
+ });
     const [message, setMessage] = useState("");
-    const [status, setStatus] = useState("註冊");
+    const [status, setStatus] = useState("登入");
 
     const [emailMessage, setEmailMessage] = useState({ email: '', subject: 'ReactGOGO帳號註冊成功', html: '恭喜您註冊成功' });
     const [response, setResponse] = useState('');
-
-    const [file, setFile] = useState<File>();  // upload picture
+    const [registeredEmail, setRegisteredEmail] = useState("");
     
     const handleChange = function (e: React.ChangeEvent<HTMLInputElement>) {
         setAccount({ ...account, [e.target.name]: e.target.value })
@@ -37,32 +39,19 @@ export default function Account() {
         }
     }
 
+    // login - googleLogin
     const logGoogleUser = async () => {
         const response = await signInWithGooglePopup();
         //console.log(response);
     }
 
-    // const logout = function (e: React.MouseEvent<HTMLElement>) {
-    //     auth.signOut();
-    //     setMessage("登出成功");
-    // }
-
-    // upload picture - select and get picture
-    const handleUpload = async function (e: React.ChangeEvent<HTMLInputElement>) {
-        if (e.target.files !== null) {
-          console.log(e.target.files[0]);
-          setAccount({ ...account, photo: e.target.files[0].name })
-          setFile(e.target.files[0]);
-        }
-    }
-  
     const handleSubmit = async function (e: React.MouseEvent<HTMLElement>) {
         try {
             if (status === "註冊") {
                 const res = await createUserWithEmailAndPassword(auth, account.email, account.password);
-                
+                const userDoc = await setDoc(doc(db, "users", res.user.uid), { email: account.email, name: account.name });
                     
-
+                // send email after register (不要刪)
                 // try {
                 //     emailMessage.email = account.email
                 //     const response = await axios({
@@ -80,49 +69,24 @@ export default function Account() {
                 // }
                 // setMessage(`註冊成功，歡迎 ${res.user?.email}`);
 
-
-
-
                 setMessage(`註冊成功，歡迎 ${res.user?.email}`);
-                setStatus("登入成功");
+                setStatus("登入");
+                setRegisteredEmail(account.email);
 
-                // Create a reference to the image
-                if (file) {
-                    const imageRef = ref(storage, file.name);
-                    // 'file' comes from the Blob or File API
-                    await uploadBytes(imageRef, file);
-                    // console.log(res)
-                    setMessage(`個人照片上傳成功，歡迎 ${res.user?.email}`);
-                    const userDoc = await setDoc(doc(db, "users", res.user.uid), { photo: file.name });
-                    const starsRef = ref(storage, file.name);
-                    const photoURL = await getDownloadURL(starsRef);
-                    setAccount({ ...account, photo: photoURL })
-                }
-                else {
-                    setMessage("未上傳檔案");
-                }
-
-
-
+                // setAccount({ ...account, email: res.user?.email || "" });
+                router.push('/account');
+                // router.push('/account?email=' + encodeURIComponent(account.email));
             }
             else {
                 const res = await signInWithEmailAndPassword(auth, account.email, account.password);
                 setMessage(`登入成功，歡迎 ${res.user?.email}`);
 
-                if (res) {
-                    const userDoc =await getDoc(doc(db, "users", res.user.uid));
-                    let photo = 'welcome.jpg';
-                    if (userDoc.exists()) {
-                        photo = userDoc.data().photo ? userDoc.data().photo: 'welcome.jpg'
-                    }
-                    //console.log("aaa", photo);
+                // 更新 AuthContext 中的 authenticated 狀態
+                authContext.setAuthData({
+                    authenticated: true,
+                });
 
-                    const starsRef = ref(storage, photo);
-                    const photoURL = await getDownloadURL(starsRef);
-                    setAccount({ ...account, photo: photoURL });
-                    
-                    //console.log("bbb", photoURL);
-                }
+                router.push('/');
             }
         }
         catch(e) {
@@ -163,75 +127,90 @@ export default function Account() {
         }
     }
 
+    useEffect(() => {
+        setAccount({ email: "", password: "", name: "" });
+
+        // 註冊後，自動代入帳號到登入頁面
+        if (registeredEmail) {
+            setAccount((prevAccount) => ({ ...prevAccount, email: registeredEmail }));
+        }
+    }, [status, registeredEmail]);
+
 
     return (
         <div className={styles.main}> 
             <form>
-                {status === '登入成功' &&
+                {status === '註冊成功' &&
                     <Card sx={{ maxWidth: "30vw" }}>
-                    <CardMedia component="img" image={account.photo} alt={account.email} />
-                    <CardContent>{account.email}</CardContent>
+                        <CardContent>{account.email}</CardContent>
                     </Card>
                 }
 
-                {(status === '註冊' || status === '登入') &&
+                {(status === '登入') &&
                     <div>
                         <div>
                             <TextField type="email" name="email" value={account.email}
-                            placeholder="電子郵件信箱" label="電子郵件信箱:" onChange={handleChange} autoComplete='username' />
+                            placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
                         </div>
 
                         <br></br>
 
                         <div>
                             <TextField type="password" name="password" value={account.password}
-                            placeholder="密碼" label="密碼:" onChange={handleChange} autoComplete='current-password' />
+                            placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
                         </div>
-                    </div>
-                }
 
-                {status === '註冊'&&
-                    <div>
                         <br></br>
 
                         <div>
+                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
+                            &nbsp;&nbsp;
+                            <Button variant="contained" color="secondary" onClick={changeStatus}>註冊</Button>
+                        </div>
+
+                        <br></br>
+                    </div>
+                }
+
+                {(status === '註冊') &&
+                    <div>
+                         <div>
                             {status === '註冊' && <TextField type="text" name="name" value={account.name}
-                                placeholder="姓名" label="姓名:" onChange={handleChange} />
+                                placeholder="暱稱" label="暱稱：" onChange={handleChange} />
                             }
                         </div>
 
                         <br></br>
 
                         <div>
-                            <TextField type="file" inputProps={{ accept: 'image/x-png,image/jpeg' }} onChange={handleUpload} />
+                            <TextField type="email" name="email" value={account.email}
+                            placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
                         </div>
 
                         <br></br>
 
+                        <div>
+                            <TextField type="password" name="password" value={account.password}
+                            placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                        </div>
+
+                        <br></br>
+
+                        <div>
+                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
+                            &nbsp;&nbsp;
+                            <Button variant="contained" color="secondary" onClick={changeStatus}>登入</Button>
+                        </div>
+
+                        <br></br>
+
+                        <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
                     </div>
                 }
 
-                {(status === '註冊' || status === '登入') &&
-                
-                    <div>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                    </div> 
 
-                    // <div>
-                    // <Button variant="contained" color="primary" onClick={logout}>登出</Button>
-                    // </div>
-
-                }
                 <div>{message}</div>
-
-                <div>
-                    <Button variant="contained" color="secondary" onClick={changeStatus}>
-                        {status === '註冊' ? "已經註冊，我要登入" : "尚未註冊，我要註冊"}</Button>
-                </div>     
-
-                <br/>   
-                
-                <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
+   
             </form>
         </div>
     )
