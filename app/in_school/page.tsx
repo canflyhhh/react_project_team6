@@ -7,12 +7,13 @@ import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, S
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { query, where } from "firebase/firestore";
 
 
 
 function InSchool() {
     // 篩選校外  
-    const [posts, setPosts] = usePosts("校內");
+    const [posts, setPosts] = usePosts("輔大");
 
     // 詳細內容
     const [status, setStatus] = useState("校內");

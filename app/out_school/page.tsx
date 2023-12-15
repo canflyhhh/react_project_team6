@@ -7,6 +7,7 @@ import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, S
 // 圖片
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { where } from "firebase/firestore";
 
 function OutSchool() {
     // 篩選校外  

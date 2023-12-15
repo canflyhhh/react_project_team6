@@ -3,7 +3,7 @@ import { collection, getDocs, getFirestore, query, orderBy, limit, Timestamp, wh
 import { useEffect, useState } from "react";
 import app from "@/app/_firebase/config"
 
-export default function usePosts(tag:string) {
+export default function usePosts(status:any) {
   const db = getFirestore(app);
   const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string }[]>([])
   
@@ -12,15 +12,31 @@ export default function usePosts(tag:string) {
     async function fetchData() {
       let data: { time: Timestamp, account: string, context:string, title:string, Id:string }[] = [];
       const query1 = collection(db, "post");
-      const query2 = query(query1, where("tag","array-contains", tag));
+      let query2;
+      let querySnapshot;
+      console.log("status:", status)
 
-      const querySnapshot = await getDocs(query2);
+      if (status === "datetime" || status === "like") {
+        query2 = query(query1, orderBy(status, "desc"), limit(3));
+        
+      }
+      else{
+        query2 = query(query1, where("tag","array-contains", status))
+      }
+      
+      if (query2) {
+        querySnapshot = await getDocs(query2);
+      }
+      else {
+        querySnapshot = await getDocs(query1);
+      }
+      
       querySnapshot.forEach((doc) => {
         data.push({ time: doc.data().datetime, account: doc.data().account, context: doc.data().context, title: doc.data().title, Id: doc.id })
       });
       setPosts(() => [...data]);
     }
     fetchData();
-  }, [db, tag]);
+  }, [db, status]);
   return [posts, setPosts] as const;
 }
