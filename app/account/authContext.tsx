@@ -6,6 +6,8 @@ import app from "@/app/_firebase/config"
 export const AuthContext = createContext({
   email: '',
   photo: '',
+  authenticated: false,
+  setAuthData: (data: any) => {},
 });
 export const AuthContextProvider = ({
   children,
@@ -13,7 +15,7 @@ export const AuthContextProvider = ({
   children: React.ReactNode;
 }) => {
   const auth = getAuth(app);
-  const [authData, setAuthData] = useState({ email: '', photo: '' });
+  const [authData, setAuthData] = useState({ email: '', photo: '', authenticated: false });
 
   // const [email, setEmail] = useState('');
 
@@ -22,10 +24,11 @@ export const AuthContextProvider = ({
       setAuthData({
         email: user.email ? user.email: "",
         photo: user.photoURL ? user.photoURL: "",
+        authenticated: true,
       });
     }
     else {
-      setAuthData({ email: "", photo: "" });
+      setAuthData({ email: "", photo: "", authenticated: false });
     }
 
     //console.log(user);
@@ -38,7 +41,7 @@ export const AuthContextProvider = ({
   useEffect(unsub, [unsub]);
 
   return (
-    <AuthContext.Provider value={authData}>
+    <AuthContext.Provider value={{ ...authData, setAuthData }}>
       {children}
     </AuthContext.Provider>
   );

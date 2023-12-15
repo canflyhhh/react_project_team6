@@ -12,22 +12,28 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 export default function Home() {
-  // Destructure posts and setPosts from the usePosts hook
-  const [posts, setPosts] = usePosts();
-  const [status, setStatus] = useState("總攬");
-  const [Id, setId] = useState("");
-  const [context, setContext] = useDetails(Id);
+    // Destructure posts and setPosts from the usePosts hook
+    const [posts, setPosts] = usePosts();
+    const [status, setStatus] = useState("總攬");
+    const [Id, setId] = useState("");
+    const [context, setContext] = useDetails(Id);   
+    function detailContex(id:string){
+      setStatus("詳細");
+      setId(id);
+    }   
+    function goBack() {
+      setStatus("總攬");
+    }   
+    function stripHtmlTags(html: string) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || "";
+    };
 
-  function detailContex(id:string){
-    setStatus("詳細");
-    setId(id);
-  }
-
-  function goBack() {
-    setStatus("總攬");
-  }
 
 
   return (
@@ -55,8 +61,9 @@ export default function Home() {
                             </Grid>
                             <Typography variant="body2">
                                 {post.context.length > 50
-                                ? `${post.context.substring(0, 50)}……`
-                                : post.context}
+                                    ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                    : stripHtmlTags(post.context)
+                                }
                             </Typography>
                         </CardContent>
                         <CardActions>
@@ -76,10 +83,23 @@ export default function Home() {
                     <div>{item.title}</div>
                     <div>{item.account}</div>
                     <div>{item.time.toDate().toLocaleString()}</div>
-                    <div>{item.context}</div>
+                    <ReactQuill
+                        theme="snow"
+                        value={item.context}
+                        modules={{
+                            toolbar: false,
+                        }}
+                        formats={[
+                            'header',
+                            'bold', 'italic', 'underline', 'strike', 'blockquote',
+                            'list', 'bullet', 'indent',
+                            'link', 'image'
+                        ]}
+                    />
+                    {/* <div>{item.context}</div> */}
                     <div>{item.tag}</div>
                     {item.photo && (
-                      <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
+                        <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
                     )}
                 </div>
             ))}

@@ -28,8 +28,8 @@ import { Post } from "../_settings/interfaces";
 import AddIcon from '@mui/icons-material/Add';
 import { AuthContext } from '../account/authContext';
 
-
-
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 
 
@@ -160,6 +160,7 @@ export default function PostList() {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editedPost, setEditedPost] = useState({ account: "", context: "", datetime: new Date(), tag: [], title: "" });
     const [editPostIndex, setEditPostIndex] = useState(-1);
+    const [value, setValue] = useState('')
 
     const handleClick = function (e: { target: { name: any; value: any; }; }) {
         if (e.target.name === 'datetime') {
@@ -179,7 +180,9 @@ export default function PostList() {
         const selectedFile = e.target.files && e.target.files[0];
         setFile(selectedFile);
     }
-    
+
+
+
 
 
 
@@ -196,6 +199,7 @@ export default function PostList() {
         resetPost()
     }
     const show = () => {
+        resetPost()
         setStatus({ ...status, visible: true })
     }
 
@@ -215,6 +219,35 @@ export default function PostList() {
         setEditedPost({ account: "", context: "", datetime: new Date(), tag: [], title: "" });
     };
 
+
+
+    const handleImageUpload = () => {
+        // Handle the image upload logic here
+        // You might want to upload the image to your server and then insert the image URL into the editor
+    };
+
+    const modules = {
+        toolbar: {
+            container: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['image', 'code-block'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link'],
+                ['clean']
+            ],
+            handlers: {
+                image: handleImageUpload
+            }
+        }
+    };
+
+
+    // Function to convert HTML to plain text
+    const stripHtmlTags = (html: string) => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || "";
+    };
 
 
     return (
@@ -242,17 +275,8 @@ export default function PostList() {
                                         {post.account}
                                     </Typography>
                                     {post.context.length > 50
-                                        ? (
-                                            <Typography variant="body2">
-                                                {`${post.context.substring(0, 50)}……`}
-                                            </Typography>
-                                        )
-                                        : (
-                                            <Typography variant="body2">
-                                                {`${post.context}`}
-                                            </Typography>
-                                        )
-                                    }
+                                        ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                        : stripHtmlTags(post.context)}
 
                                 </CardContent>
                                 <CardActions style={{ position: 'relative', bottom: 0, right: 0 }}>
@@ -304,7 +328,28 @@ export default function PostList() {
                     />
 
 
-                    <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br />
+                    {/* <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br /> */}
+                    <ReactQuill
+                        theme="snow"
+                        value={newPost.context}
+                        onChange={(content) => setNewPost({ ...newPost, context: content })}
+                        modules={{
+                            toolbar: [
+                                [{ 'header': [1, 2, false] }],
+                                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                                ['link', 'image'],
+                                ['clean']
+                            ],
+                        }}
+                        formats={[
+                            'header',
+                            'bold', 'italic', 'underline', 'strike', 'blockquote',
+                            'list', 'bullet', 'indent',
+                            'link', 'image'
+                        ]}
+                    />
+
                     <input type="file" onChange={handleChange} />
                     {file && <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
 

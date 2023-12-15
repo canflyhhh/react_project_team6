@@ -31,6 +31,7 @@ export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [activeMap, setActiveMap] = useState<Record<string, boolean>>({});
 
+
   const email = "user4@mail.com"
   const fetchPosts = async () => {
     const firestore = getFirestore();
@@ -81,6 +82,7 @@ export default function Home() {
       // Update UI immediately to provide feedback to the user
       const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
       setActiveMap(newActiveMap);
+      console.log("isCurrentlyActive:", isCurrentlyActive)
   
       // Perform the removal from the 'likes' collection
       if (isCurrentlyActive) {
@@ -92,8 +94,12 @@ export default function Home() {
           const likeSnapshot = await getDocs(likeQuery);
   
           likeSnapshot.forEach(async (likeDoc) => {
+            console.log("delete success!")
             await deleteDoc(doc(likesCollection, likeDoc.id));
+
           });
+          // 文章即時更新
+          await fetchPosts();
         } catch (error) {
           console.error('Error removing post from likes:', error);
         }
@@ -135,7 +141,7 @@ export default function Home() {
                         </Button>
                         <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
                           <Heart
-                            isActive={activeMap[post.id]}
+                            isActive={!activeMap[post.id]}
                             onClick={() => handleHeartClick(post.id)}
                             activeColor="red"
                             inactiveColor="black"

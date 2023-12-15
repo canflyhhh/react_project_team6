@@ -112,7 +112,6 @@ export default function Menu() {
             <>
             <Button color="inherit" variant={pathname === "/product" ? "outlined" : "text"} onClick={() => router.push("/product")}>產品管理</Button>
             <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>我的文章</Button>
-            <Button color="inherit" variant={pathname === "/add_post" ? "outlined" : "text"} onClick={() => router.push("/add_post")}>新增文章</Button>
             <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
             <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
             <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>
