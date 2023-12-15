@@ -1,11 +1,13 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { getFirestore, collection, getDocs, query, where, getDoc, doc} from 'firebase/firestore';
+import React, { useState, useEffect, useContext} from 'react';
+import { getFirestore, collection, getDocs, query, where, getDoc, doc, deleteDoc} from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import { 
-    Grid, Card, CardContent, Typography, CardActions, Button, Slide, 
-    Dialog, DialogTitle, DialogActions, DialogContentText, DialogContent , useMediaQuery,
+    Grid, Card, CardContent, Typography, CardActions, Button
 } from "@mui/material";
+
+// import account
+import { AuthContext } from '../account/authContext';
 
 // import heart
 import app from "@/app/_firebase/config";
@@ -17,21 +19,23 @@ interface Post {
   title: string;
   account: string;
   datetime: string;
-  context: string; // Add this field to store the number of likes
+  context: string; 
 }
 
 
 
 export default function Home() {
+  // 取得現在的帳號
+  const authContext = useContext(AuthContext);
+
   const [posts, setPosts] = useState<Post[]>([]);
+  const [activeMap, setActiveMap] = useState<Record<string, boolean>>({});
 
+  const email = "user4@mail.com"
   const fetchPosts = async () => {
-    // Assuming you have the user ID available
-    const userId = 'user4@mail.com'; // Replace this with your actual user ID
-
     const firestore = getFirestore();
     const likesCollection = collection(firestore, 'likes');
-    const likesQuery = query(likesCollection, where('email', '==', userId));
+    const likesQuery = query(likesCollection, where('email', '==', email));
     const likesSnapshot = await getDocs(likesQuery);
 
     const postsData: { id: string; title: string; account: string; datetime: string; context: string;}[] = [];
@@ -41,7 +45,6 @@ export default function Home() {
       likesSnapshot.docs.map(async (likeDoc) => {
         const likeData = likeDoc.data();
         const postId = likeData.postId;
-        console.log("postId = ", postId)
 
         // Query the 'posts' collection for the post with the matching 'id'
         const postsCollection = collection(firestore, 'post');
@@ -57,7 +60,7 @@ export default function Home() {
             context: postData.context,
           });
         }
-        console.log("postsData = ", postsData)
+        // console.log("postsData = ", postsData)
       })
     );
     setPosts(() => [...postsData]);
@@ -67,6 +70,37 @@ export default function Home() {
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  const handleHeartClick = async (postId: string) => {
+    const isCurrentlyActive = !activeMap[postId];
+  
+    // Display a confirmation dialog
+    const confirmed = window.confirm('確定取消收藏？');
+  
+    if (confirmed) {
+      // Update UI immediately to provide feedback to the user
+      const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
+      setActiveMap(newActiveMap);
+  
+      // Perform the removal from the 'likes' collection
+      if (isCurrentlyActive) {
+        // Add code to remove the post from the 'likes' collection
+        try {
+          const db = getFirestore();
+          const likesCollection = collection(db, 'likes');
+          const likeQuery = query(likesCollection, where('postId', '==', postId));
+          const likeSnapshot = await getDocs(likeQuery);
+  
+          likeSnapshot.forEach(async (likeDoc) => {
+            await deleteDoc(doc(likesCollection, likeDoc.id));
+          });
+        } catch (error) {
+          console.error('Error removing post from likes:', error);
+        }
+      }
+    }
+  };
+  
 
   return (
     <Grid container spacing={2} sx={{ padding: 4 }}>
@@ -99,9 +133,19 @@ export default function Home() {
                         <Button variant="outlined">
                             查看內容
                         </Button>
+                        <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
+                          <Heart
+                            isActive={activeMap[post.id]}
+                            onClick={() => handleHeartClick(post.id)}
+                            activeColor="red"
+                            inactiveColor="black"
+                            animationTrigger="hover"
+                            animationScale={1.5}
+                          />
+                        </div>
                     </CardActions>
                 </Card>
-                {post.id}
+              {post.id}
             </Grid>
         ))}
     </Grid>
