@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect, useContext} from 'react';
-import { getFirestore, collection, getDocs, query, where, getDoc, doc, deleteDoc} from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, query, where, getDoc, doc, deleteDoc, updateDoc} from 'firebase/firestore';
 import { 
     Grid, Card, CardContent, Typography, CardActions, Button
 } from "@mui/material";
@@ -10,9 +9,7 @@ import {
 import { AuthContext } from '../account/authContext';
 
 // import heart
-import app from "@/app/_firebase/config";
 import Heart from "react-heart"
-import firebase from 'firebase/compat/app';
 
 interface Post {
   id: string;
@@ -31,9 +28,9 @@ export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [activeMap, setActiveMap] = useState<Record<string, boolean>>({});
 
-
-  const email = "user4@mail.com"
   const fetchPosts = async () => {
+    
+    const email = authContext.email
     const firestore = getFirestore();
     const likesCollection = collection(firestore, 'likes');
     const likesQuery = query(likesCollection, where('email', '==', email));
@@ -98,6 +95,21 @@ export default function Home() {
             await deleteDoc(doc(likesCollection, likeDoc.id));
 
           });
+
+          // Decrement the 'like' value in the 'posts' collection
+          const postsCollection = collection(db, 'post');
+          const postRef = doc(postsCollection, postId);
+          const postDoc = await getDoc(postRef);
+
+          if (postDoc.exists()) {
+            const postData = postDoc.data();
+            const currentLikes = postData?.like || 0;
+          
+            if (currentLikes > 0) {
+              await updateDoc(postRef, { like: currentLikes - 1 });
+            }
+          }
+
           // 文章即時更新
           await fetchPosts();
         } catch (error) {
@@ -151,7 +163,6 @@ export default function Home() {
                         </div>
                     </CardActions>
                 </Card>
-              {post.id}
             </Grid>
         ))}
     </Grid>
