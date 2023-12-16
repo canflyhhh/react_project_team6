@@ -15,6 +15,7 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
+    domains: ["www.fju.edu.tw", "newfjnews.weebly.com"],
   },
 };
 

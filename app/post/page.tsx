@@ -226,22 +226,6 @@ export default function PostList() {
         // You might want to upload the image to your server and then insert the image URL into the editor
     };
 
-    const modules = {
-        toolbar: {
-            container: [
-                [{ header: [1, 2, false] }],
-                ['bold', 'italic', 'underline'],
-                ['image', 'code-block'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                ['link'],
-                ['clean']
-            ],
-            handlers: {
-                image: handleImageUpload
-            }
-        }
-    };
-
 
     // Function to convert HTML to plain text
     const stripHtmlTags = (html: string) => {
