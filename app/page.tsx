@@ -40,6 +40,7 @@ export default function Home() {
         if (status === "本月" || status === "熱門") {
             setStatus(status);
             setLimit(false)
+            setPage(1);
         }
         else {
             setStatus(status);
