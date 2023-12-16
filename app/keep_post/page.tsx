@@ -4,6 +4,7 @@ import { getFirestore, collection, getDocs, query, where, getDoc, doc, deleteDoc
 import { 
     Grid, Card, CardContent, Typography, CardActions, Button
 } from "@mui/material";
+import app from "@/app/_firebase/config"
 
 // import account
 import { AuthContext } from '../account/authContext';
@@ -55,7 +56,7 @@ export default function Home() {
   const fetchPosts = async () => {
     
     const email = authContext.email
-    const firestore = getFirestore();
+    const firestore = getFirestore(app);
     const likesCollection = collection(firestore, 'likes');
     const likesQuery = query(likesCollection, where('email', '==', email));
     const likesSnapshot = await getDocs(likesQuery);

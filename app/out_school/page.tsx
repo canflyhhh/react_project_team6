@@ -1,9 +1,10 @@
 'use client'
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { inOutPosts } from "../in_school/all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
 import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack } from "@mui/material";
+import app from "@/app/_firebase/config"
 // 圖片
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -64,7 +65,7 @@ function OutSchool() {
         console.log("heart:", isCurrentlyActive)
 
         // getFirestore
-        const db = getFirestore();
+        const db = getFirestore(app);
 
         // check like status
         const likesCollection = collection(db, 'likes');
@@ -76,6 +77,10 @@ function OutSchool() {
         : window.confirm('確定取消收藏？');
 
         if (confirmed) {
+          // Update UI immediately to provide feedback to the user
+          const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
+          setActiveMap(newActiveMap);
+
           if (likeSnapshot.empty) {
             // User is liking the post
             try {
@@ -100,11 +105,7 @@ function OutSchool() {
               console.error('Error adding post to likes:', error);
             }
           } else {
-            // Update UI immediately to provide feedback to the user
-            const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
-            setActiveMap(newActiveMap);
-            
-            if (isCurrentlyActive) {
+            if (isCurrentlyActive == false) {
               // User is unliking the post
               try {
                 // Remove the post from the 'likes' collection
@@ -132,10 +133,10 @@ function OutSchool() {
                 console.error('Error removing post from likes:', error);
               }
             }
-          
           }
         }
     };
+
 
     return (
         <div>
