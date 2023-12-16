@@ -22,7 +22,8 @@
     "puppeteer": "^21.6.1",
     "react": "^18",
     "react-bootstrap": "^2.9.1",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-quill": "^2.0.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",

@@ -34,7 +34,6 @@ export function inOutPosts(status:string) {
 export function usePosts(status:string, Limit:boolean) {
   const db = getFirestore(app);
   const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string }[]>([])
-  
 
   useEffect(() => {
     async function fetchData() {
@@ -64,6 +63,6 @@ export function usePosts(status:string, Limit:boolean) {
       setPosts(() => [...data]);
     }
     fetchData();
-  }, [db, status]);
+  }, [db, status, Limit]);
   return [posts, setPosts] as const;
 }
