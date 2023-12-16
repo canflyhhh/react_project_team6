@@ -18,10 +18,34 @@ interface Post {
   datetime: string;
   context: string; 
 }
+import useDetails from '../detail_data';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import Image from 'next/image'
 
 
 
 export default function Home() {
+
+  // 詳細內容
+  const [status, setStatus] = useState("校內");
+  const [Id, setId] = useState("");
+  const [context, setContext] = useDetails(Id);
+  const detailContex = (id: string) => {
+      console.log("ID:", id)
+      setStatus("詳細");
+      setId(id);
+  }
+  const goBack = () => {
+    setStatus("校內");
+  }
+
+    // 將html多元素轉化為純文字
+  const stripHtmlTags = (html: string) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
+
   // 取得現在的帳號
   const authContext = useContext(AuthContext);
 
@@ -76,10 +100,6 @@ export default function Home() {
     const confirmed = window.confirm('確定取消收藏？');
   
     if (confirmed) {
-      // Update UI immediately to provide feedback to the user
-      const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
-      setActiveMap(newActiveMap);
-      console.log("isCurrentlyActive:", isCurrentlyActive)
   
       // Perform the removal from the 'likes' collection
       if (isCurrentlyActive) {
@@ -121,7 +141,9 @@ export default function Home() {
   
 
   return (
-    <Grid container spacing={2} sx={{ padding: 4 }}>
+    <div>
+      {status === "校內" && (
+        <Grid container spacing={2} sx={{ padding: 4 }}>
         {posts.map((post, index) => (
             <Grid item xs={4} key={index}>
                 <Card variant="outlined">
@@ -148,7 +170,7 @@ export default function Home() {
                         </Typography>
                     </CardContent>
                     <CardActions style={{ justifyContent: 'flex-end' }}>
-                        <Button variant="outlined">
+                        <Button variant="outlined" onClick={() => detailContex(post.id)}>
                             查看內容
                         </Button>
                         <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
@@ -164,8 +186,40 @@ export default function Home() {
                     </CardActions>
                 </Card>
             </Grid>
-        ))}
-    </Grid>
-    
+        ))}          
+      </Grid>
+      )}
+
+      {status === "詳細" && Id && (
+        <div>
+            {context.map((item) => (
+                <div key={Id}>
+                    <div>{item.title}</div>
+                    <div>{item.account}</div>
+                    <div>{item.time.toDate().toLocaleString()}</div>
+                    <ReactQuill
+                        theme="snow"
+                        value={item.context}
+                        modules={{
+                            toolbar: false,
+                        }}
+                        formats={[
+                            'header',
+                            'bold', 'italic', 'underline', 'strike', 'blockquote',
+                            'list', 'bullet', 'indent',
+                            'link', 'image'
+                        ]}
+                    />
+                    {/* <div>{item.context}</div> */}
+                    <div>{item.tag}</div>
+                    {item.photo && (
+                        <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
+                    )}
+                </div>
+            ))}
+            <Button variant="outlined" onClick={goBack}>返回校外總攬</Button>
+        </div>
+      )}
+    </div>
   );
 }
