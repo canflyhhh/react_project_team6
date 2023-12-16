@@ -37,7 +37,7 @@ export default function Home() {
     }  
     //從詳細資訊跳至總攬 
     function changeStatus(status:string) {
-        if (status === "本周" || status === "熱門") {
+        if (status === "本月" || status === "熱門") {
             setStatus(status);
             setLimit(false)
         }
@@ -116,11 +116,11 @@ export default function Home() {
             <Button variant="outlined" onClick={() => changeStatus("熱門")}>查看更多熱門文章</Button>
             
             <hr />
-            {/*前三本周*/}
+            {/*前三本月*/}
             <Grid container spacing={2} sx={{ padding: 4 }}>
             {time.map((post) => ( postCard(post) ))}
             </Grid>
-            <Button variant="outlined" onClick={() => changeStatus("本周")}>查看更多本周文章</Button>
+            <Button variant="outlined" onClick={() => changeStatus("本月")}>查看更多本月文章</Button>
         </div>
     )}
 
@@ -142,7 +142,7 @@ export default function Home() {
         </div>
     )}
 
-    {status === "本周" && (
+    {status === "本月" && (
         <div>
         <Grid container spacing={2} sx={{ padding: 4 }}>
             {currentTime.map((post) => ( postCard(post) ))}

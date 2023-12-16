@@ -47,7 +47,14 @@ export function usePosts(status:string, Limit:boolean) {
         
       }
       else{
-        query2 = query(query1, orderBy(status, "desc"));
+        if (status === "datetime") {
+          const startDate = new Date();
+          startDate.setMonth(startDate.getMonth() - 1);
+          query2 = query(query1, orderBy("datetime", "desc"), where("datetime", ">=", startDate));
+        }
+        else {
+          query2 = query(query1, orderBy("like", "desc"));
+        }
       }
       
       if (query2) {
