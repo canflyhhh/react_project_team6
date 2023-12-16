@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import usePosts from "./in_school/all_school_data";
+import { usePosts } from "./in_school/all_school_data";
 import { useEffect } from 'react';
 import { useState } from "react";
 import Image from 'next/image'
@@ -14,12 +14,14 @@ import { useRouter } from 'next/navigation';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { Tune } from '@mui/icons-material';
 
 
 export default function Home() {
     // Destructure posts and setPosts from the usePosts hook
-    const [hot, setHot] = usePosts("like");
-    const [time, setTime] = usePosts("datetime");
+    const Limit = true;
+    const [hot, setHot] = usePosts("like", Limit);
+    const [time, setTime] = usePosts("datetime", Limit);
     console.log("time:", time)
     
     // 主畫面OR詳細

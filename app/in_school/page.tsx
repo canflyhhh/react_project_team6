@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import usePosts from "./all_school_data";
+import {inOutPosts} from "./all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
 import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack } from "@mui/material";
@@ -13,7 +13,7 @@ import { query, where } from "firebase/firestore";
 
 function InSchool() {
     // 篩選校外  
-    const [posts, setPosts] = usePosts("輔大");
+    const [posts, setPosts] = inOutPosts("輔大");
 
     // 詳細內容
     const [status, setStatus] = useState("校內");
