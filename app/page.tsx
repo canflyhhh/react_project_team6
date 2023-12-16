@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import usePosts from './post/usePosts';
+import { usePosts } from "./in_school/all_school_data";
 import { useEffect } from 'react';
 import { useState } from "react";
 import Image from 'next/image'
@@ -12,29 +12,41 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { Tune } from '@mui/icons-material';
+
 
 export default function Home() {
-  // Destructure posts and setPosts from the usePosts hook
-  const [posts, setPosts] = usePosts();
-  const [status, setStatus] = useState("總攬");
-  const [Id, setId] = useState("");
-  const [context, setContext] = useDetails(Id);
-
-  function detailContex(id:string){
-    setStatus("詳細");
-    setId(id);
-  }
-
-  function goBack() {
-    setStatus("總攬");
-  }
+    // Destructure posts and setPosts from the usePosts hook
+    const Limit = true;
+    const [hot, setHot] = usePosts("like", Limit);
+    const [time, setTime] = usePosts("datetime", Limit);
+    console.log("time:", time)
+    
+    // 主畫面OR詳細
+    const [status, setStatus] = useState("總攬");
+    const [Id, setId] = useState("");
+    const [context, setContext] = useDetails(Id);   
+    function detailContex(id:string){
+      setStatus("詳細");
+      setId(id);
+    }   
+    function goBack() {
+      setStatus("總攬");
+    }   
+    function stripHtmlTags(html: string) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || "";
+    };
 
 
   return (
     <div>
     {status === "總攬" && (
+        <div>
         <Grid container spacing={2} sx={{ padding: 4 }}>
-            {posts.map((post, index) => (
+            {hot.map((post, index) => (
                 <Grid item xs={4} key={index}>
                     <Card variant="outlined">
                         <CardContent>
@@ -55,18 +67,56 @@ export default function Home() {
                             </Grid>
                             <Typography variant="body2">
                                 {post.context.length > 50
-                                ? `${post.context.substring(0, 50)}……`
-                                : post.context}
+                                    ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                    : stripHtmlTags(post.context)
+                                }
                             </Typography>
                         </CardContent>
                         <CardActions>
-                            <Button variant="outlined" onClick={() => detailContex(post.id)}>查看內容</Button>
+                            <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
                         </CardActions>
-                        <div>{post.datetime.toLocaleString()}</div>
+                        <div>{post.time.toDate().toLocaleString()}</div>
                     </Card>
                 </Grid>
             ))}
         </Grid>
+        <hr />
+        <Grid container spacing={2} sx={{ padding: 4 }}>
+        {time.map((post, index) => (
+            <Grid item xs={4} key={index}>
+                <Card variant="outlined">
+                    <CardContent>
+                        <Typography variant="h5" component="div">
+                            {post.title}
+                        </Typography>
+                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                            <Grid item xs={6}>
+                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                    {post.account}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                    {/* {post.datetime} */}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <Typography variant="body2">
+                            {post.context.length > 50
+                                ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                : stripHtmlTags(post.context)
+                            }
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
+                    </CardActions>
+                    <div>{post.time.toDate().toLocaleString()}</div>
+                </Card>
+            </Grid>
+        ))}
+        </Grid>
+        </div>
     )}
     
     {status === "詳細" && Id && (
@@ -76,10 +126,23 @@ export default function Home() {
                     <div>{item.title}</div>
                     <div>{item.account}</div>
                     <div>{item.time.toDate().toLocaleString()}</div>
-                    <div>{item.context}</div>
+                    <ReactQuill
+                        theme="snow"
+                        value={item.context}
+                        modules={{
+                            toolbar: false,
+                        }}
+                        formats={[
+                            'header',
+                            'bold', 'italic', 'underline', 'strike', 'blockquote',
+                            'list', 'bullet', 'indent',
+                            'link', 'image'
+                        ]}
+                    />
+                    {/* <div>{item.context}</div> */}
                     <div>{item.tag}</div>
                     {item.photo && (
-                      <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
+                        <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
                     )}
                 </div>
             ))}
