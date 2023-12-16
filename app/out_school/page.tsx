@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { inOutPosts } from "../in_school/all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
@@ -7,9 +7,19 @@ import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, S
 // 圖片
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { where } from "firebase/firestore";
+
+// import heart
+import Heart from "react-heart"
+import { getFirestore, collection, getDocs, query, where, getDoc, doc, addDoc, updateDoc, deleteDoc} from 'firebase/firestore';
+
+// import account
+import { AuthContext } from '../account/authContext';
 
 function OutSchool() {
+    // 取得現在的帳號
+    const authContext = useContext(AuthContext);
+    const email = authContext.email
+
     // 篩選校外  
     const [posts, setPosts] = inOutPosts("大學");
 
@@ -46,6 +56,87 @@ function OutSchool() {
         return doc.body.textContent || "";
     };
 
+    // 收藏
+    const [activeMap, setActiveMap] = useState<Record<string, boolean>>({});
+
+    const handleHeartClick = async (postId: string) => {
+        const isCurrentlyActive = !activeMap[postId];
+        console.log("heart:", isCurrentlyActive)
+
+        // getFirestore
+        const db = getFirestore();
+
+        // check like status
+        const likesCollection = collection(db, 'likes');
+        const likeQuery = query(likesCollection, where('postId', '==', postId));
+        const likeSnapshot = await getDocs(likeQuery);
+
+        const confirmed = likeSnapshot.empty
+        ? window.confirm('確定收藏文章？')
+        : window.confirm('確定取消收藏？');
+
+        if (confirmed) {
+          if (likeSnapshot.empty) {
+            // User is liking the post
+            try {
+              // Add a new like to the 'likes' collection
+              await addDoc(likesCollection, { email, postId });
+      
+              // Increment the 'like' value in the 'posts' collection
+              const postsCollection = collection(db, 'post');
+              const postRef = doc(postsCollection, postId);
+              const postDoc = await getDoc(postRef);
+      
+              if (postDoc.exists()) {
+                const postData = postDoc.data();
+                const currentLikes = postData?.like || 0;
+      
+                await updateDoc(postRef, { like: currentLikes + 1 });
+              }
+      
+              // Update posts after modifying the 'like' value
+              await OutSchool();
+            } catch (error) {
+              console.error('Error adding post to likes:', error);
+            }
+          } else {
+            // Update UI immediately to provide feedback to the user
+            const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
+            setActiveMap(newActiveMap);
+            
+            if (isCurrentlyActive) {
+              // User is unliking the post
+              try {
+                // Remove the post from the 'likes' collection
+                likeSnapshot.forEach(async (likeDoc) => {
+                  await deleteDoc(doc(likesCollection, likeDoc.id));
+                });
+              
+                // Decrement the 'like' value in the 'posts' collection
+                const postsCollection = collection(db, 'post');
+                const postRef = doc(postsCollection, postId);
+                const postDoc = await getDoc(postRef);
+              
+                if (postDoc.exists()) {
+                  const postData = postDoc.data();
+                  const currentLikes = postData?.like || 0;
+                
+                  if (currentLikes > 0) {
+                    await updateDoc(postRef, { like: currentLikes - 1 });
+                  }
+                }
+              
+                // Update posts after modifying the 'like' value
+                await OutSchool();
+              } catch (error) {
+                console.error('Error removing post from likes:', error);
+              }
+            }
+          
+          }
+        }
+    };
+
     return (
         <div>
         {status === "校外" && (
@@ -77,8 +168,18 @@ function OutSchool() {
                                     }
                                 </Typography>
                             </CardContent>
-                            <CardActions>
+                            <CardActions style={{ justifyContent: 'flex-end' }}>
                                 <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
+                                <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
+                                  <Heart
+                                    isActive={activeMap[post.Id]}
+                                    onClick={() => handleHeartClick(post.Id)}
+                                    activeColor="red"
+                                    inactiveColor="black"
+                                    animationTrigger="hover"
+                                    animationScale={1.5}
+                                  />
+                                </div>
                             </CardActions>
                             <div>{post.time.toDate().toLocaleString()}</div>
                         </Card>
