@@ -60,8 +60,33 @@ function OutSchool() {
     // 收藏
     const [activeMap, setActiveMap] = useState<Record<string, boolean>>({});
 
+    const initialActiveMap: Record<string, boolean> = {};
+
+    const fetchLikes = async () => {
+      const db = getFirestore(app);
+      const statusCollection = collection(db, 'likes');
+      const statusQuery = query(statusCollection, where('email', '==', email));
+      const statusSnapshot = await getDocs(statusQuery);
+    
+      let newActiveMap = { ...activeMap };
+    
+      statusSnapshot.forEach((statusDoc) => {
+        const statusData = statusDoc.data();
+        const postId = statusData.postId;
+        newActiveMap = { ...newActiveMap, [postId]: true };
+      });
+    
+      setActiveMap(newActiveMap);
+      console.log("heart:", newActiveMap);
+    };
+    
+    useEffect(() => {
+      fetchLikes();
+    }, []);
+    
+
     const handleHeartClick = async (postId: string) => {
-        const isCurrentlyActive = !activeMap[postId];
+        let isCurrentlyActive = !activeMap[postId];
         console.log("heart:", isCurrentlyActive)
 
         // getFirestore
@@ -81,6 +106,7 @@ function OutSchool() {
           const newActiveMap = { ...activeMap, [postId]: isCurrentlyActive };
           setActiveMap(newActiveMap);
 
+          isCurrentlyActive = true
           if (likeSnapshot.empty) {
             // User is liking the post
             try {
@@ -105,6 +131,7 @@ function OutSchool() {
               console.error('Error adding post to likes:', error);
             }
           } else {
+            isCurrentlyActive = false
             if (isCurrentlyActive == false) {
               // User is unliking the post
               try {
@@ -173,7 +200,7 @@ function OutSchool() {
                                 <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
                                 <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
                                   <Heart
-                                    isActive={activeMap[post.Id]}
+                                    isActive={activeMap[post.Id] ?? false}
                                     onClick={() => handleHeartClick(post.Id)}
                                     activeColor="red"
                                     inactiveColor="black"
@@ -234,4 +261,3 @@ function OutSchool() {
 }
 
 export default OutSchool;
-
