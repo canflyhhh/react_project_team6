@@ -6,15 +6,15 @@ import { useState } from "react";
 import Image from 'next/image'
 import useDetails from './detail_data';
 import {
-    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Slide, Box,
-    Dialog, DialogTitle, DialogActions, DialogContentText, DialogContent, useMediaQuery, dividerClasses
+    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider,
+    Dialog
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Tune, CalendarMonth, Whatshot, TouchApp, AdsClick } from '@mui/icons-material';
+import { Tune, CalendarMonth, Whatshot, TouchApp, AdsClick, Margin } from '@mui/icons-material';
 
 
 export default function Home() {
@@ -57,9 +57,9 @@ export default function Home() {
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
         return (
             <Grid item key={post.Id} sx={{ margin: '2em' }}>
-                <Card variant="outlined" sx={{padding: '1em'}}>
+                <Card variant="outlined" sx={{ padding: '1em' }}>
                     <CardContent>
-                        <Typography variant="h5" component="div" sx={{ marginY: 1 }}>
+                        <Typography variant="h4" component="div" sx={{ marginY: 1 }}>
                             {post.title}
                         </Typography>
                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
@@ -67,19 +67,19 @@ export default function Home() {
                         </Typography>
                         <Typography variant="body2">
                             {post.context.length > 50
-                                ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                ? `${stripHtmlTags(post.context).substring(0, 200)}……`
                                 : stripHtmlTags(post.context)
                             }
                         </Typography>
                     </CardContent>
+                    <Divider light sx={{ margin: '1em' }} />
                     <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Typography sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
                             <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                             {post.time.toDate().toLocaleString()}
                         </Typography>
-                        <Button variant="outlined" onClick={() => detailContex(post.Id)} sx={{ display: 'flex', alignItems: 'center' }}>
-                            <AdsClick sx={{ fontSize: '1rem', marginRight: '0.5rem' }} /> {/* Adjust the margin as needed */}
-                            <span style={{ fontSize: '1rem' }}>查看內容</span> {/* Use a span for the text */}
+                        <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
+                            查看內容
                         </Button>
                     </CardActions>
                 </Card>
@@ -107,14 +107,17 @@ export default function Home() {
         <div>
             {status === "總攬" && (
                 <Grid sx={{ padding: 8 }}>
-                    <Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center',  fontWeight: 'bold'  }}>
                         <Whatshot sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
                         ReactGOGO 熱門文章
                     </Typography>
                     <Grid container spacing={2} >
                         <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <img src="../Hello-pana.png" alt="welcome" width='100%' />
-                            <Button sx={{ width: '85%', height: '30%' }} variant="contained" onClick={() => changeStatus("熱門")}>
+                            <Typography variant="h4" component="div" sx={{ marginY: '1.5em', display: 'flex', alignItems: 'center' }}>
+                                最熱絡的討論<br /><br />　　就在 ReactGOGO
+                            </Typography>
+                            <img src="../K-pop band-rafiki.png" alt="welcome" width='100%' />
+                            <Button sx={{ width: '85%', height: '30%', borderRadius: '1.5em'  }} variant="contained" onClick={() => changeStatus("熱門")}>
                                 <Typography variant="h4">
                                     <TouchApp sx={{ fontSize: '3rem', marginRight: '0.2em', color: 'white' }} />查看所有熱門文章
                                 </Typography>
@@ -125,7 +128,7 @@ export default function Home() {
                             {hot.map((post) => (postCard(post)))}
                         </Grid>
                     </Grid>
-                    <hr />
+                    <Divider light sx={{marginY: '3em'}} />
                     <Grid>
                         {/*前三本月*/}
                         <Grid container spacing={2} sx={{ padding: 4 }}>
