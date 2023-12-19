@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Tune, CalendarMonth, Whatshot, TouchApp, AdsClick, Margin } from '@mui/icons-material';
+import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome } from '@mui/icons-material';
 
 
 export default function Home() {
@@ -107,7 +107,7 @@ export default function Home() {
         <div>
             {status === "總攬" && (
                 <Grid sx={{ padding: 8 }}>
-                    <Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center',  fontWeight: 'bold'  }}>
+                    <Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
                         <Whatshot sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
                         ReactGOGO 熱門文章
                     </Typography>
@@ -117,7 +117,7 @@ export default function Home() {
                                 最熱絡的討論<br /><br />　　就在 ReactGOGO
                             </Typography>
                             <img src="../K-pop band-rafiki.png" alt="welcome" width='100%' />
-                            <Button sx={{ width: '85%', height: '30%', borderRadius: '1.5em'  }} variant="contained" onClick={() => changeStatus("熱門")}>
+                            <Button sx={{ width: '85%', height: '30%', borderRadius: '1.5em', backgroundColor: 'IndianRed' }} variant="contained" onClick={() => changeStatus("熱門")}>
                                 <Typography variant="h4">
                                     <TouchApp sx={{ fontSize: '3rem', marginRight: '0.2em', color: 'white' }} />查看所有熱門文章
                                 </Typography>
@@ -128,13 +128,27 @@ export default function Home() {
                             {hot.map((post) => (postCard(post)))}
                         </Grid>
                     </Grid>
-                    <Divider light sx={{marginY: '3em'}} />
-                    <Grid>
+                    <Divider light sx={{ marginY: '3em' }} />
+                    <Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                        <AutoAwesome sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'Orange' }} />
+                        最新文章
+                    </Typography>
+                    <Grid container spacing={2} >
+                        <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Typography variant="h4" component="div" sx={{ marginY: '1.5em', display: 'flex', alignItems: 'center' }}>
+                            ReactGOGO！<br /><br />　　新消息 GOGO！
+                            </Typography>
+                            <img src="../Pleasant surprise-cuate.png" alt="welcome" width='100%' />
+                            <Button sx={{ width: '85%', height: '30%', borderRadius: '1.5em', backgroundColor: 'Orange' }} variant="contained" onClick={() => changeStatus("本月")}>
+                                <Typography variant="h4">
+                                    <TouchApp sx={{ fontSize: '3rem', marginRight: '0.2em', color: 'white' }} />查看更多最新文章
+                                </Typography>
+                            </Button>
+                        </Grid>
                         {/*前三本月*/}
-                        <Grid container spacing={2} sx={{ padding: 4 }}>
+                        <Grid item direction="column" xs={8}>
                             {time.map((post) => (postCard(post)))}
                         </Grid>
-                        <Button variant="outlined" onClick={() => changeStatus("本月")}>查看更多本月文章</Button>
                     </Grid>
                 </Grid>
             )}

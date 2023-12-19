@@ -5,6 +5,7 @@ import Menu from './menu'
 import ThemeRegistry from './_theme/ThemeRegistry'
 import { AuthContextProvider } from './account/authContext';
 import { useContext } from 'react';
+import Footer from './footer';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
           <AuthContextProvider>
             <Menu />
             {children}
+            <Footer />
           </AuthContextProvider>
         </ThemeRegistry>
       </body>
