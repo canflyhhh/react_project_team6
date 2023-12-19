@@ -79,64 +79,32 @@ export default function Menu() {
   );
   useEffect(unsub, [unsub]);
 
-
-  // const unsub = onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     setEmail(user.email ? user.email : "");
-  //   }
-  //   else {
-  //     setEmail("");
-  //   }
-
-  //   //console.log(user);
-  //   return () => {
-  //     unsub();
-  //   }
-  // }
-  // );
-  // useEffect(unsub, [unsub]);
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-
+          {/* 帳號資訊 */}
           {authContext.email? authContext.email:""}
-
           <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
-          {authContext.email? <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>登出</Button> 
+          {/* 根據帳號登入登出狀態顯示不同按鈕 */}
+          {authContext.email? 
+            <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>
+              登出</Button> 
                : <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>註冊 / 登入</Button>
           }
           
           {authContext.email && (
             <>
             <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>我的文章</Button>
-            <Button color="inherit" variant={pathname === "/filter" ? "outlined" : "text"} onClick={() => router.push("/filter")}>filter</Button>
             <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
             <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>
             <Button color="inherit" variant={pathname === "/in_school" ? "outlined" : "text"} onClick={() => router.push("/in_school")}>校內</Button>
             <Button color="inherit" variant={pathname === "/out_school" ? "outlined" : "text"} onClick={() => router.push("/out_school")}>校外</Button>
             <Button color="inherit" variant={pathname === "/keep_post" ? "outlined" : "text"} onClick={() => router.push("/keep_post")}>我的收藏</Button>
             <Button color="inherit" variant={pathname === "/trend" ? "outlined" : "text"} onClick={() => router.push("/trend")}>輔大趨勢</Button>
+          
           </>
           )}
-
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          >
-          </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
         </Toolbar>
       </AppBar>
       

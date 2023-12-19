@@ -6,7 +6,7 @@ import { useState } from "react";
 import Image from 'next/image'
 import useDetails from './detail_data';
 import {
-    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Slide,
+    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Slide, Box,
     Dialog, DialogTitle, DialogActions, DialogContentText, DialogContent, useMediaQuery, dividerClasses
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Tune, CalendarMonth } from '@mui/icons-material';
+import { Tune, CalendarMonth, Whatshot, TouchApp, AdsClick } from '@mui/icons-material';
 
 
 export default function Home() {
@@ -56,8 +56,8 @@ export default function Home() {
     // card
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
         return (
-            <Grid item xs={4} key={post.Id}>
-                <Card variant="outlined">
+            <Grid item key={post.Id} sx={{ margin: '2em' }}>
+                <Card variant="outlined" sx={{padding: '1em'}}>
                     <CardContent>
                         <Typography variant="h5" component="div" sx={{ marginY: 1 }}>
                             {post.title}
@@ -73,13 +73,15 @@ export default function Home() {
                         </Typography>
                     </CardContent>
                     <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
                         <Typography sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
                             <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                             {post.time.toDate().toLocaleString()}
                         </Typography>
+                        <Button variant="outlined" onClick={() => detailContex(post.Id)} sx={{ display: 'flex', alignItems: 'center' }}>
+                            <AdsClick sx={{ fontSize: '1rem', marginRight: '0.5rem' }} /> {/* Adjust the margin as needed */}
+                            <span style={{ fontSize: '1rem' }}>查看內容</span> {/* Use a span for the text */}
+                        </Button>
                     </CardActions>
-
                 </Card>
             </Grid>
         )
@@ -104,20 +106,34 @@ export default function Home() {
     return (
         <div>
             {status === "總攬" && (
-                <div>
-                    {/*前三熱門*/}
-                    <Grid container spacing={2} sx={{ padding: 4 }}>
-                        {hot.map((post) => (postCard(post)))}
+                <Grid sx={{ padding: 8 }}>
+                    <Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center' }}>
+                        <Whatshot sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+                        ReactGOGO 熱門文章
+                    </Typography>
+                    <Grid container spacing={2} >
+                        <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <img src="../Hello-pana.png" alt="welcome" width='100%' />
+                            <Button sx={{ width: '85%', height: '30%' }} variant="contained" onClick={() => changeStatus("熱門")}>
+                                <Typography variant="h4">
+                                    <TouchApp sx={{ fontSize: '3rem', marginRight: '0.2em', color: 'white' }} />查看所有熱門文章
+                                </Typography>
+                            </Button>
+                        </Grid>
+                        {/*前三熱門*/}
+                        <Grid item direction="column" xs={8}>
+                            {hot.map((post) => (postCard(post)))}
+                        </Grid>
                     </Grid>
-                    <Button variant="outlined" onClick={() => changeStatus("熱門")}>查看更多熱門文章</Button>
-
                     <hr />
-                    {/*前三本月*/}
-                    <Grid container spacing={2} sx={{ padding: 4 }}>
-                        {time.map((post) => (postCard(post)))}
+                    <Grid>
+                        {/*前三本月*/}
+                        <Grid container spacing={2} sx={{ padding: 4 }}>
+                            {time.map((post) => (postCard(post)))}
+                        </Grid>
+                        <Button variant="outlined" onClick={() => changeStatus("本月")}>查看更多本月文章</Button>
                     </Grid>
-                    <Button variant="outlined" onClick={() => changeStatus("本月")}>查看更多本月文章</Button>
-                </div>
+                </Grid>
             )}
 
             {status === "熱門" && (
@@ -125,7 +141,7 @@ export default function Home() {
                     <Grid container spacing={2} sx={{ padding: 4 }}>
                         {currentHot.map((post) => (postCard(post)))}
                     </Grid>
-                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總攬</Button>
+                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                     <Stack spacing={2} mt={3}>
                         <Pagination
                             count={Math.ceil(hot.length / postsPerPage)}
@@ -143,7 +159,7 @@ export default function Home() {
                     <Grid container spacing={2} sx={{ padding: 4 }}>
                         {currentTime.map((post) => (postCard(post)))}
                     </Grid>
-                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總攬</Button>
+                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                     <Stack spacing={2} mt={3}>
                         <Pagination
                             count={Math.ceil(time.length / postsPerPage)}
@@ -185,7 +201,7 @@ export default function Home() {
                             )}
                         </div>
                     ))}
-                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總攬</Button>
+                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                 </div>
             )}
         </div>

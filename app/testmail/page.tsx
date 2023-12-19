@@ -1,10 +1,10 @@
 'use client'
 import axios from "axios";
-import { useState } from "react";
+import * as React from 'react';
 import {
   Grid, Card, CardContent, Typography, CardActions, Button, TextField, Divider, CardMedia, Icon
 } from "@mui/material";
-import { Email, Send } from '@mui/icons-material';
+import { Email } from '@mui/icons-material';
 import { AuthContext } from '../account/authContext';
 import { useContext } from 'react';
 
@@ -15,8 +15,8 @@ export default function TestEmail() {
   const authContext = useContext(AuthContext);
 
   // 回傳寄送內容
-  const [message, setMessage] = useState({senderEmail: authContext.email || '', email: '', subject: '', html: '' });
-  const [response, setResponse] = useState('');
+  const [message, setMessage] = React.useState({senderEmail: authContext.email || '', email: '', subject: '', html: '' });
+  const [response, setResponse] = React.useState('');
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage({ ...message, [e.target.name]: e.target.value });
   }

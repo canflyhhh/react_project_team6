@@ -1,10 +1,12 @@
 'use client'
-import React, { useState, useContext, useEffect } from "react";
+import * as React from 'react';
+import { useState, useContext, useEffect } from "react";
+import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack } from "@mui/material";
 import { inOutPosts } from "../in_school/all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
-import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack } from "@mui/material";
 import app from "@/app/_firebase/config"
+
 // 圖片
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';

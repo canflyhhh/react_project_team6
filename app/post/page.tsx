@@ -1,31 +1,12 @@
 'use client'
 import React, { useContext, useEffect, useState } from "react";
-import {
-    Box,
-    Input,
-    List,
-    ListItem,
-    ListItemText,
-    TextField,
-    Dialog,
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    Grid,
-    Card,
-    CardContent,
-    CardActions,
-    Typography,
-    Fab,
+import { 
+    Box, TextField, Dialog, Button, Grid, Card, CardContent, CardActions, Typography, Fab,
+    DialogActions, DialogContent, DialogTitle, IconButton
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import usePosts from "./usePosts"; // Import the custom hook for posts
+import { Close, Add, Edit, Delete } from "@mui/icons-material";
+import usePosts from "./usePosts";
 import { Post } from "../_settings/interfaces";
-import AddIcon from '@mui/icons-material/Add';
 import { AuthContext } from '../account/authContext';
 
 import ReactQuill from 'react-quill';
@@ -99,7 +80,7 @@ const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) 
                     >
                         <div>{tag}</div>
                         <IconButton onClick={() => handleRemoveTag(index)}>
-                            <CloseIcon />
+                            <Close />
                         </IconButton>
                     </div>
                 ))}
@@ -115,7 +96,7 @@ const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) 
                 />
 
                 <IconButton onClick={handleAddTagButtonClick}>
-                    <AddIcon />
+                    <Add />
                 </IconButton>
             </div>
         </div>
@@ -248,10 +229,10 @@ export default function PostList() {
                                         </Typography>
                                         <Box display="flex" alignItems="center">
                                             <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
-                                                <EditIcon />
+                                                <Edit />
                                             </IconButton>
                                             <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
-                                                <DeleteIcon />
+                                                <Delete />
                                             </IconButton>
                                         </Box>
                                     </Box>
@@ -281,7 +262,7 @@ export default function PostList() {
                 style={{ position: 'fixed', bottom: 16, right: 16 }}
                 onClick={show} // Assuming you want to show a dialog or something on click
             >
-                <AddIcon />
+                <Add />
             </Fab>
 
             <Dialog
@@ -348,7 +329,7 @@ export default function PostList() {
                             top: 8,
                         }}
                     >
-                        <CloseIcon />
+                        <Close />
                     </IconButton>
                     <Button variant="contained" color="primary" onClick={addOrUpdate}>
                         {newPost.id === "" ? "新增文章" : "更新文章"}
