@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Grid, Card, CardMedia, CardContent, Typography, Button, CardActions } from "@mui/material"; // Import Material-UI components
+import { Newspaper } from '@mui/icons-material';
+
 
 type WSResults = {
 	title: string;
@@ -39,27 +41,28 @@ export default function Home() {
 	}, []);
 
 	return (
-		<div>
+		<Grid container sx={{ padding: 8 }}>
+			<Typography variant="h2" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+				<Newspaper sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+				輔大趨勢 GOGO
+			</Typography>
 			<div>
-				{isLoading && <h2 className="text-white">Loading...</h2>}
+				{isLoading && <h6 className="text-white">載入中請稍後...</h6>}
 			</div>
-
-
-
-			<Grid container spacing={2} sx={{ padding: 4 }}>
+			<Grid container spacing={2}>
 				{searchResults?.map((prod, i) => (
-					<Grid item xs={4} key={i}>
-						<Card sx={{ maxWidth: 350 }}>
+					<Grid item xs={4} key={i} >
+						<Card>
 							<CardMedia
 								component="img"
 								alt={prod.title}
-								height="220"
+								height="150"
 								image={prod.imageUrl} // Assuming the image URL is stored in the imageUrl property
 							/>
 							<CardContent>
 								<Typography gutterBottom component="div">
-									{prod.title.length > 18
-										? `${prod.title.substring(0, 18)}…`
+									{prod.title.length > 100
+										? `${prod.title.substring(0, 100)}…`
 										: prod.title}
 								</Typography>
 							</CardContent>
@@ -73,6 +76,6 @@ export default function Home() {
 					</Grid>
 				))}
 			</Grid>
-		</div>
+		</Grid>
 	);
 }

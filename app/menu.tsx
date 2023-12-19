@@ -96,10 +96,9 @@ export default function Menu() {
           {authContext.email && (
             <>
             <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>我的文章</Button>
-            <Button color="inherit" variant={pathname === "/sort" ? "outlined" : "text"} onClick={() => router.push("/sort")}>排序</Button>
             <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>
-            <Button color="inherit" variant={pathname === "/in_school" ? "outlined" : "text"} onClick={() => router.push("/in_school")}>校內</Button>
-            <Button color="inherit" variant={pathname === "/out_school" ? "outlined" : "text"} onClick={() => router.push("/out_school")}>校外</Button>
+            <Button color="inherit" variant={pathname === "/in_school" ? "outlined" : "text"} onClick={() => router.push("/in_school")}>校內文章</Button>
+            <Button color="inherit" variant={pathname === "/out_school" ? "outlined" : "text"} onClick={() => router.push("/out_school")}>校外文章</Button>
             <Button color="inherit" variant={pathname === "/keep_post" ? "outlined" : "text"} onClick={() => router.push("/keep_post")}>我的收藏</Button>
             <Button color="inherit" variant={pathname === "/trend" ? "outlined" : "text"} onClick={() => router.push("/trend")}>輔大趨勢</Button>
           

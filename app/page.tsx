@@ -6,8 +6,7 @@ import { useState } from "react";
 import Image from 'next/image'
 import useDetails from './detail_data';
 import {
-    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider,
-    Dialog
+    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
