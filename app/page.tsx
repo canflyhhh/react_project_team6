@@ -46,13 +46,14 @@ export default function Home() {
             setLimit(true)
         }
     }
-    //圖片 
+
+    // 圖片 
     function stripHtmlTags(html: string) {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
     }
 
-    // card
+    // 熱門、最新文章 card（大）
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
         return (
             <Grid item key={post.Id} sx={{ margin: '2em' }}>
@@ -65,8 +66,8 @@ export default function Home() {
                             {post.account}
                         </Typography>
                         <Typography variant="body2">
-                            {post.context.length > 50
-                                ? `${stripHtmlTags(post.context).substring(0, 200)}……`
+                            {post.context.length > 150
+                                ? `${stripHtmlTags(post.context).substring(0, 150)}……`
                                 : stripHtmlTags(post.context)
                             }
                         </Typography>
@@ -85,6 +86,44 @@ export default function Home() {
             </Grid>
         )
     }
+
+    // 查看所有最新文章、所有熱門文章
+    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
+        return (
+            <Grid item key={post.Id} sx={{ margin: '0.5em' }}>
+                <Card variant="outlined" sx={{ padding: '1em' }}>
+                    <CardContent>
+                        <Typography variant="h6" component="div" sx={{ marginY: 1 }}>
+                            {post.title}
+                        </Typography>
+                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                            {post.account}
+                        </Typography>
+                        <Typography variant="body2">
+                            {post.context.length > 150
+                                ? `${stripHtmlTags(post.context).substring(0, 150)}……`
+                                : stripHtmlTags(post.context)
+                            }
+                        </Typography>
+                    </CardContent>
+                    <Divider light sx={{ margin: '0.5em' }} />
+                    <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+                            <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                            {post.time.toDate().toLocaleString()}
+                        </Typography>
+                        <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
+                            查看內容
+                        </Button>
+                    </CardActions>
+                </Card>
+            </Grid>
+        )
+    }
+
+
+
+
 
     // 換頁
     const [page, setPage] = useState(1);
@@ -153,9 +192,14 @@ export default function Home() {
             )}
 
             {status === "熱門" && (
-                <div>
-                    <Grid container spacing={2} sx={{ padding: 4 }}>
-                        {currentHot.map((post) => (postCard(post)))}
+                <Grid sx={{padding: '4em'}}>
+                                        <Typography variant="h4" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                        <Whatshot sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+                        所有熱門文章
+                    </Typography>
+                    <Divider light/>
+                    <Grid container spacing={2}>
+                        {currentHot.map((post) => (smallPostCard(post)))}
                     </Grid>
                     <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                     <Stack spacing={2} mt={3}>
@@ -167,13 +211,13 @@ export default function Home() {
                             onChange={handleChangePage}
                         />
                     </Stack>
-                </div>
+                </Grid>
             )}
 
             {status === "本月" && (
-                <div>
+                <Grid  sx={{padding: '4em'}}>
                     <Grid container spacing={2} sx={{ padding: 4 }}>
-                        {currentTime.map((post) => (postCard(post)))}
+                        {currentTime.map((post) => (smallPostCard(post)))}
                     </Grid>
                     <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                     <Stack spacing={2} mt={3}>
@@ -185,7 +229,7 @@ export default function Home() {
                             onChange={handleChangePage}
                         />
                     </Stack>
-                </div>
+                </Grid>
             )}
 
 
