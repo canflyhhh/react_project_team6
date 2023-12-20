@@ -256,17 +256,24 @@ export default function Home() {
                                         toolbar: false,
                                     }}
                                     formats={[
-                                        'header',
-                                        'bold', 'italic', 'underline', 'strike', 'blockquote',
+                                        'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
                                         'list', 'bullet', 'indent',
                                         'link', 'image'
                                     ]}
+                                    readOnly={true}
                                 />
-                                {item.tag.split(',').map((tagItem, index) => (
-                                    <Typography key={index}>
-                                        {tagItem.trim()} {/* 可能需要去除空格 */}
+                                {Array.isArray(item.tag) ? (
+                                    item.tag.map((tagItem, index) => (
+                                        <Typography key={index}>
+                                            {tagItem}
+                                        </Typography>
+                                    ))
+                                ) : (
+                                    <Typography>
+                                        無
                                     </Typography>
-                                ))}
+                                )}
+                                {item.tag}
                                 {item.photo && (
                                     <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
                                 )}
