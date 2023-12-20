@@ -64,8 +64,10 @@ const auth = getAuth(app);
 export default function Menu() {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>();
   const authContext = useContext(AuthContext);
+
+  //console.log("menu time");
+  
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -77,8 +79,12 @@ export default function Menu() {
           {/* 根據帳號登入登出狀態顯示不同按鈕 */}
           {authContext ? 
             <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>
-              登出</Button> 
-               : <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>註冊 / 登入</Button>
+              登出
+            </Button> 
+            : 
+            <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>
+              註冊 / 登入
+            </Button>
           }
           
           {authContext && (

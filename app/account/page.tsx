@@ -42,11 +42,12 @@ export default function Account() {
     // login - googleLogin
     const logGoogleUser = async () => {
         const response = await signInWithGooglePopup();
+        router.push('/');
         //console.log(response);
     }
 
     const handleSubmit = async function (e: React.MouseEvent<HTMLElement>) {
-        console.log("status: ", status);
+        console.log("status=", status);
         
         try {
             if (status === "註冊") {
@@ -71,8 +72,11 @@ export default function Account() {
                 // }
                 // setMessage(`註冊成功，歡迎 ${res.user?.email}`);
 
-                setMessage(`註冊成功，歡迎 ${res.user?.email}`);
-                setStatus("登入");
+                
+                setAccount({ ...account, password: "" });
+
+                setMessage(`註冊成功，請再次輸入密碼來登入系統`);
+                setStatus("註冊成功");
                 setRegisteredEmail(account.email);
 
                 // setAccount({ ...account, email: res.user?.email || "" });
@@ -128,7 +132,7 @@ export default function Account() {
         setAccount({ email: "", password: "", name: "" });
 
         // 註冊後，自動代入帳號到登入頁面
-        if (registeredEmail) {
+        if (status === '註冊成功' && registeredEmail) {
             setAccount((prevAccount) => ({ ...prevAccount, email: registeredEmail }));
         }
     }, [status, registeredEmail]);
@@ -138,9 +142,27 @@ export default function Account() {
         <div className={styles.main}> 
             <form>
                 {status === '註冊成功' &&
-                    <Card sx={{ maxWidth: "30vw" }}>
-                        <CardContent>{account.email}</CardContent>
-                    </Card>
+                    <div>
+                        <div>
+                            <TextField type="email" name="email" value={account.email}
+                            placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                        </div>
+
+                        <br></br>
+
+                        <div>
+                            <TextField type="password" name="password" value={account.password}
+                            placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                        </div>
+
+                        <br></br>
+
+                        <div>
+                            <Button variant="contained" color="primary" onClick={handleSubmit}>立即登入</Button>
+                        </div>
+
+                        <br></br>
+                    </div>
                 }
 
                 {(status === '登入') &&
@@ -166,6 +188,8 @@ export default function Account() {
                         </div>
 
                         <br></br>
+
+                        <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
                     </div>
                 }
 
