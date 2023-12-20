@@ -15,7 +15,7 @@ export default function TestEmail() {
   const authContext = useContext(AuthContext);
 
   // 回傳寄送內容
-  const [message, setMessage] = React.useState({senderEmail: authContext.email || '', email: '', subject: '', html: '' });
+  const [message, setMessage] = React.useState({senderEmail: authContext || '', email: '', subject: '', html: '' });
   const [response, setResponse] = React.useState('');
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage({ ...message, [e.target.name]: e.target.value });

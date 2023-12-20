@@ -11,8 +11,9 @@ const Logout = () => {
   useEffect(() => {
     const logout = async () => {
       try {
-        await auth.signOut();
         alert("登出成功，返回主頁面！");
+        await auth.signOut();
+        
         router.push('/');
       } catch (error) {
         if (error instanceof Error) {

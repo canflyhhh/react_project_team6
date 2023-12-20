@@ -21,7 +21,8 @@ import { AuthContext } from '../account/authContext';
 function OutSchool() {
     // 取得現在的帳號
     const authContext = useContext(AuthContext);
-    const email = authContext.email
+
+    const email = authContext
 
     // 篩選校外  
     const [posts, setPosts] = inOutPosts("大學");
@@ -80,7 +81,7 @@ function OutSchool() {
     
       setActiveMap(newActiveMap);
       console.log("heart:", newActiveMap);
-    };
+    }
     
     useEffect(() => {
       fetchLikes();

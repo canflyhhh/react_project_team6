@@ -55,7 +55,7 @@ export default function Home() {
 
   const fetchPosts = async () => {
     
-    const email = authContext.email
+    const email = authContext
     const firestore = getFirestore(app);
     const likesCollection = collection(firestore, 'likes');
     const likesQuery = query(likesCollection, where('email', '==', email));
@@ -81,7 +81,7 @@ export default function Home() {
             account: postData.account,
             datetime: postData.datetime,
             context: postData.context,
-          });
+          })
         }
         // console.log("postsData = ", postsData)
       })

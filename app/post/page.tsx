@@ -135,7 +135,7 @@ export default function PostList() {
     }
 
 
-    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext.email, context: "", datetime: new Date(), tag: [], title: "" });
+    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
     const [status, setStatus] = useState({ visible: false });
     const [file, setFile] = useState<File | null>(null);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -190,7 +190,7 @@ export default function PostList() {
     }
 
     const resetPost = () => {
-        setNewPost({ id: "", account: authContext.email, context: "", datetime: new Date(), tag: [], title: "" });
+        setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
     }
 
 
@@ -219,7 +219,7 @@ export default function PostList() {
         <div>
             <Grid container spacing={2} sx={{ padding: 4 }}>
                 {posts.map((post, index) => (
-                    post.account === authContext.email && (
+                    post.account === authContext && (
                         <Grid item xs={4} key={index}>
                             <Card variant="outlined" style={{ position: 'relative' }}>
                                 <CardContent>
@@ -280,7 +280,7 @@ export default function PostList() {
             >
                 <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
                 <DialogContent>
-                    <TextField label="帳號" variant="outlined" name="account" value={authContext.email} onChange={handleClick} fullWidth InputProps={{
+                    <TextField label="帳號" variant="outlined" name="account" value={authContext} onChange={handleClick} fullWidth InputProps={{
                         readOnly: true,
                         style: { backgroundColor: '#f2f2f2' },
                     }} /><br />
