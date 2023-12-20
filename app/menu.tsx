@@ -66,34 +66,22 @@ export default function Menu() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>();
   const authContext = useContext(AuthContext);
-  const [email, setEmail] = useState('');  
-
-  const unsub = onAuthStateChanged(auth, (user) => {
-    setUser(user);
-    //console.log(user);
-    
-    return () => {
-      unsub();
-    }
-  }
-  );
-  useEffect(unsub, [unsub]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           {/* 帳號資訊 */}
-          {authContext.email? authContext.email:""}
+          {authContext ? authContext :""}
           <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
           {/* 根據帳號登入登出狀態顯示不同按鈕 */}
-          {authContext.email? 
+          {authContext ? 
             <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>
               登出</Button> 
                : <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>註冊 / 登入</Button>
           }
           
-          {authContext.email && (
+          {authContext && (
             <>
             <Button color="inherit" variant={pathname === "/post" ? "outlined" : "text"} onClick={() => router.push("/post")}>我的文章</Button>
             <Button color="inherit" variant={pathname === "/testmail" ? "outlined" : "text"} onClick={() => router.push("/testmail")}>寄送信箱</Button>

@@ -50,7 +50,7 @@ export default function Home() {
     function stripHtmlTags(html: string) {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
-    };
+    }
 
     // card
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
@@ -92,7 +92,7 @@ export default function Home() {
 
     function handleChangePage(event: React.ChangeEvent<unknown>, value: number) {
         setPage(value);
-    };
+    }
 
     // 算頁數
     const indexOfLastPost = page * postsPerPage;

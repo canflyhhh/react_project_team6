@@ -3,36 +3,23 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createContext, use, useEffect, useState } from "react";
 import app from "@/app/_firebase/config"
 
-export const AuthContext = createContext({
-  email: '',
-  photo: '',
-  authenticated: false,
-  setAuthData: (data: any) => {},
-});
+export const AuthContext = createContext('email');
 export const AuthContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
   const auth = getAuth(app);
-  const [authData, setAuthData] = useState({ email: '', photo: '', authenticated: false });
-
-  // const [email, setEmail] = useState('');
-
+  const [email, setEmail] = useState('');
   const unsub = onAuthStateChanged(auth, (user) => {
     if (user) {
-      setAuthData({
-        email: user.email ? user.email: "",
-        photo: user.photoURL ? user.photoURL: "",
-        authenticated: true,
-      });
+      setEmail(user.email ? user.email : "");
     }
     else {
-      setAuthData({ email: "", photo: "", authenticated: false });
+      setEmail("");
     }
 
-    //console.log(user);
-    
+    console.log("user: ", user);
     return () => {
       unsub();
     }
@@ -41,7 +28,7 @@ export const AuthContextProvider = ({
   useEffect(unsub, [unsub]);
 
   return (
-    <AuthContext.Provider value={{ ...authData, setAuthData }}>
+    <AuthContext.Provider value={email}>
       {children}
     </AuthContext.Provider>
   );

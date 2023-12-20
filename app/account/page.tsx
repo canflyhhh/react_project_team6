@@ -46,6 +46,8 @@ export default function Account() {
     }
 
     const handleSubmit = async function (e: React.MouseEvent<HTMLElement>) {
+        console.log("status: ", status);
+        
         try {
             if (status === "註冊") {
                 const res = await createUserWithEmailAndPassword(auth, account.email, account.password);
@@ -80,11 +82,6 @@ export default function Account() {
             else {
                 const res = await signInWithEmailAndPassword(auth, account.email, account.password);
                 setMessage(`登入成功，歡迎 ${res.user?.email}`);
-
-                // 更新 AuthContext 中的 authenticated 狀態
-                authContext.setAuthData({
-                    authenticated: true,
-                });
 
                 router.push('/');
             }
