@@ -44,7 +44,7 @@ async function crawlWebsite2(url: string): Promise<any[]> {
 
     const products = $(".wsite-section-elements").map((index, element) => {
       const title = $(element).find(".wsite-multicol-col h2.wsite-content-title font[size='6']").text();
-      const relativeUrl = $(element).find("td a.wsite-button").attr("href");
+      const relativeUrl = $(element).find("a.wsite-button.wsite-button-small.wsite-button-highlight").attr("href");
       const absoluteUrl = relativeUrl ? new URL(relativeUrl, baseUrl).href : '';
 
       const imageUrl = $(element).find("td img").attr("src");
