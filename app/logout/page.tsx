@@ -7,13 +7,15 @@ import { useRouter } from 'next/navigation';
 const Logout = () => {
   const auth = getAuth(app);
   const router = useRouter();
+  let time = 1;
 
   useEffect(() => {
     const logout = async () => {
       try {
-        alert("登出成功，返回主頁面！");
         await auth.signOut();
-        
+        if(time == 1)
+          alert("登出成功，返回主頁面！");
+        time++;
         router.push('/');
       } catch (error) {
         if (error instanceof Error) {
