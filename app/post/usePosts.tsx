@@ -20,6 +20,7 @@ function usePosts() {
         data.push({
           id: doc.id,
           account: post.account,
+          location: post.location,
           context: post.context,
           datetime: postDateTime.toDate(), // Assuming datetime is stored as a valid date string
           tag: post.tag,
@@ -31,10 +32,10 @@ function usePosts() {
     fetchData();
   }, [db, updated]);
 
-  async function addPost(post: { account: string, context: string, datetime: Date, tag: string[], title: string }) {
+  async function addPost(post: { account: string, location: string, context: string, datetime: Date, tag: string[], title: string }) {
     const db = getFirestore(app);
     const docRef = await addDoc(collection(db, "post"),
-      { account: post.account, context: post.context, datetime: new Date(), tag: post.tag, title: post.title });
+      { account: post.account, location: post.location, context: post.context, datetime: new Date(), tag: post.tag, title: post.title });
 
     setUpdated((currentValue) => currentValue + 1)
   }
@@ -77,20 +78,21 @@ function usePosts() {
     try {
       const db = getFirestore(app);
       const postDocRef = doc(db, "post", post.id);
-  
+
       await updateDoc(postDocRef, {
         id: post.id,
+        location: post.location,
         context: post.context,
         title: post.title,
         tag: post.tag
       });
-  
+
       setUpdated((currentValue) => currentValue + 1);
     } catch (error) {
       console.error("Error updating post:", error);
     }
   }
-  
+
 
   function setUpdatePosts(post: Post) {
     setNewPost({ ...post, visible: true })
@@ -101,7 +103,7 @@ function usePosts() {
 }
 
 export default usePosts;
-function setNewPost(arg0: { visible: boolean; id: string; account: string; context: string; datetime: Date; tag: string[]; title: string; }) {
+function setNewPost(arg0: { visible: boolean; id: string; account: string; location: string; context: string; datetime: Date; tag: string[]; title: string; }) {
   throw new Error("Function not implemented.");
 }
 

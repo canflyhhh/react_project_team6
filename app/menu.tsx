@@ -95,6 +95,7 @@ export default function Menu() {
             <Button color="inherit" variant={pathname === "/out_school" ? "outlined" : "text"} onClick={() => router.push("/out_school")}>校外文章</Button>
             <Button color="inherit" variant={pathname === "/keep_post" ? "outlined" : "text"} onClick={() => router.push("/keep_post")}>我的收藏</Button>
             <Button color="inherit" variant={pathname === "/trend" ? "outlined" : "text"} onClick={() => router.push("/trend")}>輔大趨勢</Button>
+            <Button color="inherit" variant={pathname === "/draw" ? "outlined" : "text"} onClick={() => router.push("/draw")}>塗鴉</Button>
           
           </>
           )}
