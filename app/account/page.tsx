@@ -73,15 +73,13 @@ export default function Account() {
                 // setMessage(`註冊成功，歡迎 ${res.user?.email}`);
 
                 
-                setAccount({ ...account, password: "" });
+                // setAccount({ ...account, password: "" });
 
-                setMessage(`註冊成功，請再次輸入密碼來登入系統`);
+                //setMessage(`註冊成功，請再次輸入密碼來登入系統`);
                 setStatus("註冊成功");
-                setRegisteredEmail(account.email);
+                // setRegisteredEmail(account.email);
 
-                // setAccount({ ...account, email: res.user?.email || "" });
-                router.push('/account');
-                // router.push('/account?email=' + encodeURIComponent(account.email));
+                router.push('/');
             }
             else {
                 const res = await signInWithEmailAndPassword(auth, account.email, account.password);
@@ -128,20 +126,20 @@ export default function Account() {
         }
     }
 
-    useEffect(() => {
-        setAccount({ email: "", password: "", name: "" });
+    // useEffect(() => {
+    //     setAccount({ email: "", password: "", name: "" });
 
-        // 註冊後，自動代入帳號到登入頁面
-        if (status === '註冊成功' && registeredEmail) {
-            setAccount((prevAccount) => ({ ...prevAccount, email: registeredEmail }));
-        }
-    }, [status, registeredEmail]);
+    //     // 註冊後，自動代入帳號到登入頁面
+    //     if (status === '註冊成功' && registeredEmail) {
+    //         setAccount((prevAccount) => ({ ...prevAccount, email: registeredEmail }));
+    //     }
+    // }, [status, registeredEmail]);
 
 
     return (
         <div className={styles.main}> 
             <form>
-                {status === '註冊成功' &&
+                {/* {status === '註冊成功' &&
                     <div>
                         <div>
                             <TextField type="email" name="email" value={account.email}
@@ -163,7 +161,7 @@ export default function Account() {
 
                         <br></br>
                     </div>
-                }
+                } */}
 
                 {(status === '登入') &&
                     <div>
