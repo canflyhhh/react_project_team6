@@ -76,16 +76,6 @@ export default function Menu() {
           {/* 帳號資訊 */}
           {authContext ? authContext :""}
           <Button color="inherit" variant={pathname === "/" ? "outlined" : "text"} onClick={() => router.push("/")}>主頁面</Button>
-          {/* 根據帳號登入登出狀態顯示不同按鈕 */}
-          {authContext ? 
-            <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>
-              登出
-            </Button> 
-            : 
-            <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>
-              註冊 / 登入
-            </Button>
-          }
           
           {authContext && (
             <>
@@ -99,6 +89,17 @@ export default function Menu() {
           
           </>
           )}
+
+          {/* 根據帳號登入登出狀態顯示不同按鈕 */}
+          {authContext ? 
+            <Button color="inherit" variant={pathname === "/logout" ? "outlined" : "text"} onClick={() => router.push("/logout")}>
+              登出
+            </Button> 
+            : 
+            <Button color="inherit" variant={pathname === "/account" ? "outlined" : "text"} onClick={() => router.push("/account")}>
+              註冊 / 登入
+            </Button>
+          }
         </Toolbar>
       </AppBar>
       
