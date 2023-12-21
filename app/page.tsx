@@ -15,6 +15,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, Margin } from '@mui/icons-material';
 
+import './QuillEditor.css'; // import your custom styles
+
 
 export default function Home() {
     // Limit限制顯示數量
@@ -259,7 +261,7 @@ export default function Home() {
                                         'header',
                                         'bold', 'italic', 'underline', 'strike', 'blockquote',
                                         'list', 'bullet', 'indent',
-                                        'link', 'image'
+                                        'link', 'image',
                                     ]}
                                 />
                                 {item.tag.split(',').map((tagItem, index) => (
