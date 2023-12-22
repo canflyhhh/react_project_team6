@@ -12,7 +12,7 @@ export function inOutPosts(status:string) {
     async function fetchData() {
       let data: { time: Timestamp, account: string, context:string, title:string, Id:string, like:number }[] = [];
       const query1 = collection(db, "post");
-      const query2 = query(query1, where("tag","array-contains", status))
+      const query2 = query(query1, where("location","==", status))
       let querySnapshot;
       if (query2) {
         querySnapshot = await getDocs(query2);
