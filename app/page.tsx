@@ -56,7 +56,7 @@ export default function Home() {
     };
 
     // 熱門、最新文章 card（大）
-    function postCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
+    function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like:number;}) {
         return (
             <Card variant="outlined" sx={{ padding: '1em' }}>
                 <CardContent>
@@ -79,6 +79,11 @@ export default function Home() {
                         <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                         {post.time.toDate().toLocaleString()}
                     </Typography>
+                    {post.like ? (
+                        <Typography>{`收藏量: ${post.like}`}</Typography>
+                    ) : (
+                        <Typography>收藏量: 0</Typography>
+                    )}
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
                     </Button>
@@ -88,7 +93,7 @@ export default function Home() {
     }
 
     // 查看所有最新文章、所有熱門文章
-    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
+    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like:number;}) {
         return (
             <Card variant="outlined" sx={{ padding: '1em' }}>
                 <CardContent>
@@ -111,6 +116,7 @@ export default function Home() {
                         <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                         {post.time.toDate().toLocaleString()}
                     </Typography>
+                    收藏量:{post.like}
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
                     </Button>
@@ -279,13 +285,11 @@ export default function Home() {
                                         </Typography>
                                     ))
                                 }
-                                {/*
-                                    {item.tag.split(',').map((tagItem, index) => (
-                                        <Typography key={index}>
-                                            {tagItem.trim()} }
-                                        </Typography>
-                                    ))}
-                                */}
+                                {item.like ? (
+                                    <Typography>{`收藏量: ${item.like}`}</Typography>
+                                ) : (
+                                    <Typography>收藏量: 0</Typography>
+                                )}
                                 <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                             </CardContent>
                         </Card>

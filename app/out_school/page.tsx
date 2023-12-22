@@ -25,7 +25,7 @@ function OutSchool() {
     const email = authContext
 
     // 篩選校外  
-    const [posts, setPosts] = inOutPosts("大學");
+    const [posts, setPosts] = inOutPosts("校外");
 
     // 詳細內容
     const [status, setStatus] = useState("校外");
@@ -199,6 +199,11 @@ function OutSchool() {
                                     }
                                 </Typography>
                             </CardContent>
+                            {post.like ? (
+                                <Typography>{`收藏量: ${post.like}`}</Typography>
+                            ) : (
+                                <Typography>收藏量: 0</Typography>
+                            )}
                             <CardActions style={{ justifyContent: 'flex-end' }}>
                                 <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
                                 <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
@@ -253,6 +258,25 @@ function OutSchool() {
                     <div>{item.tag}</div>
                     {item.photo && (
                         <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
+                    )}
+                    {item.tag &&
+                      (Array.isArray(item.tag) ? (
+                          item.tag.map((tagItem, index) => (
+                              <React.Fragment key={index}>
+                                  {index > 0 && ', '}
+                                  {tagItem.trim()}
+                              </React.Fragment>
+                          ))
+                      ) : (
+                          <Typography>
+                              {item.tag}
+                          </Typography>
+                      ))
+                  }
+                  {item.like ? (
+                        <Typography>{`收藏量: ${item.like}`}</Typography>
+                    ) : (
+                        <Typography>收藏量: 0</Typography>
                     )}
                 </div>
                 ))}
