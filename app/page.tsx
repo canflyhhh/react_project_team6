@@ -240,6 +240,7 @@ export default function Home() {
             {status === "詳細" && Id && (
                 <div>
                     {context.map((item) => (
+                        console.log(item.tag),
                         <Card variant="outlined" sx={{ padding: '1em' }} key={Id}>
                             <CardContent>
                                 <Typography variant="h6" component="div" sx={{ marginY: 1 }}>
@@ -264,14 +265,27 @@ export default function Home() {
                                         'link', 'image',
                                     ]}
                                 />
-                                {item.tag.split(',').map((tagItem, index) => (
-                                    <Typography key={index}>
-                                        {tagItem.trim()} {/* 可能需要去除空格 */}
-                                    </Typography>
-                                ))}
-                                {item.photo && (
-                                    <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
-                                )}
+                                {item.tag &&
+                                    (Array.isArray(item.tag) ? (
+                                        item.tag.map((tagItem, index) => (
+                                            <React.Fragment key={index}>
+                                                {index > 0 && ', '}
+                                                {tagItem.trim()}
+                                            </React.Fragment>
+                                        ))
+                                    ) : (
+                                        <Typography>
+                                            {item.tag}
+                                        </Typography>
+                                    ))
+                                }
+                                {/*
+                                    {item.tag.split(',').map((tagItem, index) => (
+                                        <Typography key={index}>
+                                            {tagItem.trim()} }
+                                        </Typography>
+                                    ))}
+                                */}
                                 <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                             </CardContent>
                         </Card>

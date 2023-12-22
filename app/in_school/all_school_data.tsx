@@ -5,12 +5,12 @@ import app from "@/app/_firebase/config"
 
 export function inOutPosts(status:string) {
   const db = getFirestore(app);
-  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string }[]>([])
+  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string, like:number }[]>([])
   
 
   useEffect(() => {
     async function fetchData() {
-      let data: { time: Timestamp, account: string, context:string, title:string, Id:string }[] = [];
+      let data: { time: Timestamp, account: string, context:string, title:string, Id:string, like:number }[] = [];
       const query1 = collection(db, "post");
       const query2 = query(query1, where("tag","array-contains", status))
       let querySnapshot;
@@ -22,7 +22,7 @@ export function inOutPosts(status:string) {
       }
       
       querySnapshot.forEach((doc) => {
-        data.push({ time: doc.data().datetime, account: doc.data().account, context: doc.data().context, title: doc.data().title, Id: doc.id })
+        data.push({ time: doc.data().datetime, account: doc.data().account, context: doc.data().context, title: doc.data().title, Id: doc.id, like: doc.data().like })
       });
       setPosts(() => [...data]);
     }
@@ -33,11 +33,11 @@ export function inOutPosts(status:string) {
 
 export function usePosts(status:string, Limit:boolean) {
   const db = getFirestore(app);
-  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string }[]>([])
+  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string, like:number }[]>([])
 
   useEffect(() => {
     async function fetchData() {
-      let data: { time: Timestamp, account: string, context:string, title:string, Id:string }[] = [];
+      let data: { time: Timestamp, account: string, context:string, title:string, Id:string, like:number }[] = [];
       const query1 = collection(db, "post");
       let query2;
       let querySnapshot;
@@ -65,7 +65,7 @@ export function usePosts(status:string, Limit:boolean) {
       }
       
       querySnapshot.forEach((doc) => {
-        data.push({ time: doc.data().datetime, account: doc.data().account, context: doc.data().context, title: doc.data().title, Id: doc.id })
+        data.push({ time: doc.data().datetime, account: doc.data().account, context: doc.data().context, title: doc.data().title, Id: doc.id, like: doc.data().like })
       });
       setPosts(() => [...data]);
     }

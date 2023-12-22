@@ -7,11 +7,11 @@ import app from "@/app/_firebase/config"
 export default function useDetails(Id:string) {
   const db = getFirestore(app);
   const storage = getStorage(app);
-  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, photo:string | null, tag:string }[]>([])  
+  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, photo:string | null, tag:string[] }[]>([])  
 
   useEffect(() => {
     async function fetchData() {
-      let data: { time: Timestamp, account: string, context:string, title:string, photo:string | null, tag:string}[] = [];
+      let data: { time: Timestamp, account: string, context:string, title:string, photo:string | null, tag:string[]}[] = [];
       const query1 = collection(db, "post");
 
       const querySnapshot = await getDocs(query1);
