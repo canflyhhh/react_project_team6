@@ -25,7 +25,7 @@ function OutSchool() {
     const email = authContext
 
     // 篩選校外  
-    const [posts, setPosts] = inOutPosts("校外");
+    const [posts, setPosts, like] = inOutPosts("校外");
 
     // 詳細內容
     const [status, setStatus] = useState("校外");
@@ -87,6 +87,9 @@ function OutSchool() {
       fetchLikes();
     }, []);
     
+    const click_heart = (postId: string, status:boolean) => {
+
+    }
 
     const handleHeartClick = async (postId: string) => {
         let isCurrentlyActive = !activeMap[postId];
@@ -208,8 +211,8 @@ function OutSchool() {
                                 <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
                                 <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
                                   <Heart
-                                    isActive={activeMap[post.Id] ?? false}
-                                    onClick={() => handleHeartClick(post.Id)}
+                                    isActive={post.isHeart}
+                                    onClick={() => like(post.Id, !post.isHeart)}
                                     activeColor="red"
                                     inactiveColor="black"
                                     animationTrigger="hover"
