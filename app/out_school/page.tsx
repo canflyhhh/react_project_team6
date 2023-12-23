@@ -13,14 +13,8 @@ import 'react-quill/dist/quill.snow.css';
 
 // import heart
 import Heart from "react-heart"
-// import account
-import { AuthContext } from '../account/authContext';
 
 function OutSchool() {
-    // 取得現在的帳號
-    const authContext = useContext(AuthContext);
-
-    const email = authContext
 
     // 篩選校外  
     const [posts, setPosts, like] = inOutPosts("校外");
@@ -63,19 +57,16 @@ function OutSchool() {
       const check = isHeart
         ? window.confirm('確定收藏文章？')
         : window.confirm('確定取消收藏？');
-      console.log("check:", check)
       if (check) {
         like(postId, isHeart)
       }
     }
 
     //詳細資訊收藏
-    // 卡片收藏
     const d_likecheck = (postId: string, isHeart: boolean) => {
       const check = isHeart
         ? window.confirm('確定收藏文章？')
         : window.confirm('確定取消收藏？');
-      console.log("check:", check)
       if (check) {
         d_like(postId, isHeart)
       }
@@ -113,6 +104,7 @@ function OutSchool() {
                                     }
                                 </Typography>
                             </CardContent>
+                            {/*顯示收藏數量*/} 
                             {post.like ? (
                                 <Typography>{`收藏量: ${post.like}`}</Typography>
                             ) : (
@@ -120,6 +112,7 @@ function OutSchool() {
                             )}
                             <CardActions style={{ justifyContent: 'flex-end' }}>
                                 <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
+                                {/*點擊收藏*/} 
                                 <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
                                   <Heart
                                     isActive={post.isHeart}
@@ -168,8 +161,7 @@ function OutSchool() {
                             'link', 'image'
                         ]}
                     />
-                    {/* <div>{item.context}</div> */}
-                    <div>{item.tag}</div>
+                    {/*顯示tag(多tag & 只有個tag)*/} 
                     {item.tag &&
                       (Array.isArray(item.tag) ? (
                           item.tag.map((tagItem, index) => (
@@ -184,12 +176,14 @@ function OutSchool() {
                           </Typography>
                       ))
                   }
+                  {/*顯示收藏數量*/} 
                   {item.like ? (
                         <Typography>{`收藏量: ${item.like}`}</Typography>
                     ) : (
                         <Typography>收藏量: 0</Typography>
-                    )}
-                    
+                    )
+                  }
+                  {/*點擊收藏*/}                    
                   <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
                     <Heart
                       isActive={item.isHeart}

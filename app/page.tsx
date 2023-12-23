@@ -17,19 +17,21 @@ import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, Margin } from
 
 import './QuillEditor.css'; // import your custom styles
 
+// import heart
+import Heart from "react-heart"
 
 export default function Home() {
     // Limit限制顯示數量
     const [Limit, setLimit] = useState(true);
     //按熱度
-    const [hot, setHot] = usePosts("like", Limit);
+    const [hot, setHot, h_like] = usePosts("like", Limit);
     //按時間
-    const [time, setTime] = usePosts("datetime", Limit);
+    const [time, setTime, t_like] = usePosts("datetime", Limit);
 
     // 主畫面OR詳細
     const [status, setStatus] = useState("總攬");
     const [Id, setId] = useState("");
-    const [context, setContext] = useDetails(Id);
+    const [context, setContext, d_like] = useDetails(Id);
 
     //查看詳細資訊
     function detailContex(id: string) {
@@ -56,7 +58,7 @@ export default function Home() {
     };
 
     // 熱門、最新文章 card（大）
-    function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like:number;}) {
+    function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean;}, status: string) {
         return (
             <Card variant="outlined" sx={{ padding: '1em' }}>
                 <CardContent>
@@ -79,11 +81,23 @@ export default function Home() {
                         <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                         {post.time.toDate().toLocaleString()}
                     </Typography>
+                    {/*顯示收藏數量*/} 
                     {post.like ? (
                         <Typography>{`收藏量: ${post.like}`}</Typography>
                     ) : (
                         <Typography>收藏量: 0</Typography>
                     )}
+                    {/*點擊收藏*/} 
+                    <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
+                      <Heart
+                        isActive={post.isHeart}
+                        onClick={() => likecheck(post.Id, !post.isHeart, status)}
+                        activeColor="red"
+                        inactiveColor="black"
+                        animationTrigger="hover"
+                        animationScale={1.5}
+                      />
+                    </div>
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
                     </Button>
@@ -93,7 +107,7 @@ export default function Home() {
     }
 
     // 查看所有最新文章、所有熱門文章
-    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like:number;}) {
+    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean;}, status: string) {
         return (
             <Card variant="outlined" sx={{ padding: '1em' }}>
                 <CardContent>
@@ -116,7 +130,23 @@ export default function Home() {
                         <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                         {post.time.toDate().toLocaleString()}
                     </Typography>
-                    收藏量:{post.like}
+                    {/*顯示收藏數量*/} 
+                    {post.like ? (
+                        <Typography>{`收藏量: ${post.like}`}</Typography>
+                    ) : (
+                        <Typography>收藏量: 0</Typography>
+                    )}
+                    {/*點擊收藏*/} 
+                    <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
+                      <Heart
+                        isActive={post.isHeart}
+                        onClick={() => likecheck(post.Id, !post.isHeart, status)}
+                        activeColor="red"
+                        inactiveColor="black"
+                        animationTrigger="hover"
+                        animationScale={1.5}
+                      />
+                    </div>
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
                     </Button>
@@ -139,7 +169,30 @@ export default function Home() {
     const currentHot = hot.slice(indexOfFirstPost, indexOfLastPost);
     const currentTime = time.slice(indexOfFirstPost, indexOfLastPost);
 
+    // 卡片收藏
+    const likecheck = (postId: string, isHeart: boolean, status: string) => {
+      const check = isHeart
+        ? window.confirm('確定收藏文章？')
+        : window.confirm('確定取消收藏？');
+      if (check) {
+        if (status === "HOT") {
+            h_like(postId, isHeart)
+        }
+        if (status === "TIME") {
+            t_like(postId, isHeart)
+        }
+      }
+    }
 
+    //詳細資訊收藏
+    const d_likecheck = (postId: string, isHeart: boolean) => {
+      const check = isHeart
+        ? window.confirm('確定收藏文章？')
+        : window.confirm('確定取消收藏？');
+      if (check) {
+        d_like(postId, isHeart)
+      }
+    }
 
     return (
         <div style={{ margin: '6em' }}>
@@ -166,7 +219,7 @@ export default function Home() {
                         </Grid>
                         {/*熱門文章-前三名*/}
                         <Grid item flexDirection="column" xs={8}>
-                            {hot.map((post) => (postCard(post)))}
+                            {hot.map((post) => (postCard(post, "HOT")))}
                         </Grid>
                     </Grid>
 
@@ -194,7 +247,7 @@ export default function Home() {
                         </Grid>
                         {/*最新文章-最新的三篇文章*/}
                         <Grid item flexDirection="column" xs={8}>
-                            {time.map((post) => (postCard(post)))}
+                            {time.map((post) => (postCard(post, "TIME")))}
                         </Grid>
                     </Grid>
                 </div>
@@ -208,7 +261,7 @@ export default function Home() {
                     </Typography>
                     <Divider light />
                     <Grid container spacing={2}>
-                        {currentHot.map((post) => (smallPostCard(post)))}
+                        {currentHot.map((post) => (smallPostCard(post, "HOT")))}
                     </Grid>
                     <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                     <Stack spacing={2} mt={3}>
@@ -226,7 +279,7 @@ export default function Home() {
             {status === "本月" && (
                 <Grid sx={{ padding: '4em' }}>
                     <Grid container spacing={2} sx={{ padding: 4 }}>
-                        {currentTime.map((post) => (smallPostCard(post)))}
+                        {currentTime.map((post) => (smallPostCard(post, "TIME")))}
                     </Grid>
                     <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                     <Stack spacing={2} mt={3}>
@@ -285,11 +338,23 @@ export default function Home() {
                                         </Typography>
                                     ))
                                 }
+                                {/*顯示收藏數量*/} 
                                 {item.like ? (
                                     <Typography>{`收藏量: ${item.like}`}</Typography>
                                 ) : (
                                     <Typography>收藏量: 0</Typography>
                                 )}
+                                {/*點擊收藏*/} 
+                                <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
+                                  <Heart
+                                    isActive={item.isHeart}
+                                    onClick={() => d_likecheck(item.Id, !item.isHeart)}
+                                    activeColor="red"
+                                    inactiveColor="black"
+                                    animationTrigger="hover"
+                                    animationScale={1.5}
+                                  />
+                                </div>
                                 <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                             </CardContent>
                         </Card>
