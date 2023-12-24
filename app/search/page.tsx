@@ -88,13 +88,17 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
 
       // 選擇以標題或作者搜尋
       if (searchType == 'title') {
-        const q = query(postsCollection, where('title', '>=', searchTerm), where('title', '<=', searchTerm + '\uf8ff'));
+        // const q = query(postsCollection, where('title', '>=', searchTerm), where('title', '<=', searchTerm + '\uf8ff'));
       
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(postsCollection);
 
         const postsData: Post[] = [];
         querySnapshot.forEach((doc) => {
-          postsData.push({ id: doc.id, ...doc.data() } as Post);
+          const postData = { id: doc.id, ...doc.data() } as Post;
+          // 如果標題或內文包含 searchTerm，將其加入搜尋結果
+          if (postData.title.includes(searchTerm) || postData.context.includes(searchTerm)) {
+            postsData.push(postData);
+          }
         });
         setSearchPosts(postsData);
       } else {

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext} from 'react';
 import { getFirestore, collection, getDocs, query, where, getDoc, doc, deleteDoc, updateDoc} from 'firebase/firestore';
 import { 
-    Grid, Card, CardContent, Typography, CardActions, Button
+    Grid, Card, CardContent, Typography, CardActions, Button, Breadcrumbs, Divider
 } from "@mui/material";
 import app from "@/app/_firebase/config"
 
@@ -23,22 +23,33 @@ import useDetails from '../detail_data';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image'
+import { ArrowBack, Person } from '@mui/icons-material';
 
 
 
 export default function Home() {
 
   // 詳細內容
-  const [status, setStatus] = useState("校內");
+  const [status, setStatus] = useState("收藏");
   const [Id, setId] = useState("");
-  const [context, setContext] = useDetails(Id);
+  const [context, setContext, d_like] = useDetails(Id);
   const detailContex = (id: string) => {
       console.log("ID:", id)
       setStatus("詳細");
       setId(id);
   }
+
+  //詳細資訊收藏
+  const d_likecheck = (postId: string, isHeart: boolean) => {
+    const check = isHeart
+        ? window.confirm('確定收藏文章？')
+        : window.confirm('確定取消收藏？');
+    if (check) {
+        d_like(postId, isHeart)
+    }
+}
   const goBack = () => {
-    setStatus("校內");
+    setStatus("收藏");
   }
 
     // 將html多元素轉化為純文字
@@ -139,11 +150,9 @@ export default function Home() {
       }
     }
   };
-  
-
   return (
     <div>
-      {status === "校內" && (
+      {status === "收藏" && (
         <Grid container spacing={2} sx={{ padding: 4 }}>
         {posts.map((post, index) => (
             <Grid item xs={4} key={index}>
@@ -193,32 +202,75 @@ export default function Home() {
 
       {status === "詳細" && Id && (
         <div>
-            {context.map((item) => (
-                <div key={Id}>
-                    <div>{item.title}</div>
-                    <div>{item.account}</div>
-                    <div>{item.time.toDate().toLocaleString()}</div>
-                    <ReactQuill
-                        theme="snow"
-                        value={item.context}
-                        modules={{
-                            toolbar: false,
-                        }}
-                        formats={[
-                            'header',
-                            'bold', 'italic', 'underline', 'strike', 'blockquote',
-                            'list', 'bullet', 'indent',
-                            'link', 'image'
-                        ]}
-                    />
-                    {/* <div>{item.context}</div> */}
-                    <div>{item.tag}</div>
-                    {item.photo && (
-                        <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
-                    )}
-                </div>
-            ))}
-            <Button variant="outlined" onClick={goBack}>返回校外總攬</Button>
+          {context.map((item) => (
+              <Card variant="outlined" sx={{ padding: '1em' }} key={Id} >
+                  <CardContent>
+                      <Typography variant="h6" color="text.secondary" marginTop={'1em'} marginBottom={'0.5em'} display={'flex'} alignItems={'center'} >
+                          <Person sx={{ fontSize: '1.5rem', marginRight: '0.2em', color: 'Orange' }} />
+                          {item.account}
+                      </Typography>
+                      <Typography variant="h4" component="div" sx={{ marginBottom: '0.5em' }} fontWeight={'bold'} >
+                          {item.title}
+                      </Typography>
+                      <Breadcrumbs aria-label="breadcrumb" sx={{ marginY: '1em' }}>
+                          {item.tag &&
+                              (Array.isArray(item.tag) ? (
+                                  item.tag.map((tagItem, index) => (
+                                          <React.Fragment key={index}>
+                                              <Typography sx={{ display: 'flex', alignItems: 'center', color: "orange" }}>
+                                                  {tagItem.trim()}
+                                              </Typography>
+                                          </React.Fragment>
+                                  ))
+                              ) : (
+                                  <Typography>
+                                      {item.tag}
+                                  </Typography>
+                              ))
+                          }
+                      </Breadcrumbs>
+                      <Divider />
+                      <Typography variant="body2" sx={{ marginY: '1em' }}>
+                          {item.time.toDate().toLocaleString()}
+                      </Typography>
+                      <ReactQuill
+                          theme="snow"
+                          value={item.context}
+                          modules={{
+                              toolbar: false,
+                          }}
+                          formats={[
+                              'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
+                              'list', 'bullet', 'indent',
+                              'link', 'image',
+                          ]}
+                          readOnly={true}
+                      />
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: 'space-between' }}>
+                      <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
+                          返回我的收藏
+                      </Button>
+                      <Typography sx={{ width: "6em", margin: '1em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {/*點擊收藏*/}
+                          <span style={{ width: "1.5rem" }}>
+                              <Heart
+                                  isActive={item.isHeart}
+                                  onClick={() => d_likecheck(item.Id, !item.isHeart)}
+                                  activeColor="red"
+                                  inactiveColor="black"
+                                  animationTrigger="hover"
+                                  animationScale={1.2}
+                              />
+                          </span>
+                          {/* Display the like count */}
+                          <span style={{ marginLeft: '0.5em' }}>
+                              {item.like ? item.like : 0}
+                          </span>
+                      </Typography>
+                  </CardActions>
+              </Card>
+          ))}
         </div>
       )}
     </div>
