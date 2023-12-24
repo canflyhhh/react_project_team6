@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, TextField, Grid, Typography } from '@mui/material';
+import { Button, TextField, Grid, Typography, InputLabel, Divider } from '@mui/material';
 import styles from '../page.module.css';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import app from "@/app/_firebase/config";
@@ -19,15 +19,16 @@ export default function Account() {
     const db = getFirestore(app);
     const router = useRouter();
     const authContext = useContext(AuthContext);
-    const [account, setAccount] = useState({ email: "", password: "", name: ""
- });
+    const [account, setAccount] = useState({
+        email: "", password: "", name: ""
+    });
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState("登入");
 
     const [emailMessage, setEmailMessage] = useState({ email: '', subject: 'ReactGOGO帳號註冊成功', html: '恭喜您註冊成功' });
     const [response, setResponse] = useState('');
     const [registeredEmail, setRegisteredEmail] = useState("");
-    
+
     const handleChange = function (e: React.ChangeEvent<HTMLInputElement>) {
         setAccount({ ...account, [e.target.name]: e.target.value })
     }
@@ -50,12 +51,12 @@ export default function Account() {
 
     const handleSubmit = async function (e: React.MouseEvent<HTMLElement>) {
         console.log("status=", status);
-        
+
         try {
             if (status === "註冊") {
                 const res = await createUserWithEmailAndPassword(auth, account.email, account.password);
                 const userDoc = await setDoc(doc(db, "users", res.user.uid), { email: account.email, name: account.name });
-                    
+
                 // send email after register (不要刪)
                 // try {
                 //     emailMessage.email = account.email
@@ -74,7 +75,7 @@ export default function Account() {
                 // }
                 // setMessage(`註冊成功，歡迎 ${res.user?.email}`);
 
-                
+
                 // setAccount({ ...account, password: "" });
 
                 //setMessage(`註冊成功，請再次輸入密碼來登入系統`);
@@ -90,30 +91,30 @@ export default function Account() {
                 router.push('/');
             }
         }
-        catch(e) {
+        catch (e) {
             if (e instanceof FirebaseError) {
                 let message = "";
                 switch (e.code) {
                     case "auth/email-already-in-use":
                         message = "電子信箱已註冊";
                         break;
-                  case "auth/weak-password":
+                    case "auth/weak-password":
                         message = "密碼強度不足";
                         break;
-                  case "auth/invalid-email":
+                    case "auth/invalid-email":
                         message = "電子郵件格式錯誤";
                         break;
-                  case "auth/user-not-found":
+                    case "auth/user-not-found":
                         message = "電子郵件信箱不存在";
                         break;
-                  case "auth/wrong-password":
+                    case "auth/wrong-password":
                         message = "密碼錯誤";
                         break;
-                  case "auth/too-many-requests":
+                    case "auth/too-many-requests":
                         message = "登入失敗次數過多，請稍後再試";
                         break;
-                  default:
-                    message = "系統錯誤:" + e.code;
+                    default:
+                        message = "系統錯誤:" + e.code;
                 }
                 setMessage(message);
             }
@@ -139,100 +140,109 @@ export default function Account() {
 
 
     return (
-        // <div className={styles.login}>
-        <div style={{ padding: '6em' }}>   
-            <Typography variant="h2" component="div" sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
-                <ConnectWithoutContactIcon sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred', marginBottom: '0.2em' }} />
-                <p style={{ fontSize: '20px' }}>登入之後就可以在react gogogo跟大家進行互動囉</p>
-            </Typography>
-
-            <Grid container>
-                <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                <img src="../../fju.jpg" alt="歡迎" style={{ width: '100%', height: 'auto' }} />
+        <div style={{ padding: '6em' }}>
+            <Grid container sx={{ display: 'flex', alignItems: 'center', justifyContext: 'middle', height: '600px' }}>
+                <Grid item xs={5} >
+                    <Typography variant="h4" component="div"
+                        sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                        <ConnectWithoutContactIcon sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred', marginBottom: '1em' }} />
+                        註冊/登入 React GOGO！<br />和大家進行互動！
+                    </Typography>
+                    <img src="../../fju.jpg" alt="歡迎" style={{ width: '100%', height: 'auto' }} />
                 </Grid>
-                <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                    <form>
+                <Grid item sx={{ paddingX: '2em', alignSelf: 'flex-end' }} xs={7}>
+                    <form style={{ padding: '2em' }}>
                         {(status === '登入') &&
                             <div>
+                                <Typography variant="h5" component="div"
+                                    sx={{ marginY: '2em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                                    登入帳號
+                                </Typography>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', alignItems: 'center' }}>
+                                    <InputLabel htmlFor="tagInput">電子郵件信箱：</InputLabel>
+                                    <TextField
+                                        type="email"
+                                        name="email"
+                                        value={account.email}
+                                        placeholder="電子郵件信箱"
+                                        onChange={handleChange}
+                                        autoComplete='username'
+                                        style={{ width: '500px' }}
+                                    />
+                                    <InputLabel htmlFor="tagInput">密碼：</InputLabel>
+                                    <TextField
+                                        type="password"
+                                        name="password"
+                                        value={account.password}
+                                        placeholder="密碼"
+                                        onChange={handleChange}
+                                        autoComplete='current-password'
+                                        style={{ width: '500px' }}
+                                    />
+                                </div>
                                 <div>
-                                    <TextField type="email" name="email" value={account.email}
-                                    placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                                    <Button
+                                        variant="contained" onClick={handleSubmit}
+                                        sx={{ width: '100%', marginBottom: '0.5em', marginTop: '2em' }}
+                                        style={{ width: '100%' }} size='large'>
+                                        {status}
+                                    </Button>
+                                    <Divider sx={{ marginY: '0.5em' }} />
+                                    <Button
+                                        variant="contained" onClick={logGoogleUser}
+                                        sx={{ width: '100%', marginBottom: '0.5em' }}
+                                        size='large'>
+                                        使用 Google 帳號登入
+                                    </Button>
+                                    <Button
+                                        variant="outlined" onClick={changeStatus}
+                                        sx={{ width: '100%', marginBottom: '0.5em' }}
+                                        size='large'>
+                                        還沒有帳號，我要註冊
+                                    </Button>
                                 </div>
 
-                                <br></br>
-
-                                <div>
-                                    <TextField type="password" name="password" value={account.password}
-                                    placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
-                                </div>
-
-                                <br></br>
-
-                                <div>
-                                    <Grid container>
-                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                                        </Grid>
-                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                                            <Button variant="contained" color="secondary" onClick={changeStatus}>註冊</Button>
-                                        </Grid>
-                                    </Grid>
-                                </div>
                             </div>
+
+
                         }
 
                         {(status === '註冊') &&
                             <div>
-                                <div>
-                                    {status === '註冊' && <TextField type="text" name="name" value={account.name}
-                                        placeholder="暱稱" label="暱稱：" onChange={handleChange} />
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', alignItems: 'center' }}>
+                                    <InputLabel htmlFor="tagInput">我的暱稱：</InputLabel>
+                                    {status === '註冊' &&
+                                        <TextField
+                                            type="text" name="name" value={account.name}
+                                            placeholder="暱稱" onChange={handleChange}
+                                            sx={{ width: '500px', marginBottom: '0.5em' }} />
                                     }
-                                </div>
+                                    <InputLabel htmlFor="tagInput">註冊電子郵件：</InputLabel>
 
-                                <br></br>
-
-                                <div>
                                     <TextField type="email" name="email" value={account.email}
-                                    placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
-                                </div>
-
-                                <br></br>
-
-                                <div>
+                                        placeholder="電子郵件信箱" onChange={handleChange} autoComplete='username'
+                                        sx={{ width: '500px', marginBottom: '0.5em' }} />
+                                    <InputLabel htmlFor="tagInput">設定密碼：</InputLabel>
                                     <TextField type="password" name="password" value={account.password}
-                                    placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                                        placeholder="密碼" onChange={handleChange} autoComplete='current-password'
+                                        sx={{ width: '500px', marginBottom: '0.5em' }} />
                                 </div>
 
                                 <br></br>
 
                                 <div>
-                                    <Grid container>
-                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                                        </Grid>
-                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                                            <Button variant="contained" color="secondary" onClick={changeStatus}>登入</Button>
-                                        </Grid>
-                                    </Grid>
+                                    <Button variant="contained" onClick={handleSubmit} sx={{ width: '100%', marginBottom: '0.5em', marginTop: '2em' }} size='large'>
+                                        {status}
+                                    </Button>
+                                    <Divider sx={{ marginY: '0.5em' }} />
+                                    <Button variant="outlined" onClick={changeStatus} sx={{ width: '100%', marginY: '0.5em' }} size='large'>
+                                        已經註冊，我要登入
+                                    </Button>
                                 </div>
                             </div>
                         }
-
-                        <br></br>
-
-                        <hr></hr>
-
-                        <br></br>
-
-                        <Grid container>
-                            <Grid xs={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
-                                <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
-                            </Grid>
-                        </Grid>
-
-
                         <div>{message}</div>
-        
+
                     </form>
                 </Grid>
             </Grid>
