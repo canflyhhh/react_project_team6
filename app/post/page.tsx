@@ -2,9 +2,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
     Box, TextField, Dialog, Button, Grid, Card, CardContent, CardActions, Typography, Fab,
-    DialogActions, DialogContent, DialogTitle, IconButton, Select, MenuItem, Divider, InputLabel
+    DialogActions, DialogContent, DialogTitle, IconButton, Select, MenuItem, Divider, InputLabel, Breadcrumbs
 } from "@mui/material";
-import { Close, Add, Edit, Delete, AdsClick, Save, Margin, BorderColor } from "@mui/icons-material";
+import { Close, Add, Edit, Delete, AdsClick, Save, Margin, BorderColor, Person, ArrowBack } from "@mui/icons-material";
 import usePosts from "./usePosts";
 import { Post } from "../_settings/interfaces";
 import { AuthContext } from '../account/authContext';
@@ -208,185 +208,267 @@ export default function PostList() {
         return doc.body.textContent || "";
     };
 
+    // 詳細內容
+    const [p_status, p_setStatus] = useState("我的文章");
+    const [Id, setId] = useState("");
+    const [context, setContext, d_like] = useDetails(Id);
 
+    const detailContex = (id: string) => {
+        p_setStatus("詳細");
+        setId(id);
+    }
+
+    const goBack = () => {
+        p_setStatus("我的文章");
+    }
 
     return (
         <div style={{ padding: '6em' }}>
-            <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
-                <PlaylistAddCheckCircle sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
-                我的文章
-            </Typography>
-            <Grid container>
-                {posts.map((post, index) => (
-                    post.account === authContext && (
-                        <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
-                            <CardContent>
-                                <Box display="flex" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
-                                        {post.title}
-                                    </Typography>
-                                    <Box display="flex" alignItems="center">
-                                        <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
-                                            <Edit />
-                                        </IconButton>
-                                        <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
-                                            <Delete />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
-                                    <Typography sx={{ color: 'text.secondary' }}>
-                                        {post.account}
-                                    </Typography>
-                                    <Typography sx={{ color: 'text.secondary' }}>
-                                        <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
-                                        {post.datetime.toLocaleString()}
-                                    </Typography>
-                                </div>
-                                <Typography variant="body2">
-                                    {post.context.length > 150
-                                        ? `${stripHtmlTags(post.context).substring(0, 50)}……`
-                                        : stripHtmlTags(post.context)
-                                    }
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    )
-                )
-                )}
+            {p_status === "我的文章" && (
+                <div>
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+                        <PlaylistAddCheckCircle sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+                        我的文章
+                    </Typography>
+                    <Grid container>
+                        {posts.map((post, index) => (
+                            post.account === authContext && (
+                                <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
+                                    <CardContent>
+                                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                                            <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                                                {post.title}
+                                            </Typography>
+                                            <Box display="flex" alignItems="center">
+                                                <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
+                                                    <Edit />
+                                                </IconButton>
+                                                <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
+                                                    <Delete />
+                                                </IconButton>
+                                            </Box>
+                                        </Box>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                                            <Typography sx={{ color: 'text.secondary' }}>
+                                                {post.account}
+                                            </Typography>
+                                            <Typography sx={{ color: 'text.secondary' }}>
+                                                <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                                                {post.datetime.toLocaleString()}
+                                            </Typography>
+                                        </div>
+                                        <Typography variant="body2">
+                                            {post.context.length > 150
+                                                ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                                : stripHtmlTags(post.context)
+                                            }
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions sx={{ justifyContent: 'space-between' }}>
+                                        <Button variant="outlined" onClick={() => detailContex(post.id)} startIcon={<AdsClick />} size="large">
+                                            查看內容
+                                        </Button>
+                                    </CardActions>
+                                </Card>
+                            )
+                        )
+                        )}
 
-            </Grid>
-            <Fab
-                color="primary"
-                aria-label="add"
-                style={{ position: 'fixed', bottom: 16, right: 16 }}
-                onClick={show} // Assuming you want to show a dialog or something on click
-            >
-                <Add />
-            </Fab>
+                    </Grid>
+                    <Fab
+                        color="primary"
+                        aria-label="add"
+                        style={{ position: 'fixed', bottom: 16, right: 16 }}
+                        onClick={show} // Assuming you want to show a dialog or something on click
+                    >
+                        <Add />
+                    </Fab>
 
-            <Dialog
-                open={status.visible}
-                onClose={hide}
-                aria-labelledby={newPost.id === "" ? "新增文章" : "更新文章"}
-                PaperProps={{
-                    style: {
-                        maxWidth: '100%',
-                        maxHeight: '90%',
-                        width: '100%',
-                        height: '100%',
-                    },
-                }}
-            >
-                <DialogTitle sx={{ fontWeight: 'bold', marginY: '1em' }} variant={'h4'}>
-                    <Edit sx={{ marginRight: '0.5em' }} />{newPost.id === "" ? "新增文章" : "修改我的文章"}
-                </DialogTitle>
-                <DialogContent>
-                    <div style={{ marginBottom: '1em' }}>
-                        <InputLabel htmlFor="title">標題</InputLabel>
-                        <TextField
-                            variant="outlined"
-                            name="title"
-                            value={newPost.title}
-                            onChange={handleClick}
-                            fullWidth
-                        />
-                    </div>
-
-                    <div style={{ marginBottom: '1em' }}>
-                        <InputLabel htmlFor="select">文章種類</InputLabel>
-                        <Select
-                            label="選擇"
-                            variant="outlined"
-                            value={newPost.location}
-                            onChange={(e) => setNewPost({ ...newPost, location: e.target.value })}
-                            fullWidth
-                        >
-                            <MenuItem value="校內">校內</MenuItem>
-                            <MenuItem value="校外">校外</MenuItem>
-                        </Select>
-                    </div>
-
-                    <div style={{ marginBottom: '1em' }}>
-                        <InputLabel htmlFor="tagInput">文章標籤</InputLabel>
-                        <TagInput
-                            onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
-                            initialTags={newPost.tag}
-                            onRemove={() => { }}
-                        />
-                    </div>
-
-                    {/* 文章內容 */}
-                    <div style={{ marginBottom: '1em' }}>
-                        <ReactQuill
-                            theme="snow"
-                            value={newPost.context}
-                            onChange={(content) => setNewPost({ ...newPost, context: content })}
-                            modules={{
-                                toolbar: [
-                                    [{ 'header': [1, 2, false] }],
-                                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-                                    ['link', 'image'],
-                                    ['clean']
-                                ],
-                            }}
-                            formats={[
-                                'header',
-                                'bold', 'italic', 'underline', 'strike', 'blockquote',
-                                'list', 'bullet', 'indent',
-                                'link', 'image'
-                            ]}
-                        />
-                    </div>
-                    {file &&
-                        <div
-                            style={{
+                    <Dialog
+                        open={status.visible}
+                        onClose={hide}
+                        aria-labelledby={newPost.id === "" ? "新增文章" : "更新文章"}
+                        PaperProps={{
+                            style: {
+                                maxWidth: '100%',
+                                maxHeight: '90%',
                                 width: '100%',
-                                border: '1px solid orange',
-                                backgroundColor: 'white',
-                                padding: '8px', // Adding padding for better visibility
-                                boxSizing: 'border-box', // Include padding in width calculation
-                                cursor: 'pointer',
-                                borderRadius: '5px', // Adding border radius,
-                                marginBottom: '1em'
-                            }}>
-                            <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />
-                        </div>
-                    }
-                    <input type="file" onChange={handleChange} width={'100%'}
-                        style={{
-                            width: '100%',
-                            border: '1px solid orange',
-                            backgroundColor: 'white',
-                            padding: '8px', // Adding padding for better visibility
-                            boxSizing: 'border-box', // Include padding in width calculation
-                            cursor: 'pointer',
-                            borderRadius: '5px', // Adding border radius
-                        }}
-                    />
-
-
-                </DialogContent>
-                <DialogActions sx={{ paddingX: '1.5em', paddingY: '1em' }}>
-                    <IconButton
-                        aria-label="close"
-                        onClick={hide}
-                        sx={{
-                            position: 'absolute',
-                            right: 8,
-                            top: 8
+                                height: '100%',
+                            },
                         }}
                     >
-                        <Close />
-                    </IconButton>
-                    <Button variant="contained" color="primary" onClick={addOrUpdate} size="large" startIcon={<Save />}>
-                        {newPost.id === "" ? "確認新增" : "儲存更新"}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        <DialogTitle sx={{ fontWeight: 'bold', marginY: '1em' }} variant={'h4'}>
+                            <Edit sx={{ marginRight: '0.5em' }} />{newPost.id === "" ? "新增文章" : "修改我的文章"}
+                        </DialogTitle>
+                        <DialogContent>
+                            <div style={{ marginBottom: '1em' }}>
+                                <InputLabel htmlFor="title">標題</InputLabel>
+                                <TextField
+                                    variant="outlined"
+                                    name="title"
+                                    value={newPost.title}
+                                    onChange={handleClick}
+                                    fullWidth
+                                />
+                            </div>
+
+                            <div style={{ marginBottom: '1em' }}>
+                                <InputLabel htmlFor="select">文章種類</InputLabel>
+                                <Select
+                                    label="選擇"
+                                    variant="outlined"
+                                    value={newPost.location}
+                                    onChange={(e) => setNewPost({ ...newPost, location: e.target.value })}
+                                    fullWidth
+                                >
+                                    <MenuItem value="校內">校內</MenuItem>
+                                    <MenuItem value="校外">校外</MenuItem>
+                                </Select>
+                            </div>
+
+                            <div style={{ marginBottom: '1em' }}>
+                                <InputLabel htmlFor="tagInput">文章標籤</InputLabel>
+                                <TagInput
+                                    onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
+                                    initialTags={newPost.tag}
+                                    onRemove={() => { }}
+                                />
+                            </div>
+
+                            {/* 文章內容 */}
+                            <div style={{ marginBottom: '1em' }}>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={newPost.context}
+                                    onChange={(content) => setNewPost({ ...newPost, context: content })}
+                                    modules={{
+                                        toolbar: [
+                                            [{ 'header': [1, 2, false] }],
+                                            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                                            ['link', 'image'],
+                                            ['clean']
+                                        ],
+                                    }}
+                                    formats={[
+                                        'header',
+                                        'bold', 'italic', 'underline', 'strike', 'blockquote',
+                                        'list', 'bullet', 'indent',
+                                        'link', 'image'
+                                    ]}
+                                />
+                            </div>
+                            {file &&
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        border: '1px solid orange',
+                                        backgroundColor: 'white',
+                                        padding: '8px', // Adding padding for better visibility
+                                        boxSizing: 'border-box', // Include padding in width calculation
+                                        cursor: 'pointer',
+                                        borderRadius: '5px', // Adding border radius,
+                                        marginBottom: '1em'
+                                    }}>
+                                    <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />
+                                </div>
+                            }
+                            <input type="file" onChange={handleChange} width={'100%'}
+                                style={{
+                                    width: '100%',
+                                    border: '1px solid orange',
+                                    backgroundColor: 'white',
+                                    padding: '8px', // Adding padding for better visibility
+                                    boxSizing: 'border-box', // Include padding in width calculation
+                                    cursor: 'pointer',
+                                    borderRadius: '5px', // Adding border radius
+                                }}
+                            />
 
 
+                        </DialogContent>
+                        <DialogActions sx={{ paddingX: '1.5em', paddingY: '1em' }}>
+                            <IconButton
+                                aria-label="close"
+                                onClick={hide}
+                                sx={{
+                                    position: 'absolute',
+                                    right: 8,
+                                    top: 8
+                                }}
+                            >
+                                <Close />
+                            </IconButton>
+                            <Button variant="contained" color="primary" onClick={addOrUpdate} size="large" startIcon={<Save />}>
+                                {newPost.id === "" ? "確認新增" : "儲存更新"}
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+            )}
+            {p_status === "詳細" && Id && (
+                <div>
+                    {context.map((item) => (
+                        <Card variant="outlined" sx={{ padding: '1em' }} key={Id} >
+                            <CardContent>
+                                <Typography variant="h6" color="text.secondary" marginTop={'1em'} marginBottom={'0.5em'} display={'flex'} alignItems={'center'} >
+                                    <Person sx={{ fontSize: '1.5rem', marginRight: '0.2em', color: 'Orange' }} />
+                                    {item.account}
+                                </Typography>
+                                <Typography variant="h4" component="div" sx={{ marginBottom: '0.5em' }} fontWeight={'bold'} >
+                                    {item.title}
+                                </Typography>
+                                <Breadcrumbs aria-label="breadcrumb" sx={{ marginY: '1em' }}>
+                                    {item.tag &&
+                                        (Array.isArray(item.tag) ? (
+                                            item.tag.map((tagItem, index) => (
+                                                <React.Fragment key={index}>
+                                                    <Typography sx={{ display: 'flex', alignItems: 'center', color: "orange" }}>
+                                                        {tagItem.trim()}
+                                                    </Typography>
+                                                </React.Fragment>
+                                            ))
+                                        ) : (
+                                            <Typography>
+                                                {item.tag}
+                                            </Typography>
+                                        ))
+                                    }
+                                </Breadcrumbs>
+                                <Divider />
+                                <Typography variant="body2" sx={{ marginY: '1em' }}>
+                                    {item.time.toDate().toLocaleString()}
+                                </Typography>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={item.context}
+                                    modules={{
+                                        toolbar: false,
+                                    }}
+                                    formats={[
+                                        'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
+                                        'list', 'bullet', 'indent',
+                                        'link', 'image',
+                                    ]}
+                                    readOnly={true}
+                                />
+                            </CardContent>
+                            <CardActions sx={{ justifyContent: 'space-between' }}>
+                                <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
+                                    返回我的文章
+                                </Button>
+                                <Typography sx={{ width: "6em", margin: '1em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {/* Display the like count */}
+                                    <span style={{ marginLeft: '0.5em' }}>
+                                        {item.like ? item.like : 0}
+                                    </span>
+                                </Typography>
+                            </CardActions>
+                        </Card>
+                    ))}
+
+                </div>
+            )}
         </div>
     );
 }

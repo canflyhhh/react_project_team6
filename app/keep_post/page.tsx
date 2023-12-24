@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext} from 'react';
 import { getFirestore, collection, getDocs, query, where, getDoc, doc, deleteDoc, updateDoc} from 'firebase/firestore';
 import { 
-    Grid, Card, CardContent, Typography, CardActions, Button, Breadcrumbs, Divider
+    Grid, Card, CardContent, Typography, CardActions, Button, Breadcrumbs, Divider, Pagination
 } from "@mui/material";
 import app from "@/app/_firebase/config"
 
@@ -105,6 +105,19 @@ export default function Home() {
     fetchPosts();
   }, []);
 
+  
+  // 換頁
+  const [page, setPage] = useState(1);
+  const postsPerPage = 9;
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+  };
+  // 算頁數
+  const indexOfLastPost = page * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  
+
   const handleHeartClick = async (postId: string) => {
     const isCurrentlyActive = !activeMap[postId];
   
@@ -154,7 +167,7 @@ export default function Home() {
     <div>
       {status === "收藏" && (
         <Grid container spacing={2} sx={{ padding: 4 }}>
-        {posts.map((post, index) => (
+        {currentPosts.map((post, index) => (
             <Grid item xs={4} key={index}>
                 <Card variant="outlined">
                     <CardContent>
@@ -196,7 +209,16 @@ export default function Home() {
                     </CardActions>
                 </Card>
             </Grid>
-        ))}          
+        ))} 
+        <Grid item spacing={2}>
+            <Pagination
+                count={Math.ceil(posts.length / postsPerPage)}
+                page={page}
+                variant="outlined"
+                color="primary"
+                onChange={handleChangePage}
+            />
+        </Grid>         
       </Grid>
       )}
 
