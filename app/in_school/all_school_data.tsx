@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import app from "@/app/_firebase/config"
 import { AuthContext } from '../account/authContext';
 
-export function inOutPosts(status:string) {
+export function inOutPosts(status: string) {
   const db = getFirestore(app);
   const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string, like:number, isHeart:boolean }[]>([])
   const email = useContext(AuthContext);
@@ -96,7 +96,7 @@ export function inOutPosts(status:string) {
   return [posts, setPosts, like] as const;
 }
 
-export function useHOT(Limit:boolean) {
+export function useHOT(Limit: boolean) {
   const db = getFirestore(app);
   const [posts, setPosts] = 
   useState<{ 
@@ -204,7 +204,7 @@ export function useHOT(Limit:boolean) {
   return [posts, setPosts, h_like] as const;
 }
 
-export function useTIME(Limit:boolean) {
+export function useTIME(Limit: boolean) {
   const db = getFirestore(app);
   const [posts, setPosts] = 
   useState<{ 
@@ -313,4 +313,96 @@ export function useTIME(Limit:boolean) {
   }
 
   return [posts, setPosts, t_like] as const;
+}
+
+export function useTAG(TAG: string) {
+  const db = getFirestore(app);
+  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, Id:string, like:number, isHeart:boolean }[]>([])
+  const email = useContext(AuthContext);
+  const [updated, setUpdated] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      // 愛心
+      const statusCollection = collection(db, 'likes');
+      const statusQuery = query(statusCollection, where('email', '==', email));
+      const statusSnapshot = await getDocs(statusQuery);
+      const likedPostIds = statusSnapshot.docs.map((statusDoc) => statusDoc.data().postId);
+
+      //資訊
+      let data: { time: Timestamp, account: string, context:string, title:string, Id:string, like:number, isHeart:boolean }[] = [];
+      const query1 = collection(db, "post");
+      const query2 = query(query1, where("tag","array-contains", TAG))
+      let querySnapshot;
+      if (query2) {
+        querySnapshot = await getDocs(query2);
+      }
+      else {
+        querySnapshot = await getDocs(query1);
+      }
+      
+      querySnapshot.forEach((doc) => {
+        //對比愛心
+        const isHeart = likedPostIds.includes(doc.id);
+        data.push({ 
+          time: doc.data().datetime,
+          account: doc.data().account,
+          context: doc.data().context,
+          title: doc.data().title,
+          Id: doc.id,
+          like: doc.data().like,
+          isHeart: isHeart || false
+        })
+      });
+      setPosts(() => [...data]);
+    }
+    fetchData();
+  }, [db, TAG, updated]);
+
+  async function tag_like(Id: string, status: boolean) {
+    const db = getFirestore(app);    
+    const postsCollection = collection(db, 'post');
+    const postRef = doc(postsCollection, Id);
+    const postDoc = await getDoc(postRef);
+
+    const likesCollection = collection(db, 'likes');
+    const likeQuery = query(likesCollection, where('postId', '==', Id));
+    const likeSnapshot = await getDocs(likeQuery);
+
+    if (postDoc.exists()) {
+      const postData = postDoc.data();
+      const currentLikes = postData?.like || 0;
+      if (status) {
+        try {
+          // 新增收藏文章
+          await addDoc(collection(db, 'likes'), { email: email, postId: Id });
+          
+          //文章收藏數+1
+          await updateDoc(postRef, { like: currentLikes + 1 });
+        } catch (error) {
+          console.error('Error adding post to likes:', error);
+        } 
+      }
+      else {
+        try {
+          // 刪除收藏
+          likeSnapshot.forEach(async (likeDoc) => {
+            await deleteDoc(doc(likesCollection, likeDoc.id));
+          });
+
+          //文章收藏數-1
+          if (currentLikes > 0) {
+            await updateDoc(postRef, { like: currentLikes - 1 });
+          }
+        } catch (error) {
+          console.error('Error removing post from likes:', error);
+        }
+        
+      }
+    }
+    setUpdated((currentValue) => currentValue + 1)
+  }
+
+
+  return [posts, setPosts, tag_like] as const;
 }

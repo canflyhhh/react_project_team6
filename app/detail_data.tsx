@@ -8,7 +8,7 @@ import { AuthContext } from './account/authContext';
 export default function useDetails(Id:string) {
   const db = getFirestore(app);
   const storage = getStorage(app);
-  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, tag:string[], like:number, isHeart:boolean, Id:string }[]>([])  
+  const [posts, setPosts] = useState<{ time: Timestamp, account: string, context:string, title:string, tag:string[] | string, like:number, isHeart:boolean, Id:string }[]>([])  
   const email = useContext(AuthContext);
   const [updated, setUpdated] = useState(0);
 
@@ -21,7 +21,7 @@ export default function useDetails(Id:string) {
       const likedPostIds = statusSnapshot.docs.map((statusDoc) => statusDoc.data().postId);
       
       //資訊
-      let data: { time: Timestamp, account: string, context:string, title:string, tag:string[], like:number, isHeart:boolean, Id:string }[] = [];
+      let data: { time: Timestamp, account: string, context:string, title:string, tag:string[] | string, like:number, isHeart:boolean, Id:string }[] = [];
       const query1 = collection(db, "post");
 
       const querySnapshot = await getDocs(query1);
