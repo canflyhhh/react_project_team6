@@ -81,7 +81,6 @@ function InSchool() {
     const clickTAG = (tag: string) => {
         setStatus("TAG");
         setTAG(tag)
-        console.log("TAG:", typeof tag)
     }
     const tag_likecheck = (postId: string, isHeart: boolean) => {
         const check = isHeart
