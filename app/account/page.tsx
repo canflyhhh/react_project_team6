@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Card, CardContent, CardMedia, TextField } from '@mui/material';
+import { Button, TextField, Grid, Typography } from '@mui/material';
 import styles from '../page.module.css';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import app from "@/app/_firebase/config";
@@ -9,6 +9,8 @@ import { doc, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore';
 import { signInWithGooglePopup } from "./admin"; // google login
 import { useRouter } from 'next/navigation';
 import { AuthContext } from './authContext';
+import BadgeIcon from '@mui/icons-material/Badge';
+import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact';
 
 import axios from "axios";
 
@@ -137,81 +139,103 @@ export default function Account() {
 
 
     return (
-        <div className={styles.login}>
-            <div style={{ flex: 1 }}>
+        // <div className={styles.login}>
+        <div style={{ padding: '6em' }}>   
+            <Typography variant="h2" component="div" sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                <ConnectWithoutContactIcon sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred', marginBottom: '0.2em' }} />
+                <p style={{ fontSize: '20px' }}>登入之後就可以在react gogogo跟大家進行互動囉</p>
+            </Typography>
+
+            <Grid container>
+                <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
                 <img src="../../fju.jpg" alt="歡迎" style={{ width: '100%', height: 'auto' }} />
-            </div>
-            <div style={{ flex: 1, padding: '20px' }}>
-                <form>
-                    {(status === '登入') &&
-                        <div>
+                </Grid>
+                <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
+                    <form>
+                        {(status === '登入') &&
                             <div>
-                                <TextField type="email" name="email" value={account.email}
-                                placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                                <div>
+                                    <TextField type="email" name="email" value={account.email}
+                                    placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                                </div>
+
+                                <br></br>
+
+                                <div>
+                                    <TextField type="password" name="password" value={account.password}
+                                    placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                                </div>
+
+                                <br></br>
+
+                                <div>
+                                    <Grid container>
+                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
+                                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
+                                        </Grid>
+                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
+                                            <Button variant="contained" color="secondary" onClick={changeStatus}>註冊</Button>
+                                        </Grid>
+                                    </Grid>
+                                </div>
                             </div>
+                        }
 
-                            <br></br>
-
+                        {(status === '註冊') &&
                             <div>
-                                <TextField type="password" name="password" value={account.password}
-                                placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                                <div>
+                                    {status === '註冊' && <TextField type="text" name="name" value={account.name}
+                                        placeholder="暱稱" label="暱稱：" onChange={handleChange} />
+                                    }
+                                </div>
+
+                                <br></br>
+
+                                <div>
+                                    <TextField type="email" name="email" value={account.email}
+                                    placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                                </div>
+
+                                <br></br>
+
+                                <div>
+                                    <TextField type="password" name="password" value={account.password}
+                                    placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                                </div>
+
+                                <br></br>
+
+                                <div>
+                                    <Grid container>
+                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
+                                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
+                                        </Grid>
+                                        <Grid xs={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
+                                            <Button variant="contained" color="secondary" onClick={changeStatus}>登入</Button>
+                                        </Grid>
+                                    </Grid>
+                                </div>
                             </div>
+                        }
 
-                            <br></br>
+                        <br></br>
 
-                            <div>
-                                <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                                &nbsp;&nbsp;
-                                <Button variant="contained" color="secondary" onClick={changeStatus}>註冊</Button>
-                            </div>
+                        <hr></hr>
 
-                            <br></br>
+                        <br></br>
 
-                            <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
-                        </div>
-                    }
-
-                    {(status === '註冊') &&
-                        <div>
-                            <div>
-                                {status === '註冊' && <TextField type="text" name="name" value={account.name}
-                                    placeholder="暱稱" label="暱稱：" onChange={handleChange} />
-                                }
-                            </div>
-
-                            <br></br>
-
-                            <div>
-                                <TextField type="email" name="email" value={account.email}
-                                placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
-                            </div>
-
-                            <br></br>
-
-                            <div>
-                                <TextField type="password" name="password" value={account.password}
-                                placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
-                            </div>
-
-                            <br></br>
-
-                            <div>
-                                <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                                &nbsp;&nbsp;
-                                <Button variant="contained" color="secondary" onClick={changeStatus}>登入</Button>
-                            </div>
-
-                            <br></br>
-
-                            <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
-                        </div>
-                    }
+                        <Grid container>
+                            <Grid xs={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContext: 'middle' }}>
+                                <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
+                            </Grid>
+                        </Grid>
 
 
-                    <div>{message}</div>
-    
-                </form>
-            </div>
+                        <div>{message}</div>
+        
+                    </form>
+                </Grid>
+            </Grid>
         </div>
     )
 }

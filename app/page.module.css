@@ -227,11 +227,3 @@
     transform: rotate(0deg);
   }
 }
-
-/* login頁面，照片和輸入框排版 */
-.login {
-  display: flex;
-  justify-content: center; 
-  align-items: center;
-  height: auto;
-}
