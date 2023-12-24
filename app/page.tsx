@@ -60,7 +60,7 @@ export default function Home() {
     // 熱門、最新文章 card（大）
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
-            <Card variant="outlined" sx={{ padding: '1em' }}>
+            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '0.8em' }}>
                 <CardContent>
                     <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
