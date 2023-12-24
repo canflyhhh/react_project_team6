@@ -96,7 +96,7 @@ export function inOutPosts(status:string) {
   return [posts, setPosts, like] as const;
 }
 
-export function usePosts(status:string, Limit:boolean) {
+export function useHOT(Limit:boolean) {
   const db = getFirestore(app);
   const [posts, setPosts] = 
   useState<{ 
@@ -125,18 +125,10 @@ export function usePosts(status:string, Limit:boolean) {
       let querySnapshot;
 
       if (Limit) {
-        query2 = query(query1, orderBy(status, "desc"), limit(3));
-        
+        query2 = query(query1, orderBy("like", "desc"), limit(3));
       }
       else{
-        if (status === "datetime") {
-          const startDate = new Date();
-          startDate.setMonth(startDate.getMonth() - 1);
-          query2 = query(query1, orderBy("datetime", "desc"), where("datetime", ">=", startDate));
-        }
-        else {
-          query2 = query(query1, orderBy("like", "desc"));
-        }
+        query2 = query(query1, orderBy("like", "desc"));
       }
       
       if (query2) {
@@ -163,7 +155,7 @@ export function usePosts(status:string, Limit:boolean) {
       setPosts(() => [...data]);
     }
     fetchData();
-  }, [db, status, Limit, updated]);
+  }, [db, Limit, updated]);
 
   async function h_like(Id: string, status: boolean) {
     const db = getFirestore(app);    
@@ -209,6 +201,73 @@ export function usePosts(status:string, Limit:boolean) {
     setUpdated((currentValue) => currentValue + 1)
   }
 
+  return [posts, setPosts, h_like] as const;
+}
+
+export function useTIME(Limit:boolean) {
+  const db = getFirestore(app);
+  const [posts, setPosts] = 
+  useState<{ 
+    time: Timestamp,
+    account: string, 
+    context:string, 
+    title:string, 
+    Id:string, 
+    like:number,
+    isHeart:boolean
+   }[]>([])
+  const email = useContext(AuthContext);
+  const [updated, setUpdated] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      // 愛心
+      const statusCollection = collection(db, 'likes');
+      const statusQuery = query(statusCollection, where('email', '==', email));
+      const statusSnapshot = await getDocs(statusQuery);
+      const likedPostIds = statusSnapshot.docs.map((statusDoc) => statusDoc.data().postId);
+
+      let data: { time: Timestamp, account: string, context:string, title:string, Id:string, like:number, isHeart:boolean }[] = [];
+      const query1 = collection(db, "post");
+      let query2;
+      let querySnapshot;
+
+      if (Limit) {
+        query2 = query(query1, orderBy("datetime", "desc"), limit(3));
+      }
+      else{
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 1);
+        query2 = query(query1, orderBy("datetime", "desc"), where("datetime", ">=", startDate));
+      }
+      
+      if (query2) {
+        querySnapshot = await getDocs(query2);
+      }
+      else {
+        querySnapshot = await getDocs(query1);
+      }
+      
+      querySnapshot.forEach((doc) => {
+        //對比愛心
+        const isHeart = likedPostIds.includes(doc.id);
+        
+        data.push({ 
+          time: doc.data().datetime, 
+          account: doc.data().account, 
+          context: doc.data().context, 
+          title: doc.data().title, 
+          Id: doc.id, 
+          like: doc.data().like,
+          isHeart: isHeart || false
+        })
+      });
+      setPosts(() => [...data]);
+    }
+    fetchData();
+  }, [db, Limit, updated]);
+
+
   async function t_like(Id: string, status: boolean) {
     const db = getFirestore(app);    
     const postsCollection = collection(db, 'post');
@@ -253,6 +312,5 @@ export function usePosts(status:string, Limit:boolean) {
     setUpdated((currentValue) => currentValue + 1)
   }
 
-  return [posts, setPosts, h_like, t_like] as const;
+  return [posts, setPosts, t_like] as const;
 }
-

@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import { usePosts } from "./in_school/all_school_data";
+import { useHOT, useTIME } from "./in_school/all_school_data";
 import { useEffect } from 'react';
 import { useState } from "react";
 import Image from 'next/image'
@@ -24,9 +24,9 @@ export default function Home() {
     // Limit限制顯示數量
     const [Limit, setLimit] = useState(true);
     //按熱度
-    const [hot, setHot, h_like] = usePosts("like", Limit);
+    const [hot, setHot, h_like] = useHOT(Limit);
     //按時間
-    const [time, setTime, t_like] = usePosts("datetime", Limit);
+    const [time, setTime, t_like] = useTIME(Limit);
 
     // 主畫面OR詳細
     const [status, setStatus] = useState("總攬");
@@ -88,7 +88,7 @@ export default function Home() {
                         <span style={{ width: "1.5rem" }}>
                             <Heart
                                 isActive={post.isHeart}
-                                onClick={() => d_likecheck(post.Id, !post.isHeart, status)}
+                                onClick={() => likecheck(post.Id, !post.isHeart, status)}
                                 activeColor="red"
                                 inactiveColor="black"
                                 animationTrigger="hover"
@@ -139,7 +139,7 @@ export default function Home() {
                         <span style={{ width: "1.5rem" }}>
                             <Heart
                                 isActive={post.isHeart}
-                                onClick={() => d_likecheck(post.Id, !post.isHeart, status)}
+                                onClick={() => likecheck(post.Id, !post.isHeart, status)}
                                 activeColor="red"
                                 inactiveColor="black"
                                 animationTrigger="hover"
