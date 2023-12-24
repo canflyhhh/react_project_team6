@@ -1,11 +1,12 @@
 'use client'
 import * as React from 'react';
 import { useState, useContext, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack } from "@mui/material";
+import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider } from "@mui/material";
 import { inOutPosts } from "../in_school/all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
 import app from "@/app/_firebase/config"
+import { CalendarMonth, AdsClick, ArrowBack, Interests } from '@mui/icons-material';
 
 // 圖片
 import ReactQuill from 'react-quill';
@@ -24,28 +25,28 @@ function OutSchool() {
     const [Id, setId] = useState("");
     const [context, setContext, d_like] = useDetails(Id);
 
-    const detailContex = (id:string) => {
+    const detailContex = (id: string) => {
         setStatus("詳細");
         setId(id);
-      }
-    
-    const goBack =() => {
+    }
+
+    const goBack = () => {
         setStatus("校外");
-      }
-    
+    }
+
     // 換頁
     const [page, setPage] = useState(1);
     const postsPerPage = 9;
-  
-    const handleChangePage = (event: React.ChangeEvent<unknown>, value:number) => {
-      setPage(value);
+
+    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
     };
 
     // 算頁數
     const indexOfLastPost = page * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-  
+
     // 將html多元素轉化為純文字
     const stripHtmlTags = (html: string) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -54,153 +55,155 @@ function OutSchool() {
 
     // 卡片收藏
     const likecheck = (postId: string, isHeart: boolean) => {
-      const check = isHeart
-        ? window.confirm('確定收藏文章？')
-        : window.confirm('確定取消收藏？');
-      if (check) {
-        like(postId, isHeart)
-      }
+        const check = isHeart
+            ? window.confirm('確定收藏文章？')
+            : window.confirm('確定取消收藏？');
+        if (check) {
+            like(postId, isHeart)
+        }
     }
 
     //詳細資訊收藏
     const d_likecheck = (postId: string, isHeart: boolean) => {
-      const check = isHeart
-        ? window.confirm('確定收藏文章？')
-        : window.confirm('確定取消收藏？');
-      if (check) {
-        d_like(postId, isHeart)
-      }
+        const check = isHeart
+            ? window.confirm('確定收藏文章？')
+            : window.confirm('確定取消收藏？');
+        if (check) {
+            d_like(postId, isHeart)
+        }
     }
 
 
     return (
-        <div>
-        {status === "校外" && (
-            <ul>   
-                <Grid container spacing={2} sx={{ padding: 4 }}>
-                   {currentPosts.map((post, index) => (
-                    <Grid item xs={4} key={index}>
-                        <Card variant="outlined">
-                            <CardContent>
-                                <Typography variant="h5" component="div">
-                                    {post.title}
-                                </Typography>
-                                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+        <div style={{ padding: '6em' }}>
+            {status === "校外" && (
+                <div>
+                    {/*校內文章*/}
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                        <Interests sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
+                        ReactGOGO 校外文章一覽
+                    </Typography>
+                    <Grid container sx={{ padding: 4 }}>
+                        {currentPosts.map((post, index) => (
+                            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
+                                <CardContent>
+                                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                                        {post.title}
+                                    </Typography>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                                        <Typography sx={{ color: 'text.secondary' }}>
                                             {post.account}
                                         </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                            {/* {post.datetime} */}
+                                        <Typography sx={{ color: 'text.secondary' }}>
+                                            <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                                            {post.time.toDate().toLocaleString()}
                                         </Typography>
-                                    </Grid>
-                                </Grid>
-                                <Typography variant="body2">
-                                    {post.context.length > 50
-                                        ? `${stripHtmlTags(post.context).substring(0, 50)}……`
-                                        : stripHtmlTags(post.context)
-                                    }
-                                </Typography>
-                            </CardContent>
-                            {/*顯示收藏數量*/} 
-                            {post.like ? (
-                                <Typography>{`收藏量: ${post.like}`}</Typography>
+                                    </div>
+                                    <Typography variant="body2">
+                                        {post.context.length > 50
+                                            ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                            : stripHtmlTags(post.context)
+                                        }
+                                    </Typography>
+                                </CardContent>
+                                <Divider />
+                                {/*顯示收藏數量*/}
+                                <CardActions sx={{ justifyContent: 'space-between' }}>
+                                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        {/*點擊收藏*/}
+                                        <span style={{ width: "1.5rem" }}>
+                                            <Heart
+                                                isActive={post.isHeart}
+                                                onClick={() => likecheck(post.Id, !post.isHeart)}
+                                                activeColor="red"
+                                                inactiveColor="black"
+                                                animationTrigger="hover"
+                                                animationScale={1.2}
+                                            />
+                                        </span>
+                                        {/* Display the like count */}
+                                        <span style={{ marginLeft: '0.5em' }}>
+                                            {post.like ? post.like : 0}
+                                        </span>
+                                    </Typography>
+                                    <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
+                                        查看內容
+                                    </Button>
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </Grid>
+                    <Stack spacing={2} mt={3}>
+                        <Pagination
+                            count={Math.ceil(posts.length / postsPerPage)}
+                            page={page}
+                            variant="outlined"
+                            color="primary"
+                            onChange={handleChangePage}
+                        />
+                    </Stack>
+                </div>
+            )}
+
+            {status === "詳細" && Id && (
+                <div>
+                    {context.map((item) => (
+                        <div key={Id}>
+                            <div>{item.title}</div>
+                            <div>{item.account}</div>
+                            <div>{item.time.toDate().toLocaleString()}</div>
+                            <ReactQuill
+                                theme="snow"
+                                value={item.context}
+                                modules={{
+                                    toolbar: false,
+                                }}
+                                formats={[
+                                    'header',
+                                    'bold', 'italic', 'underline', 'strike', 'blockquote',
+                                    'list', 'bullet', 'indent',
+                                    'link', 'image'
+                                ]}
+                            />
+                            {/*顯示tag(多tag & 只有個tag)*/}
+                            {item.tag &&
+                                (Array.isArray(item.tag) ? (
+                                    item.tag.map((tagItem, index) => (
+                                        <React.Fragment key={index}>
+                                            {index > 0 && ', '}
+                                            {tagItem.trim()}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <Typography>
+                                        {item.tag}
+                                    </Typography>
+                                ))
+                            }
+                            {/*顯示收藏數量*/}
+                            {item.like ? (
+                                <Typography>{`收藏量: ${item.like}`}</Typography>
                             ) : (
                                 <Typography>收藏量: 0</Typography>
                             )}
-                            <CardActions style={{ justifyContent: 'flex-end' }}>
-                                <Button variant="outlined" onClick={() => detailContex(post.Id)}>查看內容</Button>
-                                {/*點擊收藏*/} 
-                                <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
-                                  <Heart
-                                    isActive={post.isHeart}
-                                    onClick={() => likecheck(post.Id, !post.isHeart)}
+                            {/*點擊收藏*/}
+                            <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem' }}>
+                                <Heart
+                                    isActive={item.isHeart}
+                                    onClick={() => d_likecheck(item.Id, !item.isHeart)}
                                     activeColor="red"
                                     inactiveColor="black"
                                     animationTrigger="hover"
                                     animationScale={1.5}
-                                  />
-                                </div>
-                            </CardActions>
-                            <div>{post.time.toDate().toLocaleString()}</div>
-                        </Card>
-                    </Grid>
-                ))}
-                </Grid>  
-                <Stack spacing={2} mt={3}>
-                    <Pagination
-                        count={Math.ceil(posts.length / postsPerPage)}
-                        page={page}
-                        variant="outlined"
-                        color="primary"
-                        onChange={handleChangePage}
-                    />
-                </Stack>
-            </ul>
-        )}
-
-        {status === "詳細" && Id && (
-            <div>
-                {context.map((item) => (
-                <div key={Id}>
-                    <div>{item.title}</div>
-                    <div>{item.account}</div>
-                    <div>{item.time.toDate().toLocaleString()}</div>
-                    <ReactQuill
-                        theme="snow"
-                        value={item.context}
-                        modules={{
-                            toolbar: false,
-                        }}
-                        formats={[
-                            'header',
-                            'bold', 'italic', 'underline', 'strike', 'blockquote',
-                            'list', 'bullet', 'indent',
-                            'link', 'image'
-                        ]}
-                    />
-                    {/*顯示tag(多tag & 只有個tag)*/} 
-                    {item.tag &&
-                      (Array.isArray(item.tag) ? (
-                          item.tag.map((tagItem, index) => (
-                              <React.Fragment key={index}>
-                                  {index > 0 && ', '}
-                                  {tagItem.trim()}
-                              </React.Fragment>
-                          ))
-                      ) : (
-                          <Typography>
-                              {item.tag}
-                          </Typography>
-                      ))
-                  }
-                  {/*顯示收藏數量*/} 
-                  {item.like ? (
-                        <Typography>{`收藏量: ${item.like}`}</Typography>
-                    ) : (
-                        <Typography>收藏量: 0</Typography>
-                    )
-                  }
-                  {/*點擊收藏*/}                    
-                  <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem'}}>
-                    <Heart
-                      isActive={item.isHeart}
-                      onClick={() => d_likecheck(item.Id, !item.isHeart)}
-                      activeColor="red"
-                      inactiveColor="black"
-                      animationTrigger="hover"
-                      animationScale={1.5}
-                    />
-                  </div>
+                                />
+                            </div>
+                        </div>
+                    ))}
+                    <Button variant="outlined" onClick={goBack}>返回校外總覽</Button>
                 </div>
-                ))}
-                <Button variant="outlined" onClick={goBack}>返回校內總攬</Button>
-            </div>
-        )}
+            )}
         </div>
-    );
+    )
 }
 
 export default OutSchool;

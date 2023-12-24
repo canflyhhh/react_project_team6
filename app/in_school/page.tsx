@@ -4,7 +4,7 @@ import { inOutPosts } from "./all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
 import { Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider } from "@mui/material";
-import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, ArrowBack, Person } from '@mui/icons-material';
+import { CalendarMonth, AdsClick, ArrowBack, School } from '@mui/icons-material';
 
 // 圖片
 import ReactQuill from 'react-quill';
@@ -72,63 +72,20 @@ function InSchool() {
         }
     }
 
-    // 查看所有最新文章、所有熱門文章
-    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
-        return (
-            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }}>
-                <CardContent>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
-                        <Typography sx={{ color: 'text.secondary' }}>
-                            {post.account}
-                        </Typography>
-                        <Typography sx={{ color: 'text.secondary' }}>
-                            <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
-                            {post.time.toDate().toLocaleString()}
-                        </Typography>
-                    </div>
-                    <Typography variant="body2">
-                        {post.context.length > 150
-                            ? `${stripHtmlTags(post.context).substring(0, 150)}……`
-                            : stripHtmlTags(post.context)
-                        }
-                    </Typography>
-                </CardContent>
-                <Divider light sx={{ margin: '0.2em' }} />
-                <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {/*點擊收藏*/}
-                        <span style={{ width: "1.5rem" }}>
-                            <Heart
-                                isActive={post.isHeart}
-                                onClick={() => d_likecheck(post.Id, !post.isHeart, status)}
-                                activeColor="red"
-                                inactiveColor="black"
-                                animationTrigger="hover"
-                                animationScale={1.2}
-                            />
-                        </span>
-                        {/* Display the like count */}
-                        <span style={{ marginLeft: '0.5em' }}>
-                            {post.like ? post.like : '0'}
-                        </span>
-                    </Typography>
-                    <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
-                        查看內容
-                    </Button>
-                </CardActions>
-            </Card>
-        )
-    }
-
     return (
-        <div>
+        <div style={{ padding: '6em' }}>
             {status === "校內" && (
                 <div>
-                    <Grid container sx={{ padding: 4 }}>
+                    {/*校內文章*/}
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+                        <School sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
+                        ReactGOGO 校內文章一覽
+                    </Typography>
+                    <Grid container>
                         {currentPosts.map((post, index) => (
                             <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
                                 <CardContent>
-                                    <Typography variant="h5" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                                         {post.title}
                                     </Typography>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
@@ -147,12 +104,10 @@ function InSchool() {
                                         }
                                     </Typography>
                                 </CardContent>
+                                <Divider />
                                 {/*顯示收藏數量*/}
                                 <CardActions sx={{ justifyContent: 'space-between' }}>
-                                    <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} size="large">
-                                        返回總覽
-                                    </Button>
-                                    <Typography sx={{ width: "6em", margin: '1em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         {/*點擊收藏*/}
                                         <span style={{ width: "1.5rem" }}>
                                             <Heart
@@ -169,21 +124,29 @@ function InSchool() {
                                             {post.like ? post.like : 0}
                                         </span>
                                     </Typography>
+                                    <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
+                                        查看內容
+                                    </Button>
                                 </CardActions>
-
-
                             </Card>
                         ))}
                     </Grid>
-                    <Stack spacing={2} mt={3}>
-                        <Pagination
-                            count={Math.ceil(posts.length / postsPerPage)}
-                            page={page}
-                            variant="outlined"
-                            color="primary"
-                            onChange={handleChangePage}
-                        />
-                    </Stack>
+                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
+                        <Grid item>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
+                                返回校內總覽
+                            </Button>
+                        </Grid>
+                        <Grid item spacing={2}>
+                            <Pagination
+                                count={Math.ceil(posts.length / postsPerPage)}
+                                page={page}
+                                variant="outlined"
+                                color="primary"
+                                onChange={handleChangePage}
+                            />
+                        </Grid>
+                    </Grid>
                 </div>
             )}
 

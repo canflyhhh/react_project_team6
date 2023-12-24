@@ -112,7 +112,7 @@ export default function Home() {
     function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
             <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }}>
-                                <CardContent>
+                <CardContent>
                     <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
                     </Typography>
@@ -258,13 +258,12 @@ export default function Home() {
             )}
 
             {status === "熱門" && (
-                <Grid container flexDirection={'row'}>
+                <Grid container>
                     <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
                         <Whatshot sx={{ fontSize: '4rem', marginRight: '0.2em', color: 'indianred' }} />
                         所有熱門文章
                     </Typography>
-                    <Divider light />
-                    <Grid container spacing={2}>
+                    <Grid container>
                         {currentHot.map((post) => (smallPostCard(post, "HOT")))}
                     </Grid>
                     <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
@@ -289,7 +288,7 @@ export default function Home() {
 
             {status === "本月" && (
                 // 查看所有最新文章（按時間排序）
-                <Grid container flexDirection={'row'}>
+                <Grid container>
                     <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
                         <AutoAwesome sx={{ fontSize: '4rem', marginRight: '0.2em', color: 'indianred' }} />
                         所有最新文章
@@ -325,10 +324,10 @@ export default function Home() {
                         <Card variant="outlined" sx={{ padding: '1em' }} key={Id} >
                             <CardContent>
                                 <Typography variant="h6" color="text.secondary" marginTop={'1em'} marginBottom={'0.5em'} display={'flex'} alignItems={'center'} >
-                                    <Person sx={{ fontSize: '1.5rem', marginRight: '0.2em' }} />
+                                    <Person sx={{ fontSize: '1.5rem', marginRight: '0.2em', color: 'Orange' }} />
                                     {item.account}
                                 </Typography>
-                                <Typography variant="h4" component="div" sx={{ marginBottom: '0.5em' }} fontWeight={'bold'}>
+                                <Typography variant="h4" component="div" sx={{ marginBottom: '0.5em' }} fontWeight={'bold'} >
                                     {item.title}
                                 </Typography>
                                 <Breadcrumbs aria-label="breadcrumb" sx={{ marginY: '1em' }}>
