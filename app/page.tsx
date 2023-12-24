@@ -6,28 +6,32 @@ import { useState } from "react";
 import Image from 'next/image'
 import useDetails from './detail_data';
 import {
-    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider
+    Grid, Card, CardContent, Typography, CardActions, Button, Pagination, Stack, Divider, Breadcrumbs
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, Margin } from '@mui/icons-material';
+import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, ArrowBack, Person } from '@mui/icons-material';
 
+import './QuillEditor.css'; // import your custom styles
+
+// import heart
+import Heart from "react-heart"
 
 export default function Home() {
     // Limit限制顯示數量
     const [Limit, setLimit] = useState(true);
     //按熱度
-    const [hot, setHot] = usePosts("like", Limit);
+    const [hot, setHot, h_like] = usePosts("like", Limit);
     //按時間
-    const [time, setTime] = usePosts("datetime", Limit);
+    const [time, setTime, t_like] = usePosts("datetime", Limit);
 
     // 主畫面OR詳細
     const [status, setStatus] = useState("總攬");
     const [Id, setId] = useState("");
-    const [context, setContext] = useDetails(Id);
+    const [context, setContext, d_like] = useDetails(Id);
 
     //查看詳細資訊
     function detailContex(id: string) {
@@ -54,16 +58,22 @@ export default function Home() {
     };
 
     // 熱門、最新文章 card（大）
-    function postCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
+    function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
             <Card variant="outlined" sx={{ padding: '1em' }}>
                 <CardContent>
-                    <Typography variant="h4" component="div" sx={{ marginY: 1 }}>
+                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
                     </Typography>
-                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {post.account}
-                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                    <Typography sx={{ color: 'text.secondary' }}>
+                            {post.account}
+                        </Typography>
+                        <Typography sx={{ color: 'text.secondary' }}>
+                            <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                            {post.time.toDate().toLocaleString()}
+                        </Typography>
+                    </div>
                     <Typography variant="body2">
                         {post.context.length > 150
                             ? `${stripHtmlTags(post.context).substring(0, 150)}……`
@@ -71,11 +81,24 @@ export default function Home() {
                         }
                     </Typography>
                 </CardContent>
-                <Divider light sx={{ margin: '1em' }} />
+                <Divider light sx={{ margin: '0.2em' }} />
                 <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-                        <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
-                        {post.time.toDate().toLocaleString()}
+                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {/*點擊收藏*/}
+                        <span style={{ width: "1.5rem" }}>
+                            <Heart
+                                isActive={post.isHeart}
+                                onClick={() => d_likecheck(post.Id, !post.isHeart, status)}
+                                activeColor="red"
+                                inactiveColor="black"
+                                animationTrigger="hover"
+                                animationScale={1.2}
+                            />
+                        </span>
+                        {/* Display the like count */}
+                        <span style={{ marginLeft: '0.5em' }}>
+                            {post.like ? post.like : '0'}
+                        </span>
                     </Typography>
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
@@ -86,11 +109,11 @@ export default function Home() {
     }
 
     // 查看所有最新文章、所有熱門文章
-    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; }) {
+    function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
-            <Card variant="outlined" sx={{ padding: '1em' }}>
+            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }}>
                 <CardContent>
-                    <Typography variant="h6" component="div" sx={{ marginY: 1 }}>
+                    <Typography variant="h5" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
                     </Typography>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
@@ -109,6 +132,19 @@ export default function Home() {
                         <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
                         {post.time.toDate().toLocaleString()}
                     </Typography>
+                    {/*點擊收藏*/}
+                    <div style={{ width: "1.5rem", marginRight: '0.5rem' }}>
+                        <Heart
+                            isActive={post.isHeart}
+                            onClick={() => likecheck(post.Id, !post.isHeart, status)}
+                            activeColor="red"
+                            inactiveColor="black"
+                            animationTrigger="hover"
+                            animationScale={1.5}
+                        />
+                    </div>
+                    {/*顯示收藏數量*/}
+                    {post.like ? post.like : '0'}
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
                     </Button>
@@ -131,7 +167,30 @@ export default function Home() {
     const currentHot = hot.slice(indexOfFirstPost, indexOfLastPost);
     const currentTime = time.slice(indexOfFirstPost, indexOfLastPost);
 
+    // 卡片收藏
+    const likecheck = (postId: string, isHeart: boolean, status: string) => {
+        const check = isHeart
+            ? window.confirm('確定收藏文章？')
+            : window.confirm('確定取消收藏？');
+        if (check) {
+            if (status === "HOT") {
+                h_like(postId, isHeart)
+            }
+            if (status === "TIME") {
+                t_like(postId, isHeart)
+            }
+        }
+    }
 
+    //詳細資訊收藏
+    const d_likecheck = (postId: string, isHeart: boolean) => {
+        const check = isHeart
+            ? window.confirm('確定收藏文章？')
+            : window.confirm('確定取消收藏？');
+        if (check) {
+            d_like(postId, isHeart)
+        }
+    }
 
     return (
         <div style={{ margin: '6em' }}>
@@ -158,7 +217,7 @@ export default function Home() {
                         </Grid>
                         {/*熱門文章-前三名*/}
                         <Grid item flexDirection="column" xs={8}>
-                            {hot.map((post) => (postCard(post)))}
+                            {hot.map((post) => (postCard(post, "HOT")))}
                         </Grid>
                     </Grid>
 
@@ -186,50 +245,64 @@ export default function Home() {
                         </Grid>
                         {/*最新文章-最新的三篇文章*/}
                         <Grid item flexDirection="column" xs={8}>
-                            {time.map((post) => (postCard(post)))}
+                            {time.map((post) => (postCard(post, "TIME")))}
                         </Grid>
                     </Grid>
                 </div>
             )}
 
             {status === "熱門" && (
-                <Grid sx={{ padding: '4em' }}>
-                    <Typography variant="h4" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
-                        <Whatshot sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+                <Grid container flexDirection={'row'}>
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+                        <Whatshot sx={{ fontSize: '4rem', marginRight: '0.2em', color: 'indianred' }} />
                         所有熱門文章
                     </Typography>
                     <Divider light />
                     <Grid container spacing={2}>
-                        {currentHot.map((post) => (smallPostCard(post)))}
+                        {currentHot.map((post) => (smallPostCard(post, "HOT")))}
                     </Grid>
-                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
-                    <Stack spacing={2} mt={3}>
-                        <Pagination
-                            count={Math.ceil(hot.length / postsPerPage)}
-                            page={page}
-                            variant="outlined"
-                            color="primary"
-                            onChange={handleChangePage}
-                        />
-                    </Stack>
+                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
+                        <Grid item>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} >返回總覽</Button>
+                        </Grid>
+                        <Grid item>
+                            <Pagination
+                                count={Math.ceil(hot.length / postsPerPage)}
+                                page={page}
+                                variant="outlined"
+                                color="primary"
+                                onChange={handleChangePage}
+                            />
+                        </Grid>
+                    </Grid>
+
                 </Grid>
             )}
 
             {status === "本月" && (
-                <Grid sx={{ padding: '4em' }}>
+                // 查看所有最新文章（按時間排序）
+                <Grid container flexDirection={'row'}>
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+                        <AutoAwesome sx={{ fontSize: '4rem', marginRight: '0.2em', color: 'indianred' }} />
+                        所有最新文章
+                    </Typography>
                     <Grid container spacing={2} sx={{ padding: 4 }}>
-                        {currentTime.map((post) => (smallPostCard(post)))}
+                        {currentTime.map((post) => (smallPostCard(post, "TIME")))}
                     </Grid>
-                    <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
-                    <Stack spacing={2} mt={3}>
-                        <Pagination
-                            count={Math.ceil(time.length / postsPerPage)}
-                            page={page}
-                            variant="outlined"
-                            color="primary"
-                            onChange={handleChangePage}
-                        />
-                    </Stack>
+                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
+                        <Grid item>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} >返回總覽</Button>
+                        </Grid>
+                        <Grid item spacing={2}>
+                            <Pagination
+                                count={Math.ceil(hot.length / postsPerPage)}
+                                page={page}
+                                variant="outlined"
+                                color="primary"
+                                onChange={handleChangePage}
+                            />
+                        </Grid>
+                    </Grid>
                 </Grid>
             )}
 
@@ -238,15 +311,37 @@ export default function Home() {
             {status === "詳細" && Id && (
                 <div>
                     {context.map((item) => (
-                        <Card variant="outlined" sx={{ padding: '1em' }} key={Id}>
+                        console.log(item.tag),
+                        <Card variant="outlined" sx={{ padding: '1em' }} key={Id} >
                             <CardContent>
-                                <Typography variant="h6" component="div" sx={{ marginY: 1 }}>
-                                    {item.title}
-                                </Typography>
-                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                <Typography variant="h6" color="text.secondary" marginTop={'1em'} marginBottom={'0.5em'} display={'flex'} alignItems={'center'} >
+                                    <Person sx={{ fontSize: '1.5rem', marginRight: '0.2em' }} />
                                     {item.account}
                                 </Typography>
-                                <Typography variant="body2">
+                                <Typography variant="h4" component="div" sx={{ marginBottom: '0.5em' }} fontWeight={'bold'}>
+                                    {item.title}
+                                </Typography>
+                                <Breadcrumbs aria-label="breadcrumb" sx={{ marginY: '1em' }}>
+                                    {item.tag &&
+                                        (Array.isArray(item.tag) ? (
+                                            item.tag.map((tagItem, index) => (
+                                                <React.Fragment key={index}>
+                                                    <Typography
+                                                        sx={{ display: 'flex', alignItems: 'center' }}
+                                                        color="orange"
+                                                    >{tagItem.trim()}
+                                                    </Typography>
+                                                </React.Fragment>
+                                            ))
+                                        ) : (
+                                            <Typography>
+                                                {item.tag}
+                                            </Typography>
+                                        ))
+                                    }
+                                </Breadcrumbs>
+                                <Divider />
+                                <Typography variant="body2" sx={{ marginY: '1em' }}>
                                     {item.time.toDate().toLocaleString()}
                                 </Typography>
                                 <ReactQuill
@@ -258,27 +353,32 @@ export default function Home() {
                                     formats={[
                                         'header', 'bold', 'italic', 'underline', 'strike', 'blockquote',
                                         'list', 'bullet', 'indent',
-                                        'link', 'image'
+                                        'link', 'image',
                                     ]}
                                     readOnly={true}
                                 />
-                                {Array.isArray(item.tag) ? (
-                                    item.tag.map((tagItem, index) => (
-                                        <Typography key={index}>
-                                            {tagItem}
-                                        </Typography>
-                                    ))
-                                ) : (
-                                    <Typography>
-                                        無
-                                    </Typography>
-                                )}
-                                {item.tag}
-                                {item.photo && (
-                                    <Image src={item.photo} alt="image" priority={true} height={300} width={300} />
-                                )}
-                                <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
                             </CardContent>
+                            <CardActions sx={{ justifyContent: 'space-between' }}>
+                                <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
+                                <Typography sx={{ width: "6em", margin: '1em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {/*點擊收藏*/}
+                                    <span style={{ width: "1.5rem" }}>
+                                        <Heart
+                                            isActive={item.isHeart}
+                                            onClick={() => d_likecheck(item.Id, !item.isHeart)}
+                                            activeColor="red"
+                                            inactiveColor="black"
+                                            animationTrigger="hover"
+                                            animationScale={1.2}
+                                        />
+                                    </span>
+                                    {/* Display the like count */}
+                                    <span style={{ marginLeft: '0.5em' }}>
+                                        {item.like ? item.like : 0}
+                                    </span>
+                                </Typography>
+
+                            </CardActions>
                         </Card>
                     ))}
 

@@ -22,14 +22,17 @@
     "puppeteer": "^21.6.1",
     "react": "^18",
     "react-bootstrap": "^2.9.1",
+    "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-heart": "^1.0.6",
-    "react-quill": "^2.0.0"
+    "react-quill": "^2.0.0",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-color": "^3.0.10",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "13.5.4",

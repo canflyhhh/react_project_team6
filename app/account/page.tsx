@@ -73,15 +73,13 @@ export default function Account() {
                 // setMessage(`註冊成功，歡迎 ${res.user?.email}`);
 
                 
-                setAccount({ ...account, password: "" });
+                // setAccount({ ...account, password: "" });
 
-                setMessage(`註冊成功，請再次輸入密碼來登入系統`);
+                //setMessage(`註冊成功，請再次輸入密碼來登入系統`);
                 setStatus("註冊成功");
-                setRegisteredEmail(account.email);
+                // setRegisteredEmail(account.email);
 
-                // setAccount({ ...account, email: res.user?.email || "" });
-                router.push('/account');
-                // router.push('/account?email=' + encodeURIComponent(account.email));
+                router.push('/');
             }
             else {
                 const res = await signInWithEmailAndPassword(auth, account.email, account.password);
@@ -128,111 +126,92 @@ export default function Account() {
         }
     }
 
-    useEffect(() => {
-        setAccount({ email: "", password: "", name: "" });
+    // useEffect(() => {
+    //     setAccount({ email: "", password: "", name: "" });
 
-        // 註冊後，自動代入帳號到登入頁面
-        if (status === '註冊成功' && registeredEmail) {
-            setAccount((prevAccount) => ({ ...prevAccount, email: registeredEmail }));
-        }
-    }, [status, registeredEmail]);
+    //     // 註冊後，自動代入帳號到登入頁面
+    //     if (status === '註冊成功' && registeredEmail) {
+    //         setAccount((prevAccount) => ({ ...prevAccount, email: registeredEmail }));
+    //     }
+    // }, [status, registeredEmail]);
 
 
     return (
-        <div className={styles.main}> 
-            <form>
-                {status === '註冊成功' &&
-                    <div>
+        <div className={styles.login}>
+            <div style={{ flex: 1 }}>
+                <img src="../../fju.jpg" alt="歡迎" style={{ width: '100%', height: 'auto' }} />
+            </div>
+            <div style={{ flex: 1, padding: '20px' }}>
+                <form>
+                    {(status === '登入') &&
                         <div>
-                            <TextField type="email" name="email" value={account.email}
-                            placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                            <div>
+                                <TextField type="email" name="email" value={account.email}
+                                placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                            </div>
+
+                            <br></br>
+
+                            <div>
+                                <TextField type="password" name="password" value={account.password}
+                                placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                            </div>
+
+                            <br></br>
+
+                            <div>
+                                <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
+                                &nbsp;&nbsp;
+                                <Button variant="contained" color="secondary" onClick={changeStatus}>註冊</Button>
+                            </div>
+
+                            <br></br>
+
+                            <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
                         </div>
+                    }
 
-                        <br></br>
-
+                    {(status === '註冊') &&
                         <div>
-                            <TextField type="password" name="password" value={account.password}
-                            placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                            <div>
+                                {status === '註冊' && <TextField type="text" name="name" value={account.name}
+                                    placeholder="暱稱" label="暱稱：" onChange={handleChange} />
+                                }
+                            </div>
+
+                            <br></br>
+
+                            <div>
+                                <TextField type="email" name="email" value={account.email}
+                                placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
+                            </div>
+
+                            <br></br>
+
+                            <div>
+                                <TextField type="password" name="password" value={account.password}
+                                placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
+                            </div>
+
+                            <br></br>
+
+                            <div>
+                                <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
+                                &nbsp;&nbsp;
+                                <Button variant="contained" color="secondary" onClick={changeStatus}>登入</Button>
+                            </div>
+
+                            <br></br>
+
+                            <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
                         </div>
-
-                        <br></br>
-
-                        <div>
-                            <Button variant="contained" color="primary" onClick={handleSubmit}>立即登入</Button>
-                        </div>
-
-                        <br></br>
-                    </div>
-                }
-
-                {(status === '登入') &&
-                    <div>
-                        <div>
-                            <TextField type="email" name="email" value={account.email}
-                            placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
-                        </div>
-
-                        <br></br>
-
-                        <div>
-                            <TextField type="password" name="password" value={account.password}
-                            placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
-                        </div>
-
-                        <br></br>
-
-                        <div>
-                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                            &nbsp;&nbsp;
-                            <Button variant="contained" color="secondary" onClick={changeStatus}>註冊</Button>
-                        </div>
-
-                        <br></br>
-
-                        <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
-                    </div>
-                }
-
-                {(status === '註冊') &&
-                    <div>
-                         <div>
-                            {status === '註冊' && <TextField type="text" name="name" value={account.name}
-                                placeholder="暱稱" label="暱稱：" onChange={handleChange} />
-                            }
-                        </div>
-
-                        <br></br>
-
-                        <div>
-                            <TextField type="email" name="email" value={account.email}
-                            placeholder="電子郵件信箱" label="電子郵件信箱：" onChange={handleChange} autoComplete='username' />
-                        </div>
-
-                        <br></br>
-
-                        <div>
-                            <TextField type="password" name="password" value={account.password}
-                            placeholder="密碼" label="密碼：" onChange={handleChange} autoComplete='current-password' />
-                        </div>
-
-                        <br></br>
-
-                        <div>
-                            <Button variant="contained" color="primary" onClick={handleSubmit}>{status}</Button>
-                            &nbsp;&nbsp;
-                            <Button variant="contained" color="secondary" onClick={changeStatus}>登入</Button>
-                        </div>
-
-                        <br></br>
-
-                        <Button variant="contained" color="secondary" onClick={logGoogleUser}>使用google帳號登入</Button>
-                    </div>
-                }
+                    }
 
 
-                <div>{message}</div>
-   
-            </form>
+                    <div>{message}</div>
+    
+                </form>
+            </div>
         </div>
     )
 }

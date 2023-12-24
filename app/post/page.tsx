@@ -1,8 +1,8 @@
 'use client'
 import React, { useContext, useEffect, useState } from "react";
-import { 
+import {
     Box, TextField, Dialog, Button, Grid, Card, CardContent, CardActions, Typography, Fab,
-    DialogActions, DialogContent, DialogTitle, IconButton
+    DialogActions, DialogContent, DialogTitle, IconButton, Select, MenuItem
 } from "@mui/material";
 import { Close, Add, Edit, Delete } from "@mui/icons-material";
 import usePosts from "./usePosts";
@@ -135,7 +135,7 @@ export default function PostList() {
     }
 
 
-    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
+    const [newPost, setNewPost] = useState<Post>({ id: "", account: authContext, location: "", context: "", datetime: new Date(), tag: [], title: "" });
     const [status, setStatus] = useState({ visible: false });
     const [file, setFile] = useState<File | null>(null);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -190,7 +190,7 @@ export default function PostList() {
     }
 
     const resetPost = () => {
-        setNewPost({ id: "", account: authContext, context: "", datetime: new Date(), tag: [], title: "" });
+        setNewPost({ id: "", account: authContext, location: "", context: "", datetime: new Date(), tag: [], title: "" });
     }
 
 
@@ -286,6 +286,16 @@ export default function PostList() {
                     }} /><br />
                     <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} fullWidth /><br />
                     {/* <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br /> */}
+                    <Select
+                        label="選擇"
+                        variant="outlined"
+                        value={newPost.location} // Assuming you have a property named 'location' in newPost
+                        onChange={(e) => setNewPost({ ...newPost, location: e.target.value })}
+                        fullWidth
+                    >
+                        <MenuItem value="校內">校內</MenuItem>
+                        <MenuItem value="校外">校外</MenuItem>
+                    </Select><br />
                     <TagInput
                         onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
                         initialTags={newPost.tag}
