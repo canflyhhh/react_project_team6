@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import Grid from '@mui/material/Grid';
+
 
 import { useContext } from 'react';
 import { AuthContext } from './account/authContext';
@@ -100,6 +102,16 @@ export default function Menu() {
               註冊 / 登入
             </Button>
           }
+
+          <Button
+            color="inherit"
+            variant={pathname === '/search' ? 'outlined' : 'text'}
+            onClick={() => router.push('/search')}
+            sx={{ border: 'none' }} // 移除邊框
+          >
+            <SearchIcon />
+          </Button>
+
         </Toolbar>
       </AppBar>
       
