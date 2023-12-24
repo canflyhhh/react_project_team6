@@ -79,11 +79,11 @@ function OutSchool() {
             {status === "校外" && (
                 <div>
                     {/*校內文章*/}
-                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em'  }}>
                         <Interests sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
                         ReactGOGO 校外文章一覽
                     </Typography>
-                    <Grid container sx={{ padding: 4 }}>
+                    <Grid container>
                         {currentPosts.map((post, index) => (
                             <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
                                 <CardContent>
@@ -133,7 +133,13 @@ function OutSchool() {
                             </Card>
                         ))}
                     </Grid>
-                    <Stack spacing={2} mt={3}>
+                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
+                        <Grid item>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
+                                返回校外總覽
+                            </Button>
+                        </Grid>
+                        <Grid item spacing={2}>
                         <Pagination
                             count={Math.ceil(posts.length / postsPerPage)}
                             page={page}
@@ -141,7 +147,8 @@ function OutSchool() {
                             color="primary"
                             onChange={handleChangePage}
                         />
-                    </Stack>
+                        </Grid>
+                    </Grid>
                 </div>
             )}
 
