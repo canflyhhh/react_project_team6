@@ -335,12 +335,11 @@ export default function Home() {
                                         (Array.isArray(item.tag) ? (
                                             item.tag.map((tagItem, index) => (
                                                 <React.Fragment key={index}>
-                                                    <Typography
-                                                        sx={{ display: 'flex', alignItems: 'center' }}
-                                                        color="orange"
-                                                    >{tagItem.trim()}
+                                                    <Typography sx={{ display: 'flex', alignItems: 'center', color: "orange" }}>
+                                                        {tagItem.trim()}
                                                     </Typography>
                                                 </React.Fragment>
+
                                             ))
                                         ) : (
                                             <Typography>
