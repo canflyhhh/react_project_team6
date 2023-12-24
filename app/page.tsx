@@ -66,7 +66,7 @@ export default function Home() {
                         {post.title}
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
-                    <Typography sx={{ color: 'text.secondary' }}>
+                        <Typography sx={{ color: 'text.secondary' }}>
                             {post.account}
                         </Typography>
                         <Typography sx={{ color: 'text.secondary' }}>
@@ -112,13 +112,19 @@ export default function Home() {
     function smallPostCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
             <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }}>
-                <CardContent>
-                    <Typography variant="h5" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                                <CardContent>
+                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
                     </Typography>
-                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {post.account}
-                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                        <Typography sx={{ color: 'text.secondary' }}>
+                            {post.account}
+                        </Typography>
+                        <Typography sx={{ color: 'text.secondary' }}>
+                            <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                            {post.time.toDate().toLocaleString()}
+                        </Typography>
+                    </div>
                     <Typography variant="body2">
                         {post.context.length > 150
                             ? `${stripHtmlTags(post.context).substring(0, 150)}……`
@@ -126,25 +132,25 @@ export default function Home() {
                         }
                     </Typography>
                 </CardContent>
-                <Divider light sx={{ margin: '0.5em' }} />
+                <Divider light sx={{ margin: '0.2em' }} />
                 <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-                        <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
-                        {post.time.toDate().toLocaleString()}
+                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {/*點擊收藏*/}
+                        <span style={{ width: "1.5rem" }}>
+                            <Heart
+                                isActive={post.isHeart}
+                                onClick={() => d_likecheck(post.Id, !post.isHeart, status)}
+                                activeColor="red"
+                                inactiveColor="black"
+                                animationTrigger="hover"
+                                animationScale={1.2}
+                            />
+                        </span>
+                        {/* Display the like count */}
+                        <span style={{ marginLeft: '0.5em' }}>
+                            {post.like ? post.like : '0'}
+                        </span>
                     </Typography>
-                    {/*點擊收藏*/}
-                    <div style={{ width: "1.5rem", marginRight: '0.5rem' }}>
-                        <Heart
-                            isActive={post.isHeart}
-                            onClick={() => likecheck(post.Id, !post.isHeart, status)}
-                            activeColor="red"
-                            inactiveColor="black"
-                            animationTrigger="hover"
-                            animationScale={1.5}
-                        />
-                    </div>
-                    {/*顯示收藏數量*/}
-                    {post.like ? post.like : '0'}
                     <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
                         查看內容
                     </Button>
@@ -193,7 +199,7 @@ export default function Home() {
     }
 
     return (
-        <div style={{ margin: '6em' }}>
+        <div style={{ padding: '6em' }}>
             {status === "總攬" && (
                 <div>
                     {/*熱門文章*/}
@@ -263,7 +269,9 @@ export default function Home() {
                     </Grid>
                     <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
                         <Grid item>
-                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} >返回總覽</Button>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} size="large">
+                                返回總覽
+                            </Button>
                         </Grid>
                         <Grid item>
                             <Pagination
@@ -291,7 +299,9 @@ export default function Home() {
                     </Grid>
                     <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
                         <Grid item>
-                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} >返回總覽</Button>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} size="large">
+                                返回總覽
+                            </Button>
                         </Grid>
                         <Grid item spacing={2}>
                             <Pagination
@@ -359,7 +369,9 @@ export default function Home() {
                                 />
                             </CardContent>
                             <CardActions sx={{ justifyContent: 'space-between' }}>
-                                <Button variant="outlined" onClick={() => changeStatus("總攬")}>返回總覽</Button>
+                                <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} size="large">
+                                    返回總覽
+                                </Button>
                                 <Typography sx={{ width: "6em", margin: '1em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     {/*點擊收藏*/}
                                     <span style={{ width: "1.5rem" }}>
@@ -377,7 +389,6 @@ export default function Home() {
                                         {item.like ? item.like : 0}
                                     </span>
                                 </Typography>
-
                             </CardActions>
                         </Card>
                     ))}
