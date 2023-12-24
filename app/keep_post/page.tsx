@@ -167,7 +167,7 @@ export default function Home() {
     <div>
       {status === "收藏" && (
         <Grid container spacing={2} sx={{ padding: 4 }}>
-        {posts.map((post, index) => (
+        {currentPosts.map((post, index) => (
             <Grid item xs={4} key={index}>
                 <Card variant="outlined">
                     <CardContent>
