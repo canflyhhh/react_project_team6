@@ -133,21 +133,15 @@ function InSchool() {
                             </Card>
                         ))}
                     </Grid>
-                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
-                        <Grid item>
-                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
-                                返回校內總覽
-                            </Button>
-                        </Grid>
-                        <Grid item spacing={2}>
-                            <Pagination
-                                count={Math.ceil(posts.length / postsPerPage)}
-                                page={page}
-                                variant="outlined"
-                                color="primary"
-                                onChange={handleChangePage}
-                            />
-                        </Grid>
+                    <Grid container marginY={'3em'} justifyContent='flex-end'>
+                        <Pagination
+                            count={Math.ceil(posts.length / postsPerPage)}
+                            page={page}
+                            variant="outlined"
+                            color="primary"
+                            onChange={handleChangePage}
+                            sx={{ marginRight: '16px' }}
+                        />
                     </Grid>
                 </div>
             )}

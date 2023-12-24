@@ -2,15 +2,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
     Box, TextField, Dialog, Button, Grid, Card, CardContent, CardActions, Typography, Fab,
-    DialogActions, DialogContent, DialogTitle, IconButton, Select, MenuItem
+    DialogActions, DialogContent, DialogTitle, IconButton, Select, MenuItem, Divider, InputLabel
 } from "@mui/material";
-import { Close, Add, Edit, Delete } from "@mui/icons-material";
+import { Close, Add, Edit, Delete, AdsClick, Save, Margin, BorderColor } from "@mui/icons-material";
 import usePosts from "./usePosts";
 import { Post } from "../_settings/interfaces";
 import { AuthContext } from '../account/authContext';
 
+import useDetails from '../detail_data';
+
+import { CalendarMonth, PlaylistAddCheckCircle } from '@mui/icons-material';
+
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+import '../QuillEditor.css'; // import your custom styles
 
 
 
@@ -72,10 +78,10 @@ const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            margin: '4px',
+                            marginRight: '1em',
                             border: '1px solid #ccc',
                             borderRadius: '5px',
-                            padding: '4px',
+                            paddingLeft: '1em',
                         }}
                     >
                         <div>{tag}</div>
@@ -84,19 +90,17 @@ const TagInput: React.FC<TagInputProps> = ({ onRemove, onUpdate, initialTags }) 
                         </IconButton>
                     </div>
                 ))}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+
                 <TextField
-                    label="新增標籤"
+                    placeholder="加入其他標籤"
                     variant="outlined"
                     name="tag"  // Add this line to set the name attribute
                     value={currentTag}
                     onChange={(e) => setCurrentTag(e.target.value)}
                     onKeyDown={handleKeyDown}
                 />
-
                 <IconButton onClick={handleAddTagButtonClick}>
-                    <Add />
+                    <Add sx={{ color: 'indianred' }} />
                 </IconButton>
             </div>
         </div>
@@ -114,6 +118,9 @@ const App = () => {
         </div>
     );
 };
+
+
+
 
 
 
@@ -162,19 +169,6 @@ export default function PostList() {
         setFile(selectedFile);
     }
 
-
-
-
-
-
-
-    // const update = () => {
-    //     // setPosts([...posts, newPost]);
-    //     setNewPost({ ...newPost, visible: false, account: "", context: "", datetime: new Date(), tag: "", title: "" });
-    //     console.log(posts);
-    // };
-
-
     const hide = () => {
         setStatus({ ...status, visible: false })
         resetPost()
@@ -215,42 +209,48 @@ export default function PostList() {
     };
 
 
+
     return (
-        <div>
-            <Grid container spacing={2} sx={{ padding: 4 }}>
+        <div style={{ padding: '6em' }}>
+            <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+                <PlaylistAddCheckCircle sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+                我的文章
+            </Typography>
+            <Grid container>
                 {posts.map((post, index) => (
                     post.account === authContext && (
-                        <Grid item xs={4} key={index}>
-                            <Card variant="outlined" style={{ position: 'relative' }}>
-                                <CardContent>
-                                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                                        <Typography variant="h5" component="div">
-                                            {post.title}
-                                        </Typography>
-                                        <Box display="flex" alignItems="center">
-                                            <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
-                                                <Edit />
-                                            </IconButton>
-                                            <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
-                                                <Delete />
-                                            </IconButton>
-                                        </Box>
+                        <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
+                            <CardContent>
+                                <Box display="flex" justifyContent="space-between" alignItems="center">
+                                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                                        {post.title}
+                                    </Typography>
+                                    <Box display="flex" alignItems="center">
+                                        <IconButton aria-label="edit" onClick={() => setUpdatePost(post)} sx={{ marginRight: 1 }}>
+                                            <Edit />
+                                        </IconButton>
+                                        <IconButton edge="end" aria-label="delete" onClick={() => deletePost(post.id)}>
+                                            <Delete />
+                                        </IconButton>
                                     </Box>
-                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                </Box>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                                    <Typography sx={{ color: 'text.secondary' }}>
                                         {post.account}
                                     </Typography>
-                                    {post.context.length > 50
+                                    <Typography sx={{ color: 'text.secondary' }}>
+                                        <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                                        {post.datetime.toLocaleString()}
+                                    </Typography>
+                                </div>
+                                <Typography variant="body2">
+                                    {post.context.length > 150
                                         ? `${stripHtmlTags(post.context).substring(0, 50)}……`
-                                        : stripHtmlTags(post.context)}
-
-                                </CardContent>
-                                <CardActions style={{ position: 'relative', bottom: 0, right: 0 }}>
-                                    <Button size="small">Learn More</Button>
-
-                                    <Typography>{post.datetime.toLocaleString()}</Typography>
-                                </CardActions>
-                            </Card>
-                        </Grid>
+                                        : stripHtmlTags(post.context)
+                                    }
+                                </Typography>
+                            </CardContent>
+                        </Card>
                     )
                 )
                 )}
@@ -269,83 +269,138 @@ export default function PostList() {
                 open={status.visible}
                 onClose={hide}
                 aria-labelledby={newPost.id === "" ? "新增文章" : "更新文章"}
-                maxWidth="md"
-                fullWidth
                 PaperProps={{
                     style: {
-                        width: '80%', // Adjust the width as needed
-                        maxHeight: '80%', // Adjust the maxHeight as needed
+                        maxWidth: '100%',
+                        maxHeight: '90%',
+                        width: '100%',
+                        height: '100%',
                     },
                 }}
             >
-                <DialogTitle>{newPost.id === "" ? "新增文章" : "更新文章"}</DialogTitle>
+                <DialogTitle sx={{ fontWeight: 'bold', marginY: '1em' }} variant={'h4'}>
+                    <Edit sx={{ marginRight: '0.5em' }} />{newPost.id === "" ? "新增文章" : "修改我的文章"}
+                </DialogTitle>
                 <DialogContent>
-                    <TextField label="帳號" variant="outlined" name="account" value={authContext} onChange={handleClick} fullWidth InputProps={{
-                        readOnly: true,
-                        style: { backgroundColor: '#f2f2f2' },
-                    }} /><br />
-                    <TextField label="標題" variant="outlined" name="title" value={newPost.title} onChange={handleClick} fullWidth /><br />
-                    {/* <TextField label="標籤" variant="outlined" name="tag" value={newPost.tag} onChange={handleClick} fullWidth /><br /> */}
-                    <Select
-                        label="選擇"
-                        variant="outlined"
-                        value={newPost.location} // Assuming you have a property named 'location' in newPost
-                        onChange={(e) => setNewPost({ ...newPost, location: e.target.value })}
-                        fullWidth
-                    >
-                        <MenuItem value="校內">校內</MenuItem>
-                        <MenuItem value="校外">校外</MenuItem>
-                    </Select><br />
-                    <TagInput
-                        onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
-                        initialTags={newPost.tag}
-                        onRemove={function (): void { }}
-                    />
+                    <div style={{ marginBottom: '1em' }}>
+                        <InputLabel htmlFor="account">帳號</InputLabel>
+                        <TextField
+                            variant="outlined"
+                            name="account"
+                            value={authContext}
+                            onChange={handleClick}
+                            fullWidth
+                            InputProps={{
+                                readOnly: true,
+                                style: { backgroundColor: '#f2f2f2' },
+                            }}
+                        />
+                    </div>
 
+                    <div style={{ marginBottom: '1em' }}>
+                        <InputLabel htmlFor="title">標題</InputLabel>
+                        <TextField
+                            variant="outlined"
+                            name="title"
+                            value={newPost.title}
+                            onChange={handleClick}
+                            fullWidth
+                        />
+                    </div>
 
-                    {/* <TextField label="內容" variant="outlined" name="context" value={newPost.context} onChange={handleClick} multiline rows={8} fullWidth /><br /> */}
-                    <ReactQuill
-                        theme="snow"
-                        value={newPost.context}
-                        onChange={(content) => setNewPost({ ...newPost, context: content })}
-                        modules={{
-                            toolbar: [
-                                [{ 'header': [1, 2, false] }],
-                                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-                                ['link', 'image'],
-                                ['clean']
-                            ],
+                    <div style={{ marginBottom: '1em' }}>
+                        <InputLabel htmlFor="select">文章種類</InputLabel>
+                        <Select
+                            label="選擇"
+                            variant="outlined"
+                            value={newPost.location}
+                            onChange={(e) => setNewPost({ ...newPost, location: e.target.value })}
+                            fullWidth
+                        >
+                            <MenuItem value="校內">校內</MenuItem>
+                            <MenuItem value="校外">校外</MenuItem>
+                        </Select>
+                    </div>
+
+                    <div style={{ marginBottom: '1em' }}>
+                        <InputLabel htmlFor="tagInput">文章標籤</InputLabel>
+                        <TagInput
+                            onUpdate={(updatedTags) => setNewPost({ ...newPost, tag: updatedTags })}
+                            initialTags={newPost.tag}
+                            onRemove={() => { }}
+                        />
+                    </div>
+
+                    {/* 文章內容 */}
+                    <div style={{ marginBottom: '1em' }}>
+                        <ReactQuill
+                            theme="snow"
+                            value={newPost.context}
+                            onChange={(content) => setNewPost({ ...newPost, context: content })}
+                            modules={{
+                                toolbar: [
+                                    [{ 'header': [1, 2, false] }],
+                                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                                    ['link', 'image'],
+                                    ['clean']
+                                ],
+                            }}
+                            formats={[
+                                'header',
+                                'bold', 'italic', 'underline', 'strike', 'blockquote',
+                                'list', 'bullet', 'indent',
+                                'link', 'image'
+                            ]}
+                        />
+                    </div>
+                    {file &&
+                        <div
+                            style={{
+                                width: '100%',
+                                border: '1px solid orange',
+                                backgroundColor: 'white',
+                                padding: '8px', // Adding padding for better visibility
+                                boxSizing: 'border-box', // Include padding in width calculation
+                                cursor: 'pointer',
+                                borderRadius: '5px', // Adding border radius,
+                                marginBottom: '1em'
+                            }}>
+                            <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />
+                        </div>
+                    }
+                    <input type="file" onChange={handleChange} width={'100%'}
+                        style={{
+                            width: '100%',
+                            border: '1px solid orange',
+                            backgroundColor: 'white',
+                            padding: '8px', // Adding padding for better visibility
+                            boxSizing: 'border-box', // Include padding in width calculation
+                            cursor: 'pointer',
+                            borderRadius: '5px', // Adding border radius
                         }}
-                        formats={[
-                            'header',
-                            'bold', 'italic', 'underline', 'strike', 'blockquote',
-                            'list', 'bullet', 'indent',
-                            'link', 'image'
-                        ]}
                     />
 
-                    <input type="file" onChange={handleChange} />
-                    {file && <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
 
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{ paddingX: '1.5em', paddingY: '1em' }}>
                     <IconButton
                         aria-label="close"
                         onClick={hide}
                         sx={{
                             position: 'absolute',
                             right: 8,
-                            top: 8,
+                            top: 8
                         }}
                     >
                         <Close />
                     </IconButton>
-                    <Button variant="contained" color="primary" onClick={addOrUpdate}>
-                        {newPost.id === "" ? "新增文章" : "更新文章"}
+                    <Button variant="contained" color="primary" onClick={addOrUpdate} size="large" startIcon={<Save />}>
+                        {newPost.id === "" ? "確認新增" : "儲存更新"}
                     </Button>
                 </DialogActions>
             </Dialog>
+
 
         </div>
     );

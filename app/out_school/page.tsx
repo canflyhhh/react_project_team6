@@ -6,7 +6,7 @@ import { inOutPosts } from "../in_school/all_school_data";
 import Image from 'next/image'
 import useDetails from '../detail_data';
 import app from "@/app/_firebase/config"
-import { CalendarMonth, AdsClick, ArrowBack, Interests , Person } from '@mui/icons-material';
+import { CalendarMonth, AdsClick, ArrowBack, Interests, Person } from '@mui/icons-material';
 
 // 圖片
 import ReactQuill from 'react-quill';
@@ -134,23 +134,19 @@ function OutSchool() {
                             </Card>
                         ))}
                     </Grid>
-                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
-                        <Grid item>
-                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
-                                返回校外總覽
-                            </Button>
-                        </Grid>
-                        <Grid item spacing={2}>
-                            <Pagination
-                                count={Math.ceil(posts.length / postsPerPage)}
-                                page={page}
-                                variant="outlined"
-                                color="primary"
-                                onChange={handleChangePage}
-                            />
-                        </Grid>
+                    <Grid container marginY={'3em'} justifyContent='flex-end'>
+                        <Pagination
+                            count={Math.ceil(posts.length / postsPerPage)}
+                            page={page}
+                            variant="outlined"
+                            color="primary"
+                            onChange={handleChangePage}
+                            sx={{ marginRight: '16px' }}
+                        />
                     </Grid>
+
                 </div>
+
             )}
 
             {status === "詳細" && Id && (
