@@ -15,9 +15,10 @@ import '../QuillEditor.css'; // import your custom styles
 
 // import heart
 import Heart from "react-heart"
+import { AuthContext } from "../account/authContext";
 
 function InSchool() {
-    
+    const email = useContext(AuthContext);
     // 篩選校外  
     const [posts, setPosts, like] = inOutPosts("校內");
 
@@ -60,21 +61,29 @@ function InSchool() {
 
     // 卡片收藏
     const likecheck = (postId: string, isHeart: boolean) => {
-        const check = isHeart
-            ? window.confirm('確定收藏文章？')
-            : window.confirm('確定取消收藏？');
-        if (check) {
-            like(postId, isHeart)
+        if (email === '') {
+            window.confirm('請先進行登入')
+        } else {
+            const check = isHeart
+                ? window.confirm('確定收藏文章？')
+                : window.confirm('確定取消收藏？');
+            if (check) {
+                like(postId, isHeart)
+            }
         }
     }
 
     //詳細資訊收藏
     const d_likecheck = (postId: string, isHeart: boolean) => {
-        const check = isHeart
-            ? window.confirm('確定收藏文章？')
-            : window.confirm('確定取消收藏？');
-        if (check) {
-            d_like(postId, isHeart)
+        if (email === '') {
+            window.confirm('請先進行登入')
+        } else {
+            const check = isHeart
+                ? window.confirm('確定收藏文章？')
+                : window.confirm('確定取消收藏？');
+            if (check) {
+                d_like(postId, isHeart)
+            }
         }
     }
 
@@ -83,17 +92,21 @@ function InSchool() {
         setTAG(tag)
     }
     const tag_likecheck = (postId: string, isHeart: boolean) => {
-        const check = isHeart
-            ? window.confirm('確定收藏文章？')
-            : window.confirm('確定取消收藏？');
-        if (check) {
-            tag_like(postId, isHeart)
+        if (email === '') {
+            window.confirm('請先進行登入')
+        } else {
+            const check = isHeart
+                ? window.confirm('確定收藏文章？')
+                : window.confirm('確定取消收藏？');
+            if (check) {
+                tag_like(postId, isHeart)
+            }
         }
     }
-    
+
     const currentTAGPosts = TAG_POST.slice(indexOfFirstPost, indexOfLastPost);
 
-    
+
 
     return (
         <div style={{ padding: '6em' }}>
@@ -192,7 +205,7 @@ function InSchool() {
                                             ))
                                         ) : (
                                             <Typography sx={{ display: 'flex', alignItems: 'center', color: 'orange', cursor: 'pointer' }} onClick={() => clickTAG(item.tag as string)}>
-                                                    {item.tag}
+                                                {item.tag}
                                             </Typography>
                                         ))
                                     }

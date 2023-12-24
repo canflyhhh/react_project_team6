@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react';
 import { useHOT, useTIME } from "./in_school/all_school_data";
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useState } from "react";
 import Image from 'next/image'
 import useDetails from './detail_data';
@@ -19,8 +19,10 @@ import './QuillEditor.css'; // import your custom styles
 
 // import heart
 import Heart from "react-heart"
+import { AuthContext } from './account/authContext';
 
 export default function Home() {
+    const email = useContext(AuthContext);
     // Limit限制顯示數量
     const [Limit, setLimit] = useState(true);
     //按熱度
@@ -60,7 +62,7 @@ export default function Home() {
     // 熱門、最新文章 card（大）
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
-            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '0.8em', height: '20em',display: 'flex', flexDirection: 'column' }}>
+            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '0.8em', height: '20em', display: 'flex', flexDirection: 'column' }}>
                 <CardContent>
                     <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
@@ -175,26 +177,34 @@ export default function Home() {
 
     // 卡片收藏
     const likecheck = (postId: string, isHeart: boolean, status: string) => {
-        const check = isHeart
-            ? window.confirm('確定收藏文章？')
-            : window.confirm('確定取消收藏？');
-        if (check) {
-            if (status === "HOT") {
-                h_like(postId, isHeart)
-            }
-            if (status === "TIME") {
-                t_like(postId, isHeart)
+        if (email === '') {
+            window.confirm('請先進行登入')
+        } else {
+            const check = isHeart
+                ? window.confirm('確定收藏文章？')
+                : window.confirm('確定取消收藏？');
+            if (check) {
+                if (status === "HOT") {
+                    h_like(postId, isHeart)
+                }
+                if (status === "TIME") {
+                    t_like(postId, isHeart)
+                }
             }
         }
     }
 
     //詳細資訊收藏
     const d_likecheck = (postId: string, isHeart: boolean) => {
-        const check = isHeart
-            ? window.confirm('確定收藏文章？')
-            : window.confirm('確定取消收藏？');
-        if (check) {
-            d_like(postId, isHeart)
+        if (email === '') {
+            window.confirm('請先進行登入')
+        } else {
+            const check = isHeart
+                ? window.confirm('確定收藏文章？')
+                : window.confirm('確定取消收藏？');
+            if (check) {
+                d_like(postId, isHeart)
+            }
         }
     }
 
