@@ -155,7 +155,6 @@ function InSchool() {
             {status === "詳細" && Id && (
                 <div>
                     {context.map((item) => (
-                        console.log(item.tag),
                         <Card variant="outlined" sx={{ padding: '1em' }} key={Id} >
                             <CardContent>
                                 <Typography variant="h6" color="text.secondary" marginTop={'1em'} marginBottom={'0.5em'} display={'flex'} alignItems={'center'} >
@@ -169,13 +168,11 @@ function InSchool() {
                                     {item.tag &&
                                         (Array.isArray(item.tag) ? (
                                             item.tag.map((tagItem, index) => (
-                                                <React.Fragment key={index}>
-                                                    <Typography
-                                                        sx={{ display: 'flex', alignItems: 'center' }}
-                                                        color="orange"
-                                                    >{tagItem.trim()}
-                                                    </Typography>
-                                                </React.Fragment>
+                                                    <React.Fragment key={index}>
+                                                        <Typography sx={{ display: 'flex', alignItems: 'center', color: "orange" }}>
+                                                            {tagItem.trim()}
+                                                        </Typography>
+                                                    </React.Fragment>
                                             ))
                                         ) : (
                                             <Typography>
@@ -203,9 +200,9 @@ function InSchool() {
                                 />
                             </CardContent>
                             <CardActions sx={{ justifyContent: 'space-between' }}>
-                                <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />}  size="large">
-                                    返回校外總攬
-                                    </Button>
+                                <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
+                                    返回校內總覽
+                                </Button>
                                 <Typography sx={{ width: "6em", margin: '1em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     {/*點擊收藏*/}
                                     <span style={{ width: "1.5rem" }}>
