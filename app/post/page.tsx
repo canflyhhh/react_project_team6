@@ -283,21 +283,6 @@ export default function PostList() {
                 </DialogTitle>
                 <DialogContent>
                     <div style={{ marginBottom: '1em' }}>
-                        <InputLabel htmlFor="account">帳號</InputLabel>
-                        <TextField
-                            variant="outlined"
-                            name="account"
-                            value={authContext}
-                            onChange={handleClick}
-                            fullWidth
-                            InputProps={{
-                                readOnly: true,
-                                style: { backgroundColor: '#f2f2f2' },
-                            }}
-                        />
-                    </div>
-
-                    <div style={{ marginBottom: '1em' }}>
                         <InputLabel htmlFor="title">標題</InputLabel>
                         <TextField
                             variant="outlined"

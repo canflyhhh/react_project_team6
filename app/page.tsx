@@ -60,7 +60,7 @@ export default function Home() {
     // 熱門、最新文章 card（大）
     function postCard(post: { time: any; account: any; context: any; title: any; Id: any; like: number; isHeart: boolean; }, status: string) {
         return (
-            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '0.8em' }}>
+            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '0.8em', height: '20em',display: 'flex', flexDirection: 'column' }}>
                 <CardContent>
                     <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
                         {post.title}
@@ -81,8 +81,8 @@ export default function Home() {
                         }
                     </Typography>
                 </CardContent>
-                <Divider light sx={{ margin: '0.2em' }} />
-                <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Divider light sx={{ marginTop: 'auto', marginBottom: '0.2em', display: 'flex' }} />
+                <CardActions sx={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
                     <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {/*點擊收藏*/}
                         <span style={{ width: "1.5rem" }}>
