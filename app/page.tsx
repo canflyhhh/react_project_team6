@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import { useHOT, useTIME } from "./in_school/all_school_data";
+import { useHOT, useTAG, useTIME } from "./in_school/all_school_data";
 import { useContext, useEffect } from 'react';
 import { useState } from "react";
 import Image from 'next/image'
@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, ArrowBack, Person } from '@mui/icons-material';
+import { CalendarMonth, Whatshot, TouchApp, AdsClick, AutoAwesome, ArrowBack, Person, School } from '@mui/icons-material';
 
 import './QuillEditor.css'; // import your custom styles
 
@@ -34,6 +34,9 @@ export default function Home() {
     const [status, setStatus] = useState("總攬");
     const [Id, setId] = useState("");
     const [context, setContext, d_like] = useDetails(Id);
+
+    const [TAG, setTAG] = useState("");
+    const [TAG_POST, setTAG_POST, tag_like] = useTAG(TAG);
 
     //查看詳細資訊
     function detailContex(id: string) {
@@ -208,6 +211,27 @@ export default function Home() {
         }
     }
 
+    const clickTAG = (tag: string) => {
+        setStatus("TAG");
+        setTAG(tag)
+    }
+    const tag_likecheck = (postId: string, isHeart: boolean) => {
+        if (email === '') {
+            window.confirm('請先進行登入')
+        } else {
+            const check = isHeart
+                ? window.confirm('確定收藏文章？')
+                : window.confirm('確定取消收藏？');
+            if (check) {
+                tag_like(postId, isHeart)
+            }
+        }
+    }
+
+    const currentTAGPosts = TAG_POST.slice(indexOfFirstPost, indexOfLastPost);
+
+
+
     return (
         <div style={{ padding: '6em' }}>
             {status === "總攬" && (
@@ -345,14 +369,14 @@ export default function Home() {
                                         (Array.isArray(item.tag) ? (
                                             item.tag.map((tagItem, index) => (
                                                 <React.Fragment key={index}>
-                                                    <Typography sx={{ display: 'flex', alignItems: 'center', color: "orange" }}>
+                                                    <Typography sx={{ display: 'flex', alignItems: 'center', color: 'orange', cursor: 'pointer' }} onClick={() => clickTAG(tagItem)}>
                                                         {tagItem.trim()}
                                                     </Typography>
                                                 </React.Fragment>
 
                                             ))
                                         ) : (
-                                            <Typography>
+                                            <Typography sx={{ display: 'flex', alignItems: 'center', color: 'orange', cursor: 'pointer' }} onClick={() => clickTAG(item.tag as string)}>
                                                 {item.tag}
                                             </Typography>
                                         ))
@@ -401,6 +425,80 @@ export default function Home() {
                         </Card>
                     ))}
 
+                </div>
+            )}
+            {status === "TAG" && (
+                <div>
+                    {/*校內文章*/}
+                    <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+                        <School sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
+                        與「{TAG}」相關的文章
+                    </Typography>
+                    <Grid container>
+                        {currentTAGPosts.map((post, index) => (
+                            <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
+                                <CardContent>
+                                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                                        {post.title}
+                                    </Typography>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                                        <Typography sx={{ color: 'text.secondary' }}>
+                                            {post.account}
+                                        </Typography>
+                                        <Typography sx={{ color: 'text.secondary' }}>
+                                            <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                                            {post.time.toDate().toLocaleString()}
+                                        </Typography>
+                                    </div>
+                                    <Typography variant="body2">
+                                        {post.context.length > 50
+                                            ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                                            : stripHtmlTags(post.context)
+                                        }
+                                    </Typography>
+                                </CardContent>
+                                <Divider />
+                                {/*顯示收藏數量*/}
+                                <CardActions sx={{ justifyContent: 'space-between' }}>
+                                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        {/*點擊收藏*/}
+                                        <span style={{ width: "1.5rem" }}>
+                                            <Heart
+                                                isActive={post.isHeart}
+                                                onClick={() => tag_likecheck(post.Id, !post.isHeart)}
+                                                activeColor="red"
+                                                inactiveColor="black"
+                                                animationTrigger="hover"
+                                                animationScale={1.2}
+                                            />
+                                        </span>
+                                        {/* Display the like count */}
+                                        <span style={{ marginLeft: '0.5em' }}>
+                                            {post.like ? post.like : 0}
+                                        </span>
+                                    </Typography>
+                                    <Button variant="outlined" onClick={() => detailContex(post.Id)} startIcon={<AdsClick />} size="large">
+                                        查看內容
+                                    </Button>
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </Grid>
+                    <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
+                        <Grid item>
+                            <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={() => changeStatus("總攬")} startIcon={<ArrowBack />} size="large">
+                                返回校內總攬
+                            </Button>
+                        </Grid>
+                        <Pagination
+                            count={Math.ceil(TAG_POST.length / postsPerPage)}
+                            page={page}
+                            variant="outlined"
+                            color="primary"
+                            onChange={handleChangePage}
+                            sx={{ marginRight: '16px' }}
+                        />
+                    </Grid>
                 </div>
             )}
         </div>
