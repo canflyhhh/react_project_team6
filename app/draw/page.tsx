@@ -5,6 +5,7 @@ import { FC, useEffect, useState } from 'react'
 import { useDraw } from '../hooks/useDraw'
 import { CirclePicker, CompactPicker, SliderPicker } from 'react-color'
 
+
 import { io } from 'socket.io-client'
 import { drawLine } from '../utils/drawLine'
 
@@ -68,7 +69,7 @@ const page: FC<pageProps> = ({ }) => {
   }
 
   return (
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <canvas
         ref={canvasRef}
         onMouseDown={onMouseDown}
@@ -77,12 +78,12 @@ const page: FC<pageProps> = ({ }) => {
         className='border border-black rounded-md'
       />
       <SliderPicker color={color} onChange={(e) => setColor(e.hex)} />
-      <button
+      <Button
         type='button'
         className='p-2 rounded-md border border-black'
         onClick={() => socket.emit('clear')}>
-        Clear canvas
-      </button>
+        清除畫布
+      </Button>
     </div>
   )
 }

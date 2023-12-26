@@ -202,7 +202,7 @@ export default function PostList() {
     };
 
 
-    // Function to convert HTML to plain text
+    // 轉換為純文字
     const stripHtmlTags = (html: string) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
@@ -373,7 +373,7 @@ export default function PostList() {
                                     <img src={URL.createObjectURL(file)} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />
                                 </div>
                             }
-                            <input type="file" onChange={handleChange} width={'100%'}
+                            {/* <input type="file" onChange={handleChange} width={'100%'}
                                 style={{
                                     width: '100%',
                                     border: '1px solid orange',
@@ -383,7 +383,7 @@ export default function PostList() {
                                     cursor: 'pointer',
                                     borderRadius: '5px', // Adding border radius
                                 }}
-                            />
+                            /> */}
 
 
                         </DialogContent>

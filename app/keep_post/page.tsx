@@ -211,8 +211,9 @@ export default function Home() {
                   </Grid>
                   <Typography variant="body2">
                     {post.context.length > 50
-                      ? `${post.context.substring(0, 50)}……`
-                      : post.context}
+                      ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                      : stripHtmlTags(post.context)
+                    }
                   </Typography>
                 </CardContent>
                 <CardActions style={{ justifyContent: 'flex-end' }}>

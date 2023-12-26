@@ -58,22 +58,22 @@ export default function Account() {
                 const userDoc = await setDoc(doc(db, "users", res.user.uid), { email: account.email, name: account.name });
 
                 // send email after register (不要刪)
-                // try {
-                //     emailMessage.email = account.email
-                //     const response = await axios({
-                //       method: 'post',
-                //       url: '/email',
-                //       data: emailMessage,
-                //     });
-                //     setResponse(response.data.message);
-                // } catch (error) {
-                //     if (axios.isAxiosError(error)) {
-                //       setResponse(error.message);
-                //     } else {
-                //       setResponse("錯誤");
-                //     }
-                // }
-                // setMessage(`註冊成功，歡迎 ${res.user?.email}`);
+                try {
+                    emailMessage.email = account.email
+                    const response = await axios({
+                      method: 'post',
+                      url: '/email',
+                      data: emailMessage,
+                    });
+                    setResponse(response.data.message);
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                      setResponse(error.message);
+                    } else {
+                      setResponse("錯誤");
+                    }
+                }
+                setMessage(`註冊成功，歡迎 ${res.user?.email}`);
 
 
                 // setAccount({ ...account, password: "" });
