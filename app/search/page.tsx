@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 
 // import search
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
@@ -286,7 +287,7 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
       {status === "搜尋" && (
         <div>
           <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
-            <Interests sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
+            <TravelExploreIcon sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
             快來使用ReactGOGO的強大搜尋
           </Typography>
           <div style={{ display: 'flex', marginBottom: '1em' }}>
@@ -521,7 +522,7 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
           <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
             <Grid item>
               <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
-                返回搜尋總攬
+                返回搜尋總覽
               </Button>
             </Grid>
             <Pagination
