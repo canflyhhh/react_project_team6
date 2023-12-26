@@ -406,3 +406,40 @@ export function useTAG(TAG: string) {
 
   return [posts, setPosts, tag_like] as const;
 }
+
+export function usefindTAG() {
+  const db = getFirestore(app);
+  const [topTags, setTopTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const allTags: string[] = [];
+
+      const querySnapshot = await getDocs(collection(db, "post"));
+
+      querySnapshot.forEach((doc) => {
+        const tags = doc.data().tag || [];
+        allTags.push(...tags);
+      });
+
+      // 统计 tag 出现的次数
+      const tagCountMap = new Map<string, number>();
+      allTags.forEach((tag) => {
+        tagCountMap.set(tag, (tagCountMap.get(tag) || 0) + 1);
+      });
+
+      // 将 Map 转换为数组，并按出现次数降序排序
+      const sortedTags = Array.from(tagCountMap.entries()).sort((a, b) => b[1] - a[1]);
+
+      // 获取前 10 个 tag
+      const top10Tags = sortedTags.slice(0, 10).map(([tag]) => tag);
+
+      setTopTags(top10Tags);
+    }
+    fetchData();
+  }, [db]);
+
+
+
+  return [topTags] as const;
+}

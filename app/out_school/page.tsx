@@ -308,7 +308,7 @@ function OutSchool() {
                     <Grid container marginY={'3em'} display='flex' direction="row" justifyContent='space-between'>
                         <Grid item>
                             <Button variant="outlined" sx={{ alignItems: 'center' }} onClick={goBack} startIcon={<ArrowBack />} size="large">
-                                返回校外總攬
+                                返回校總攬
                             </Button>
                         </Grid>
                         <Pagination
