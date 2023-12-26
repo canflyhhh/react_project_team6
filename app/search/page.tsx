@@ -13,13 +13,14 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
 
 // import search
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import { AdsClick, ArrowBack, CalendarMonth, Interests, Person, School } from '@mui/icons-material';
-import { Breadcrumbs, Divider, Pagination } from '@mui/material';
+import { Breadcrumbs, Divider, Pagination, Select } from '@mui/material';
 import Heart from "react-heart"
 import useDetails from '../detail_data';
 import { useHOT, useTAG, usefindTAG } from '../in_school/all_school_data';
@@ -278,6 +279,8 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
     }
   }, [searchTerm, updated]);
 
+  
+
   return (
     <div style={{ padding: '6em' }}>
       {status === "搜尋" && (
@@ -286,14 +289,14 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
             <Interests sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'orange' }} />
             快來使用ReactGOGO的強大搜尋
           </Typography>
-          <div>
+          <div style={{ display: 'flex', marginBottom: '1em' }}>
             {/* 搜尋方式 */}
-            <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
-              <option value="title">標題&內文</option>
-              <option value="author">作者</option>
-            </select>
+            <Select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+              <MenuItem value="title">標題&內文</MenuItem>
+              <MenuItem value="author">作者</MenuItem>
+            </Select>
             {/* 搜尋框 */}
-            <Search>
+            <Search sx={{ display: 'flex' }}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -305,6 +308,8 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
                 inputProps={{ 'aria-label': 'search' }}
               />
             </Search>
+          </div>
+          <div>
 
             {/* 搜尋文章 */}
             {searchTerm.length !== 0 ? (
@@ -365,13 +370,15 @@ const SearchComponent: React.FC<SearchComponentProps> = () => {
                 )}
               </div>
             ) : (
-              // 10大熱門TAG
-              hotTAG.map((tag) => (
-                <Typography sx={{ display: 'flex', alignItems: 'center', color: 'orange', cursor: 'pointer' }} onClick={() => clickTAG(tag)}>
-                  {tag}
-                </Typography>
-              ))
-
+              <Breadcrumbs>
+                {// 10大熱門TAG
+                  hotTAG.slice(0, 10).map((tag) => (
+                    <Typography sx={{ display: 'flex', alignItems: 'center', color: 'orange', cursor: 'pointer' }} onClick={() => clickTAG(tag)}>
+                      {tag}
+                    </Typography>
+                  ))
+                }
+              </Breadcrumbs>
             )}
 
           </div>

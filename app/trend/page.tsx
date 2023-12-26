@@ -52,7 +52,7 @@ export default function Home() {
 			<Grid container spacing={2}>
 				{searchResults?.map((prod, i) => (
 					<Grid item xs={4} key={i} >
-						<Card>
+						<Card sx={{ height: '280px'}}>
 							<CardMedia
 								component="img"
 								alt={prod.title}
@@ -71,7 +71,6 @@ export default function Home() {
 									了解更多
 								</Button>
 							</CardActions>
-
 						</Card>
 					</Grid>
 				))}
