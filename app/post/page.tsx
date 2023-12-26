@@ -264,6 +264,7 @@ export default function PostList() {
                                             }
                                         </Typography>
                                     </CardContent>
+                                    <Divider />
                                     <CardActions sx={{ justifyContent: 'space-between' }}>
                                         <Button variant="outlined" onClick={() => detailContex(post.id)} startIcon={<AdsClick />} size="large">
                                             查看內容

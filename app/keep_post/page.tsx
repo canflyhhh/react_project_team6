@@ -23,7 +23,7 @@ import useDetails from '../detail_data';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image'
-import { AdsClick, ArrowBack, CalendarMonth, Person, School } from '@mui/icons-material';
+import { AdsClick, ArrowBack, CalendarMonth, Person, School, Stars } from '@mui/icons-material';
 import { useTAG } from '../in_school/all_school_data';
 
 export default function Home() {
@@ -187,63 +187,73 @@ export default function Home() {
     }
   };
   return (
-    <div>
+    <div style={{ padding: '6em' }}>
       {status === "收藏" && (
-        <Grid container spacing={2} sx={{ padding: 4 }}>
-          {currentPosts.map((post, index) => (
-            <Grid item xs={4} key={index}>
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h5" component="div">
-                    {post.title}
-                  </Typography>
-                  <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+        <div>
+          <Typography variant="h3" component="div" sx={{ marginY: '0.5em', display: 'flex', alignItems: 'center', fontWeight: 'bold', marginBottom: '1em' }}>
+            <Stars sx={{ fontSize: '5rem', marginRight: '0.2em', color: 'indianred' }} />
+            我的收藏
+          </Typography>
+          <Grid container>
+            {currentPosts.map((post, index) => (
+              <Grid container>
+                <Card variant="outlined" sx={{ padding: '1em', marginBottom: '1em', width: '100%' }} key={index}>
+                  <CardContent>
+                    <Typography variant="h4" component="div" sx={{ marginY: 1 }} fontWeight={'bold'}>
+                      {post.title}
+                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5em' }}>
+                      <Typography sx={{ color: 'text.secondary' }}>
                         {post.account}
                       </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {/* {post.datetime} */}
+                      <Typography sx={{ color: 'text.secondary' }}>
+                        <CalendarMonth sx={{ fontSize: '1rem', marginRight: '0.2em' }} />
+                        {post.datetime.toDate().toLocaleString()}
                       </Typography>
-                    </Grid>
-                  </Grid>
-                  <Typography variant="body2">
-                    {post.context.length > 50
-                      ? `${stripHtmlTags(post.context).substring(0, 50)}……`
-                      : stripHtmlTags(post.context)
-                    }
-                  </Typography>
-                </CardContent>
-                <CardActions style={{ justifyContent: 'flex-end' }}>
-                  <Button variant="outlined" onClick={() => detailContex(post.id)}>
-                    查看內容
-                  </Button>
-                  <div style={{ width: "1.5rem", marginRight: '0.5rem', marginLeft: '1.5rem' }}>
-                    <Heart
-                      isActive={!activeMap[post.id]}
-                      onClick={() => handleHeartClick(post.id)}
-                      activeColor="red"
-                      inactiveColor="black"
-                      animationTrigger="hover"
-                      animationScale={1.5}
-                    />
-                  </div>
-                </CardActions>
-              </Card>
+                    </div>
+                    <Typography variant="body2">
+                      {post.context.length > 50
+                        ? `${stripHtmlTags(post.context).substring(0, 50)}……`
+                        : stripHtmlTags(post.context)
+                      }
+                    </Typography>
+                  </CardContent>
+                  <Divider />
+                  {/*顯示收藏數量*/}
+                  <CardActions sx={{ justifyContent: 'space-between' }}>
+                    <Typography sx={{ width: "6em", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {/*點擊收藏*/}
+                      <span style={{ width: "1.5rem" }}>
+                        <Heart
+                          isActive={!activeMap[post.id]}
+                          onClick={() => handleHeartClick(post.id)}
+                          activeColor="red"
+                          inactiveColor="black"
+                          animationTrigger="hover"
+                          animationScale={1.5}
+                        />
+                      </span>
+                      
+                    </Typography>
+                    <Button variant="outlined" onClick={() => detailContex(post.id)} startIcon={<AdsClick />} size="large">
+                      查看內容
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+            <Grid container marginY={'3em'} justifyContent='flex-end'>
+              <Pagination
+                count={Math.ceil(posts.length / postsPerPage)}
+                page={page}
+                variant="outlined"
+                color="primary"
+                onChange={handleChangePage}
+                sx={{ marginRight: '16px' }}
+              />
             </Grid>
-          ))}
-          <Grid item spacing={2}>
-            <Pagination
-              count={Math.ceil(posts.length / postsPerPage)}
-              page={page}
-              variant="outlined"
-              color="primary"
-              onChange={handleChangePage}
-            />
           </Grid>
-        </Grid>
+        </div>
       )}
 
       {status === "詳細" && Id && (
